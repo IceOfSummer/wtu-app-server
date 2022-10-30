@@ -6,5 +6,4 @@ option optimize_for = SPEED;
 
 message MessageReceive {
   int32 receivedId = 1;
-  int32 unreceivedId = 2;
 }

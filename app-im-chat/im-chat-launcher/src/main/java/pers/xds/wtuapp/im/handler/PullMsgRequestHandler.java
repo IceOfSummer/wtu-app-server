@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
-import pers.xds.wtuapp.im.database.bean.UserMessage;
+import pers.xds.wtuapp.im.database.bean.Message;
 import pers.xds.wtuapp.im.message.ChatResponseMessage;
 import pers.xds.wtuapp.im.message.PullMsgRequestMessage;
 import pers.xds.wtuapp.im.service.ChatService;
@@ -40,7 +40,7 @@ public class PullMsgRequestHandler extends SimpleChannelInboundHandler<PullMsgRe
         if (principal == null) {
             return;
         }
-        List<UserMessage> unreceivedMessage = chatService.getUnreceivedMessage(principal.getId());
+        List<Message> unreceivedMessage = chatService.getUnreceivedMessage(principal.getId());
         if (!unreceivedMessage.isEmpty()) {
             try {
                 ctx.channel().writeAndFlush(new ChatResponseMessage(unreceivedMessage, msg.getRequestId()));

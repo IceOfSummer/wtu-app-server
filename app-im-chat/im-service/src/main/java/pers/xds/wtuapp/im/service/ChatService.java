@@ -3,7 +3,7 @@ package pers.xds.wtuapp.im.service;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.im.database.bean.MessageReceive;
-import pers.xds.wtuapp.im.database.bean.UserMessage;
+import pers.xds.wtuapp.im.database.bean.Message;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,10 +22,10 @@ public interface ChatService {
      * @param userid 用户id
      * @return 没有收到的消息
      */
-    List<UserMessage> getUnreceivedMessage(int userid);
+    List<Message> getUnreceivedMessage(int userid);
 
     /**
-     * 表示用户已经确认收到消息id为<code>receivedId</code>为止，之前所有的消息
+     * 表示用户已经确认收到消息id为<code>receivedId</code>为止(包含)，之前所有的消息
      * @param userId 用户id
      * @param receivedId 用户在received之前的消息都已经收到了
      * @throws IllegalArgumentException receivedId大于unreceivedId
@@ -41,10 +41,12 @@ public interface ChatService {
     MessageReceive getMessageReceiveStatus(int userid);
 
     /**
-     * 发送离线消息
-     * @param message 消息
+     * 保存离线消息
+     * @param content 消息内容
+     * @param sender 谁发的
+     * @param to 发给谁
      * @throws NoSuchElementException 未找到该消息对应该用户
      */
-    void saveOfflineMessage(UserMessage message) throws NoSuchElementException;
+    void saveOfflineMessage(String content, int sender, int to) throws NoSuchElementException;
 
 }

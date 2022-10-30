@@ -1,6 +1,6 @@
 package pers.xds.wtuapp.im.message;
 
-import pers.xds.wtuapp.im.database.bean.UserMessage;
+import pers.xds.wtuapp.im.database.bean.Message;
 import pers.xds.wtuapp.im.proto.UserMessageProto;
 
 import java.util.ArrayList;
@@ -12,9 +12,12 @@ import java.util.List;
  * @author DeSen Xu
  * @date 2022-09-03 18:19
  */
-public class ChatResponseMessage extends Message{
+public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
 
-    private List<UserMessage> messages;
+    /**
+     * 要发送的消息
+     */
+    private List<Message> messages;
 
 
     public static final byte MESSAGE_TYPE = 126;
@@ -23,19 +26,19 @@ public class ChatResponseMessage extends Message{
         super(MESSAGE_TYPE, requestId);
     }
 
-    public ChatResponseMessage(List<UserMessage> messages, short requestId) {
+    public ChatResponseMessage(List<Message> messages, short requestId) {
         this(requestId);
         this.messages = messages;
     }
 
-    public ChatResponseMessage(UserMessage singleMessage, short requestId) {
+    public ChatResponseMessage(Message singleMessage, short requestId) {
         this(requestId);
         this.messages = Collections.singletonList(singleMessage);
     }
 
     public ChatResponseMessage(ChatRequestMessage message, int sender, short requestId) {
         this(requestId);
-        this.messages = Collections.singletonList(new UserMessage(-1, message.getTo(), sender, message.getMessage()));
+        this.messages = Collections.singletonList(new Message(message.getTo(), sender, message.getMessage()));
     }
 
     /**
@@ -55,32 +58,35 @@ public class ChatResponseMessage extends Message{
             return new byte[0];
         }
         UserMessageProto.UserMessageGroup.Builder builder = UserMessageProto.UserMessageGroup.newBuilder();
-        for (UserMessage message : messages) {
+        for (Message message : messages) {
             builder.addMessage(buildMessage(message));
         }
         return builder.build().toByteArray();
     }
 
-    private UserMessageProto.UserMessage buildMessage(UserMessage message) {
-        return UserMessageProto.UserMessage
+    private UserMessageProto.UserMessage buildMessage(Message message) {
+        Integer msgId = message.getMsgId();
+        UserMessageProto.UserMessage.Builder builder = UserMessageProto.UserMessage
                 .newBuilder()
-                .setMsgId(message.getMsgId())
-                .setTo(message.getMsgTo())
+                .setTo(message.getUid())
                 .setContent(message.getContent())
                 .setCreateTime(message.getCreateTime() == null ? System.currentTimeMillis() : message.getCreateTime().getTime())
-                .setFrom(message.getMsgFrom())
-                .build();
+                .setFrom(message.getFrom());
+        if (msgId != null) {
+            builder.setMsgId(msgId);
+        }
+        return builder.build();
     }
 
-    private UserMessage castProtoToMessage(UserMessageProto.UserMessage message) {
-        return new UserMessage(message.getMsgId(), message.getTo(), message.getFrom(), message.getContent());
+    private Message castProtoToMessage(UserMessageProto.UserMessage message) {
+        return new Message(message.getTo(), message.getFrom(), message.getContent());
     }
 
-    public List<UserMessage> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<UserMessage> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 

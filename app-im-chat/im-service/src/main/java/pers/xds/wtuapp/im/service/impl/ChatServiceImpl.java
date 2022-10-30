@@ -7,7 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.im.database.MessageReceiveMapper;
 import pers.xds.wtuapp.im.database.UserMessageMapper;
 import pers.xds.wtuapp.im.database.bean.MessageReceive;
-import pers.xds.wtuapp.im.database.bean.UserMessage;
+import pers.xds.wtuapp.im.database.bean.Message;
+import pers.xds.wtuapp.im.redis.UserCache;
 import pers.xds.wtuapp.im.service.ChatService;
 
 import java.util.List;
@@ -24,6 +25,13 @@ public class ChatServiceImpl implements ChatService {
 
     private MessageReceiveMapper messageReceiveMapper;
 
+    private UserCache userCache;
+
+    @Autowired
+    public void setUserCache(UserCache userCache) {
+        this.userCache = userCache;
+    }
+
     @Autowired
     public void setMessageReceiveMapper(MessageReceiveMapper messageReceiveMapper) {
         this.messageReceiveMapper = messageReceiveMapper;
@@ -35,7 +43,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<UserMessage> getUnreceivedMessage(int userid) {
+    public List<Message> getUnreceivedMessage(int userid) {
         return userMessageMapper.queryUnreceivedMessage(userid);
     }
 
@@ -60,19 +68,12 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
-    /**
-     * 发送离线消息
-     * @param message 消息
-     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveOfflineMessage(UserMessage message) throws NoSuchElementException {
-        MessageReceive messageReceive = messageReceiveMapper.selectById(message.getMsgTo());
-        if (messageReceive == null) {
-            throw new NoSuchElementException();
+    public void saveOfflineMessage(String content, int sender, int to) throws NoSuchElementException {
+        if (!userCache.isUserNotExist(to)) {
+            throw new NoSuchElementException("用户不存在");
         }
-        int nextId = messageReceive.getUnreceivedId();
-        messageReceiveMapper.increaseMessageCounter(message.getMsgTo());
-        userMessageMapper.insert(message);
+        userMessageMapper.insert(new Message(to, sender, content));
     }
 }

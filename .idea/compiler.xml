@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="im-redis" />
         <module name="security" />
         <module name="web-elasticsearch" />
         <module name="app-web-launcher" />

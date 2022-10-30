@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
-import pers.xds.wtuapp.im.database.bean.UserMessage;
 import pers.xds.wtuapp.im.message.ChatRequestMessage;
 import pers.xds.wtuapp.im.message.ChatResponseMessage;
 import pers.xds.wtuapp.im.message.ServerFailResponseMessage;
@@ -80,11 +79,10 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
             }
         }
 
-        UserMessage userMessage = new UserMessage(msg.getTo(), principal.getId(), msg.getMessage());
-        if (ch == null || ch.isOpen()) {
+        if (ch == null) {
             // 发送离线消息
             try {
-                chatService.saveOfflineMessage(userMessage);
+                chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
             } catch (NoSuchElementException e){
                 ctx.channel().writeAndFlush(new ServerFailResponseMessage("目标用户不存在", ChannelAttrManager.getRequestId(ctx)));
             } catch (Exception e) {
@@ -92,18 +90,7 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
                 ctx.channel().writeAndFlush(new ServerFailResponseMessage("消息发送失败", ChannelAttrManager.getRequestId(ctx)));
             }
         } else {
-            try {
-                ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), msg.getRequestId()));
-            } catch (Exception e) {
-                // 发送失败，尝试发送离线消息
-                log.error("", e);
-                try {
-                    chatService.saveOfflineMessage(userMessage);
-                } catch (Exception ex) {
-                    log.error("", ex);
-                    ctx.channel().writeAndFlush(new ServerFailResponseMessage("消息发送失败", ChannelAttrManager.getRequestId(ctx)));
-                }
-            }
+            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), msg.getRequestId()));
         }
         log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
     }

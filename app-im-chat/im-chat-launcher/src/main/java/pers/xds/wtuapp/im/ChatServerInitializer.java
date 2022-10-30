@@ -87,7 +87,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(sslContext.newHandler(ch.alloc()))
-                .addLast(CHANNEL_EXCEPTION_HANDLER)
                 .addLast(new Message.MessageFrameDecoder())
                 .addLast(connectActiveHandler)
                 .addLast(MESSAGE_CODEC)

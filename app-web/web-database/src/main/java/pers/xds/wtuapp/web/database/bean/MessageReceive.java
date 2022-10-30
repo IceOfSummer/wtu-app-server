@@ -1,40 +1,33 @@
 package pers.xds.wtuapp.web.database.bean;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
- * @author DeSen Xu
- * @date 2022-09-03 17:23
+ * @author HuPeng
+ * @date 2022-10-29 18:41
  */
+@TableName("message_receive")
 public class MessageReceive {
 
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Integer userId;
+    @TableId
+    private Integer uid;
 
-    @TableField("receive_id")
     private Integer receiveId;
-
-    @TableField("unreceived_id")
-    private Integer unreceivedId;
-
 
     public MessageReceive() {
     }
 
-    public MessageReceive(int userId) {
-        this.userId = userId;
-        this.receiveId =0;
-        this.unreceivedId = 0;
+    public MessageReceive(Integer uid) {
+        this.uid = uid;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getUid() {
+        return uid;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public Integer getReceiveId() {
@@ -45,11 +38,4 @@ public class MessageReceive {
         this.receiveId = receiveId;
     }
 
-    public Integer getUnreceivedId() {
-        return unreceivedId;
-    }
-
-    public void setUnreceivedId(Integer unreceivedId) {
-        this.unreceivedId = unreceivedId;
-    }
 }

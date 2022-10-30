@@ -5,13 +5,13 @@
 <mapper namespace="pers.xds.wtuapp.im.database.MessageReceiveMapper">
 
     <update id="increaseMessageCounter">
-        UPDATE message_receive SET unreceived_id = unreceived_id + 1 WHERE user_id = #{userId}
+        UPDATE message_receive SET receive_id = receive_id + 1 WHERE uid = #{userId}
     </update>
 
     <update id="updateUserReceivedMsgId">
         UPDATE message_receive
         SET receive_id = #{receivedId}
-        WHERE user_id = #{userId}
-          AND unreceived_id <![CDATA[ <= ]]> #{receivedId}
+        WHERE uid = #{userId}
+          AND receive_id <![CDATA[ <= ]]> #{receivedId}
     </update>
 </mapper>

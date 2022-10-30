@@ -15,8 +15,6 @@ public class MessageReceive {
 
     private Integer receiveId;
 
-    private Integer unreceivedId;
-
     public MessageReceive() {
     }
 
@@ -40,11 +38,4 @@ public class MessageReceive {
         this.receiveId = receiveId;
     }
 
-    public Integer getUnreceivedId() {
-        return unreceivedId;
-    }
-
-    public void setUnreceivedId(Integer unreceivedId) {
-        this.unreceivedId = unreceivedId;
-    }
 }

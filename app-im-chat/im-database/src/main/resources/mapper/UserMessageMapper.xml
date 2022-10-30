@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.im.database.UserMessageMapper">
 
-    <select id="queryUnreceivedMessage" resultType="pers.xds.wtuapp.im.database.bean.UserMessage">
+    <select id="queryUnreceivedMessage" resultType="pers.xds.wtuapp.im.database.bean.Message">
         SELECT *
         FROM message
-        WHERE msg_to = #{userid} AND msg_id >= (
-            SELECT receive_id 're' FROM message_receive WHERE user_id = #{userid}
+        WHERE uid = #{userid} AND msg_id > (
+            SELECT receive_id 're' FROM message_receive WHERE uid = #{userid}
         )
         LIMIT 100
     </select>

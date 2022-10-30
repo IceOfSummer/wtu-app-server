@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.User;
  */
 public final class UserPrincipal extends User {
 
+    public static final long serialVersionUID = 1;
+
     private final int id;
 
     private final String wtuUsername;

@@ -1,21 +1,29 @@
 package pers.xds.wtuapp.im.database.bean;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.sql.Timestamp;
 
 /**
+ * message表<p>
+ *
+ * <b>主键为联合索引(uid, msgId)</b>
  * @author HuPeng
  * @date 2022-10-29 18:36
  */
 @TableName("message")
-public class UserMessage {
+public class Message {
 
+    private Integer uid;
+
+    /**
+     * 消息id，自增
+     */
     private Integer msgId;
 
-    private Integer msgTo;
-
-    private Integer msgFrom;
+    @TableField(value = "`from`")
+    private Integer from;
 
     private String content;
 
@@ -25,20 +33,12 @@ public class UserMessage {
         return msgId;
     }
 
-    public UserMessage() {
+    public Message() {
     }
 
-    public UserMessage(Integer msgTo, Integer msgFrom, String content) {
-        this.msgTo = msgTo;
-        this.msgFrom = msgFrom;
-        this.content = content;
-        this.createTime = new Timestamp(System.currentTimeMillis());
-    }
-
-    public UserMessage(Integer msgId, Integer msgTo, Integer msgFrom, String content) {
-        this.msgId = msgId;
-        this.msgTo = msgTo;
-        this.msgFrom = msgFrom;
+    public Message(Integer uid, Integer from, String content) {
+        this.uid = uid;
+        this.from = from;
         this.content = content;
         this.createTime = new Timestamp(System.currentTimeMillis());
     }
@@ -47,20 +47,20 @@ public class UserMessage {
         this.msgId = msgId;
     }
 
-    public Integer getMsgTo() {
-        return msgTo;
+    public Integer getUid() {
+        return uid;
     }
 
-    public void setMsgTo(Integer msgTo) {
-        this.msgTo = msgTo;
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
-    public Integer getMsgFrom() {
-        return msgFrom;
+    public Integer getFrom() {
+        return from;
     }
 
-    public void setMsgFrom(Integer msgFrom) {
-        this.msgFrom = msgFrom;
+    public void setFrom(Integer from) {
+        this.from = from;
     }
 
     public String getContent() {

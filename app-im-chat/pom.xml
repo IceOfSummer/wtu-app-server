@@ -12,6 +12,7 @@
         <module>im-chat-launcher</module>
         <module>im-service</module>
         <module>im-database</module>
+        <module>im-redis</module>
     </modules>
 
     <dependencyManagement>
@@ -36,6 +37,11 @@
             <dependency>
                 <groupId>pers.xds.wtuapp.im</groupId>
                 <artifactId>im-database</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.im</groupId>
+                <artifactId>im-redis</artifactId>
                 <version>${reversion}</version>
             </dependency>
         </dependencies>

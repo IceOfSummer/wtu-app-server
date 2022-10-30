@@ -19,7 +19,12 @@ public final class UserMessageProto {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 msgId = 1;</code>
+     * <code>optional int32 msgId = 1;</code>
+     * @return Whether the msgId field is set.
+     */
+    boolean hasMsgId();
+    /**
+     * <code>optional int32 msgId = 1;</code>
      * @return The msgId.
      */
     int getMsgId();
@@ -90,6 +95,7 @@ public final class UserMessageProto {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -101,7 +107,7 @@ public final class UserMessageProto {
               done = true;
               break;
             case 8: {
-
+              bitField0_ |= 0x00000001;
               msgId_ = input.readInt32();
               break;
             }
@@ -160,10 +166,19 @@ public final class UserMessageProto {
               pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage.class, pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage.Builder.class);
     }
 
+    private int bitField0_;
     public static final int MSGID_FIELD_NUMBER = 1;
     private int msgId_;
     /**
-     * <code>int32 msgId = 1;</code>
+     * <code>optional int32 msgId = 1;</code>
+     * @return Whether the msgId field is set.
+     */
+    @java.lang.Override
+    public boolean hasMsgId() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional int32 msgId = 1;</code>
      * @return The msgId.
      */
     @java.lang.Override
@@ -256,7 +271,7 @@ public final class UserMessageProto {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (msgId_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt32(1, msgId_);
       }
       if (to_ != 0) {
@@ -280,7 +295,7 @@ public final class UserMessageProto {
       if (size != -1) return size;
 
       size = 0;
-      if (msgId_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, msgId_);
       }
@@ -314,8 +329,11 @@ public final class UserMessageProto {
       }
       pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage other = (pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage) obj;
 
-      if (getMsgId()
-          != other.getMsgId()) return false;
+      if (hasMsgId() != other.hasMsgId()) return false;
+      if (hasMsgId()) {
+        if (getMsgId()
+            != other.getMsgId()) return false;
+      }
       if (getTo()
           != other.getTo()) return false;
       if (getFrom()
@@ -335,8 +353,10 @@ public final class UserMessageProto {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + MSGID_FIELD_NUMBER;
-      hash = (53 * hash) + getMsgId();
+      if (hasMsgId()) {
+        hash = (37 * hash) + MSGID_FIELD_NUMBER;
+        hash = (53 * hash) + getMsgId();
+      }
       hash = (37 * hash) + TO_FIELD_NUMBER;
       hash = (53 * hash) + getTo();
       hash = (37 * hash) + FROM_FIELD_NUMBER;
@@ -480,7 +500,7 @@ public final class UserMessageProto {
       public Builder clear() {
         super.clear();
         msgId_ = 0;
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         to_ = 0;
 
         from_ = 0;
@@ -515,11 +535,17 @@ public final class UserMessageProto {
       @java.lang.Override
       public pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage buildPartial() {
         pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage result = new pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage(this);
-        result.msgId_ = msgId_;
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.msgId_ = msgId_;
+          to_bitField0_ |= 0x00000001;
+        }
         result.to_ = to_;
         result.from_ = from_;
         result.content_ = content_;
         result.createTime_ = createTime_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -568,7 +594,7 @@ public final class UserMessageProto {
 
       public Builder mergeFrom(pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage other) {
         if (other == pers.xds.wtuapp.im.proto.UserMessageProto.UserMessage.getDefaultInstance()) return this;
-        if (other.getMsgId() != 0) {
+        if (other.hasMsgId()) {
           setMsgId(other.getMsgId());
         }
         if (other.getTo() != 0) {
@@ -612,10 +638,19 @@ public final class UserMessageProto {
         }
         return this;
       }
+      private int bitField0_;
 
       private int msgId_ ;
       /**
-       * <code>int32 msgId = 1;</code>
+       * <code>optional int32 msgId = 1;</code>
+       * @return Whether the msgId field is set.
+       */
+      @java.lang.Override
+      public boolean hasMsgId() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional int32 msgId = 1;</code>
        * @return The msgId.
        */
       @java.lang.Override
@@ -623,22 +658,22 @@ public final class UserMessageProto {
         return msgId_;
       }
       /**
-       * <code>int32 msgId = 1;</code>
+       * <code>optional int32 msgId = 1;</code>
        * @param value The msgId to set.
        * @return This builder for chaining.
        */
       public Builder setMsgId(int value) {
-        
+        bitField0_ |= 0x00000001;
         msgId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 msgId = 1;</code>
+       * <code>optional int32 msgId = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearMsgId() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         msgId_ = 0;
         onChanged();
         return this;
@@ -1679,12 +1714,12 @@ public final class UserMessageProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021UserMessage.proto\"[\n\013UserMessage\022\r\n\005ms" +
-      "gId\030\001 \001(\005\022\n\n\002to\030\002 \001(\005\022\014\n\004from\030\003 \001(\005\022\017\n\007c" +
-      "ontent\030\004 \001(\t\022\022\n\ncreateTime\030\005 \001(\003\"1\n\020User" +
-      "MessageGroup\022\035\n\007message\030\001 \003(\0132\014.UserMess" +
-      "ageB.\n\030pers.xds.wtuapp.im.protoB\020UserMes" +
-      "sageProtoH\001b\006proto3"
+      "\n\021UserMessage.proto\"j\n\013UserMessage\022\022\n\005ms" +
+      "gId\030\001 \001(\005H\000\210\001\001\022\n\n\002to\030\002 \001(\005\022\014\n\004from\030\003 \001(\005" +
+      "\022\017\n\007content\030\004 \001(\t\022\022\n\ncreateTime\030\005 \001(\003B\010\n" +
+      "\006_msgId\"1\n\020UserMessageGroup\022\035\n\007message\030\001" +
+      " \003(\0132\014.UserMessageB.\n\030pers.xds.wtuapp.im" +
+      ".protoB\020UserMessageProtoH\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1695,7 +1730,7 @@ public final class UserMessageProto {
     internal_static_UserMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_UserMessage_descriptor,
-        new java.lang.String[] { "MsgId", "To", "From", "Content", "CreateTime", });
+        new java.lang.String[] { "MsgId", "To", "From", "Content", "CreateTime", "MsgId", });
     internal_static_UserMessageGroup_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_UserMessageGroup_fieldAccessorTable = new

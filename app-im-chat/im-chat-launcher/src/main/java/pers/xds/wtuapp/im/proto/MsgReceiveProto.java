@@ -23,12 +23,6 @@ public final class MsgReceiveProto {
      * @return The receivedId.
      */
     int getReceivedId();
-
-    /**
-     * <code>int32 unreceivedId = 2;</code>
-     * @return The unreceivedId.
-     */
-    int getUnreceivedId();
   }
   /**
    * Protobuf type {@code MessageReceive}
@@ -80,11 +74,6 @@ public final class MsgReceiveProto {
               receivedId_ = input.readInt32();
               break;
             }
-            case 16: {
-
-              unreceivedId_ = input.readInt32();
-              break;
-            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -130,17 +119,6 @@ public final class MsgReceiveProto {
       return receivedId_;
     }
 
-    public static final int UNRECEIVEDID_FIELD_NUMBER = 2;
-    private int unreceivedId_;
-    /**
-     * <code>int32 unreceivedId = 2;</code>
-     * @return The unreceivedId.
-     */
-    @java.lang.Override
-    public int getUnreceivedId() {
-      return unreceivedId_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -158,9 +136,6 @@ public final class MsgReceiveProto {
       if (receivedId_ != 0) {
         output.writeInt32(1, receivedId_);
       }
-      if (unreceivedId_ != 0) {
-        output.writeInt32(2, unreceivedId_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -173,10 +148,6 @@ public final class MsgReceiveProto {
       if (receivedId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, receivedId_);
-      }
-      if (unreceivedId_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, unreceivedId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -195,8 +166,6 @@ public final class MsgReceiveProto {
 
       if (getReceivedId()
           != other.getReceivedId()) return false;
-      if (getUnreceivedId()
-          != other.getUnreceivedId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -210,8 +179,6 @@ public final class MsgReceiveProto {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + RECEIVEDID_FIELD_NUMBER;
       hash = (53 * hash) + getReceivedId();
-      hash = (37 * hash) + UNRECEIVEDID_FIELD_NUMBER;
-      hash = (53 * hash) + getUnreceivedId();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -347,8 +314,6 @@ public final class MsgReceiveProto {
         super.clear();
         receivedId_ = 0;
 
-        unreceivedId_ = 0;
-
         return this;
       }
 
@@ -376,7 +341,6 @@ public final class MsgReceiveProto {
       public pers.xds.wtuapp.im.proto.MsgReceiveProto.MessageReceive buildPartial() {
         pers.xds.wtuapp.im.proto.MsgReceiveProto.MessageReceive result = new pers.xds.wtuapp.im.proto.MsgReceiveProto.MessageReceive(this);
         result.receivedId_ = receivedId_;
-        result.unreceivedId_ = unreceivedId_;
         onBuilt();
         return result;
       }
@@ -427,9 +391,6 @@ public final class MsgReceiveProto {
         if (other == pers.xds.wtuapp.im.proto.MsgReceiveProto.MessageReceive.getDefaultInstance()) return this;
         if (other.getReceivedId() != 0) {
           setReceivedId(other.getReceivedId());
-        }
-        if (other.getUnreceivedId() != 0) {
-          setUnreceivedId(other.getUnreceivedId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -487,37 +448,6 @@ public final class MsgReceiveProto {
       public Builder clearReceivedId() {
         
         receivedId_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int unreceivedId_ ;
-      /**
-       * <code>int32 unreceivedId = 2;</code>
-       * @return The unreceivedId.
-       */
-      @java.lang.Override
-      public int getUnreceivedId() {
-        return unreceivedId_;
-      }
-      /**
-       * <code>int32 unreceivedId = 2;</code>
-       * @param value The unreceivedId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setUnreceivedId(int value) {
-        
-        unreceivedId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 unreceivedId = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearUnreceivedId() {
-        
-        unreceivedId_ = 0;
         onChanged();
         return this;
       }
@@ -588,10 +518,9 @@ public final class MsgReceiveProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\020MsgReceive.proto\":\n\016MessageReceive\022\022\n\n" +
-      "receivedId\030\001 \001(\005\022\024\n\014unreceivedId\030\002 \001(\005B-" +
-      "\n\030pers.xds.wtuapp.im.protoB\017MsgReceivePr" +
-      "otoH\001b\006proto3"
+      "\n\020MsgReceive.proto\"$\n\016MessageReceive\022\022\n\n" +
+      "receivedId\030\001 \001(\005B-\n\030pers.xds.wtuapp.im.p" +
+      "rotoB\017MsgReceiveProtoH\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -602,7 +531,7 @@ public final class MsgReceiveProto {
     internal_static_MessageReceive_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_MessageReceive_descriptor,
-        new java.lang.String[] { "ReceivedId", "UnreceivedId", });
+        new java.lang.String[] { "ReceivedId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
