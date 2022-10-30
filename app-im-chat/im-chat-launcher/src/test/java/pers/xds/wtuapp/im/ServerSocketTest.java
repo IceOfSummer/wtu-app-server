@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
 import pers.xds.wtuapp.im.message.*;
 import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
 import pers.xds.wtuapp.im.message.common.ProtobufToMessageParser;
-import pers.xds.wtuapp.im.proto.MsgReceiveProto;
-import pers.xds.wtuapp.im.proto.UserMessageProto;
+import pers.xds.wtuapp.im.proto.OnlineChatMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
 
 import javax.net.ssl.SSLException;
@@ -38,8 +37,7 @@ public class ServerSocketTest {
     short requestId = 0;
 
     public void connect(int port) throws InterruptedException, SSLException {
-        MessageDecoderManager.registry(new ProtobufToMessageParser<>(UserMessageProto.UserMessageGroup.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
-        MessageDecoderManager.registry(new ProtobufToMessageParser<>(MsgReceiveProto.MessageReceive.parser(), ReceiveStatusResponseMessage::new), ReceiveStatusResponseMessage.MESSAGE_TYPE);
+        MessageDecoderManager.registry(new ProtobufToMessageParser<>(OnlineChatMessageProto.OnlineChatMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         MessageCodec messageCodec = new MessageCodec();
         SslContext sslContext = SslContextBuilder
@@ -60,13 +58,7 @@ public class ServerSocketTest {
 
                             @Override
                             protected void channelRead0(ChannelHandlerContext ctx, ChatResponseMessage msg) {
-                                log.info(msg.getMessages().toString());
-                            }
-                        });
-                        ch.pipeline().addLast(new SimpleChannelInboundHandler<ReceiveStatusResponseMessage>() {
-                            @Override
-                            protected void channelRead0(ChannelHandlerContext ctx, ReceiveStatusResponseMessage msg) {
-                                log.info("{}", msg);
+                                log.info(msg.getMessage().toString());
                             }
                         });
                     }
@@ -75,9 +67,7 @@ public class ServerSocketTest {
                 .sync()
                 .channel();
 
-        channel.closeFuture().addListener(future -> {
-            System.out.println("channel closed ");
-        });
+        channel.closeFuture().addListener(future -> System.out.println("channel closed "));
         Scanner sc = new Scanner(System.in);
         System.out.print("请输入Session: ");
         String session = sc.nextLine();
@@ -87,20 +77,11 @@ public class ServerSocketTest {
             Thread.sleep(600);
             System.out.print("=============Menu=============\n" +
                     "1: 和某人私聊\n" +
-                    "2: 拉取未读消息\n" +
-                    "3: 获取消息接收状态\n" +
-                    "4: 确认接收消息\n" +
                     "==============================\n" +
                     "请输入: ");
             int order = sc.nextInt();
             if (order == 1) {
                 chatWithSomeone(sc, channel);
-            } else if (order == 2) {
-                channel.writeAndFlush(new PullMsgRequestMessage(++requestId));
-            } else if (order == 3) {
-                channel.writeAndFlush(new ReceiveStatusRequestMessage(++requestId));
-            } else if (order == 4) {
-                sendMsgAck(sc, channel);
             }
         }
     }
@@ -116,13 +97,6 @@ public class ServerSocketTest {
         channel.writeAndFlush(chatRequestMessage);
         log.info("发送消息: {}", chatRequestMessage);
     }
-
-    public void sendMsgAck(Scanner sc, Channel channel) {
-        System.out.print("已接收的消息id: ");
-        int id = sc.nextInt();
-        channel.writeAndFlush(new MsgReceiveAckMessage(++requestId, id));
-    }
-
     public static void main(String[] args) throws Exception {
         new ServerSocketTest().connect(PORT);
     }

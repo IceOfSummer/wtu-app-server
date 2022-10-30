@@ -22,9 +22,6 @@ public class MessageDecoderManager {
         registry(new ProtobufToMessageParser<>(ChatMessageProto.ChatMessage.parser(), ChatRequestMessage::new), ChatRequestMessage.MESSAGE_TYPE);
         registry(new NoActionParser<>(new ServerSuccessResponseMessage.Factory()), ServerSuccessResponseMessage.MESSAGE_TYPE);
         registry(new NoActionParser<>(new ServerFailResponseMessage.Factory()), ServerFailResponseMessage.MESSAGE_TYPE);
-        registry(new NoActionParser<>(new PullMsgRequestMessage.PullMsgRequestMessageFactory()), PullMsgRequestMessage.MESSAGE_TYPE);
-        registry(new NoActionParser<>(new ReceiveStatusRequestMessage.Factory()), ReceiveStatusRequestMessage.MESSAGE_TYPE);
-        registry(new NoActionParser<>(new MsgReceiveAckMessage.Factory()), MsgReceiveAckMessage.MESSAGE_TYPE);
     }
 
     public static void registry(MessageParser<?> parser, int id) {

@@ -1,17 +1,13 @@
 package pers.xds.wtuapp.im.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pers.xds.wtuapp.im.database.MessageReceiveMapper;
 import pers.xds.wtuapp.im.database.UserMessageMapper;
-import pers.xds.wtuapp.im.database.bean.MessageReceive;
 import pers.xds.wtuapp.im.database.bean.Message;
 import pers.xds.wtuapp.im.redis.UserCache;
 import pers.xds.wtuapp.im.service.ChatService;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -23,8 +19,6 @@ public class ChatServiceImpl implements ChatService {
 
     private UserMessageMapper userMessageMapper;
 
-    private MessageReceiveMapper messageReceiveMapper;
-
     private UserCache userCache;
 
     @Autowired
@@ -33,38 +27,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Autowired
-    public void setMessageReceiveMapper(MessageReceiveMapper messageReceiveMapper) {
-        this.messageReceiveMapper = messageReceiveMapper;
-    }
-
-    @Autowired
     public void setUserMessageMapper(UserMessageMapper userMessageMapper) {
         this.userMessageMapper = userMessageMapper;
-    }
-
-    @Override
-    public List<Message> getUnreceivedMessage(int userid) {
-        return userMessageMapper.queryUnreceivedMessage(userid);
-    }
-
-    @Override
-    public void messageReceiveAck(int userId, int receivedId) {
-        Integer status = messageReceiveMapper.updateUserReceivedMsgId(userId, receivedId);
-        if (status == 0) {
-            // 失败
-            throw new IllegalArgumentException("receivedId greater than unreceivedId");
-        }
-    }
-
-    @Override
-    @NonNull
-    public MessageReceive getMessageReceiveStatus(int userid) {
-        MessageReceive messageReceive = messageReceiveMapper.selectById(userid);
-        if (messageReceive == null) {
-            messageReceive = new MessageReceive(userid);
-            messageReceiveMapper.insert(messageReceive);
-        }
-        return messageReceive;
     }
 
 

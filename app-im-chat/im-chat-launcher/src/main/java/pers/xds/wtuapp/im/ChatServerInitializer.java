@@ -34,12 +34,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private ConnectActiveHandler connectActiveHandler;
 
-    private PullMsgRequestHandler pullMsgRequestHandler;
-
-    private ReceiveStatusRequestHandler receiveStatusRequestHandler;
-
-    private MsgReceiveAckRequestHandler msgReceiveAckRequestHandler;
-
     private SocketChannelRecorder socketChannelRecorder;
 
     @Autowired
@@ -50,21 +44,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     @Autowired
     public void setSslContext(SslContext sslContext) {
         this.sslContext = sslContext;
-    }
-
-    @Autowired
-    public void setMsgReceiveAckRequestHandler(MsgReceiveAckRequestHandler msgReceiveAckRequestHandler) {
-        this.msgReceiveAckRequestHandler = msgReceiveAckRequestHandler;
-    }
-
-    @Autowired
-    public void setReceiveStatusRequestHandler(ReceiveStatusRequestHandler receiveStatusRequestHandler) {
-        this.receiveStatusRequestHandler = receiveStatusRequestHandler;
-    }
-
-    @Autowired
-    public void setPullMsgRequestHandler(PullMsgRequestHandler pullMsgRequestHandler) {
-        this.pullMsgRequestHandler = pullMsgRequestHandler;
     }
 
     @Autowired
@@ -92,9 +71,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(MESSAGE_CODEC)
                 .addLast(authHandler)
                 .addLast(chatMessageHandler)
-                .addLast(pullMsgRequestHandler)
-                .addLast(receiveStatusRequestHandler)
-                .addLast(msgReceiveAckRequestHandler)
                 .addLast(CHANNEL_EXCEPTION_HANDLER);
 
         ch.closeFuture().addListener(future -> {
