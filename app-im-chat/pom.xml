@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pers.xds.wtuapp.im</groupId>
+    <artifactId>app-im-chat</artifactId>
+    <packaging>pom</packaging>
+    <version>${reversion}</version>
+    <modules>
+        <module>im-chat-launcher</module>
+        <module>im-service</module>
+        <module>im-database</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>pers.xds.wtuapp</groupId>
+                <artifactId>wtu-app-server-parent</artifactId>
+                <version>0.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.security</groupId>
+                <artifactId>security</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.im</groupId>
+                <artifactId>im-service</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.im</groupId>
+                <artifactId>im-database</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <reversion>0.0.1</reversion>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>

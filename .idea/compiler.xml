@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="security" />
+        <module name="web-elasticsearch" />
+        <module name="app-web-launcher" />
+        <module name="im-service" />
+        <module name="im-database" />
+        <module name="web-database" />
+        <module name="wtu-app-server" />
+        <module name="web-redis" />
+        <module name="web-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="untitled" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

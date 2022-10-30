@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pers.xds.wtuapp.web</groupId>
+    <artifactId>app-web</artifactId>
+    <version>${reversion}</version>
+    <modules>
+        <module>web-database</module>
+        <module>web-service</module>
+        <module>web-elasticsearch</module>
+        <module>web-redis</module>
+        <module>app-web-launcher</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <properties>
+        <reversion>0.0.1</reversion>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>pers.xds.wtuapp</groupId>
+                <artifactId>wtu-app-server-parent</artifactId>
+                <version>0.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.web</groupId>
+                <artifactId>web-database</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.web</groupId>
+                <artifactId>web-redis</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.web</groupId>
+                <artifactId>web-service</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.web</groupId>
+                <artifactId>web-elasticsearch</artifactId>
+                <version>${reversion}</version>
+            </dependency>
+            <dependency>
+                <groupId>pers.xds.wtuapp.security</groupId>
+                <artifactId>security</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

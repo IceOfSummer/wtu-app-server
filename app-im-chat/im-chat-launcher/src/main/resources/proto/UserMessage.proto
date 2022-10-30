@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "UserMessageProto";
+option optimize_for = SPEED;
+
+message UserMessage {
+  int32 msgId = 1;
+  int32 to = 2;
+  int32 from = 3;
+  string content = 4;
+  int64 createTime = 5;
+}
+
+message UserMessageGroup {
+  repeated UserMessage message = 1;
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.TradeStatMapper">
+
+    <resultMap id="BaseResultMap" type="pers.xds.wtuapp.web.database.bean.TradeStat">
+            <id property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="income" column="income" jdbcType="DECIMAL"/>
+            <result property="expenditure" column="expenditure" jdbcType="DECIMAL"/>
+            <result property="sumOrder" column="sum_order" jdbcType="INTEGER"/>
+            <result property="successOrder" column="success_order" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,income,expenditure,
+        sum_order,success_order
+    </sql>
+</mapper>

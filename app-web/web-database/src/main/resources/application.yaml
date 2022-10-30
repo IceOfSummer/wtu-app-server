@@ -1,0 +1,2 @@
+mybatis-plus:
+  type-aliases-package: pers.xds.wtuapp.databse.bean

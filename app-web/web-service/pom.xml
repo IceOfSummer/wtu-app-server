@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>app-web</artifactId>
+        <groupId>pers.xds.wtuapp.web</groupId>
+        <version>${reversion}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>web-service</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>pers.xds.wtuapp.web</groupId>
+            <artifactId>web-database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pers.xds.wtuapp.web</groupId>
+            <artifactId>web-elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos-sts_api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pers.xds.wtuapp.web</groupId>
+            <artifactId>web-redis</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!--默认源代码目录-->
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <!--默认测试源代码目录-->
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <!--默认资源目录-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
+</project>

@@ -1,0 +1,5 @@
+**/target/
+# 这些配置文件里含有隐私信息
+**/resources/config/*
+.back_武纺智联/*
+武纺智联.pdma.json

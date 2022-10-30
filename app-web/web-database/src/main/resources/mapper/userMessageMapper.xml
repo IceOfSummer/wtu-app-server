@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.UserMessageMapper">
+
+    <select id="queryUnreceivedMessage" resultType="pers.xds.wtuapp.web.database.bean.UserMessage">
+        SELECT *
+        FROM message
+        WHERE msg_to = #{userid} AND msg_id >= (
+            SELECT receive_id 're' FROM message_receive WHERE user_id = #{userid}
+        )
+        LIMIT 100
+    </select>
+
+</mapper>

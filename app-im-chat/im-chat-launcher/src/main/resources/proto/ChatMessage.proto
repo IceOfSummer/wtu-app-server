@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "ChatMessageProto";
+option optimize_for = SPEED;
+// 消息, 向别人发送时使用的格式
+message ChatMessage {
+  int32 to = 1;
+  string content = 2;
+}

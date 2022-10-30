@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-chat-launcher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-chat-launcher/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-database/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-database/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/im-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-im-chat/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/app-web-launcher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/app-web-launcher/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-database/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-database/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-elasticsearch/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-elasticsearch/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-redis/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app-web/web-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/security/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

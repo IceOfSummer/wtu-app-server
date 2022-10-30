@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/wtu_app_server?serverTimezone=GMT%2B8
+      username: root
+      password: abc123
+server:
+  servlet:
+    session:
+      timeout: 3600000

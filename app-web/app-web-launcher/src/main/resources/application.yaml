@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: wtu-app-server
+  profiles:
+    active: dev
+
+mybatis-plus:
+  configuration:
+    cache-enabled: false
