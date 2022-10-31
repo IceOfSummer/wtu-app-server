@@ -14,7 +14,6 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
      */
     private OnlineChatMessageProto.OnlineChatMessage message;
 
-
     public static final byte MESSAGE_TYPE = 126;
 
     private ChatResponseMessage(short requestId) {

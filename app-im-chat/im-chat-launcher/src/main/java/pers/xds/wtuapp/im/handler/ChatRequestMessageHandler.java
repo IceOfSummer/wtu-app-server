@@ -1,7 +1,6 @@
 package pers.xds.wtuapp.im.handler;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.Attribute;
@@ -14,17 +13,14 @@ import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.message.ChatRequestMessage;
 import pers.xds.wtuapp.im.message.ChatResponseMessage;
-import pers.xds.wtuapp.im.message.ServerFailResponseMessage;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 import java.lang.ref.WeakReference;
-import java.util.NoSuchElementException;
 
 /**
  * @author DeSen Xu
  * @date 2022-09-02 14:56
  */
-@ChannelHandler.Sharable
 @Component
 public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatRequestMessage> {
 
@@ -36,6 +32,12 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
     private ChatService chatService;
 
     private SocketChannelRecorder socketChannelRecorder;
+
+    @Override
+    public boolean isSharable() {
+        return true;
+    }
+
 
     @Autowired
     public void setSocketChannelRecorder(SocketChannelRecorder socketChannelRecorder) {
@@ -65,8 +67,9 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
                 // Channel已经被清理 || 缓存的channel不是目标
                 // 释放弱键
                 attr.set(null);
+            } else {
+                ch = channel;
             }
-            ch = channel;
         }
 
         // 从服务中拿Channel
@@ -81,14 +84,7 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
 
         if (ch == null) {
             // 发送离线消息
-            try {
-                chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
-            } catch (NoSuchElementException e){
-                ctx.channel().writeAndFlush(new ServerFailResponseMessage("目标用户不存在", ChannelAttrManager.getRequestId(ctx)));
-            } catch (Exception e) {
-                log.error("", e);
-                ctx.channel().writeAndFlush(new ServerFailResponseMessage("消息发送失败", ChannelAttrManager.getRequestId(ctx)));
-            }
+            chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
         } else {
             ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), msg.getRequestId()));
         }

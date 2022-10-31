@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.im.handler;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.message.AuthRequestMessage;
-import pers.xds.wtuapp.im.message.ServerFailResponseMessage;
-import pers.xds.wtuapp.im.message.ServerSuccessResponseMessage;
 import pers.xds.wtuapp.im.service.ChatAuthService;
 import pers.xds.wtuapp.security.UserPrincipal;
 
@@ -22,13 +19,17 @@ import pers.xds.wtuapp.security.UserPrincipal;
  * @author DeSen Xu
  * @date 2022-09-02 16:56
  */
-@ChannelHandler.Sharable
 @Component
 public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage> {
 
     private ChatAuthService chatAuthService;
 
     private SocketChannelRecorder socketChannelRecorder;
+
+    @Override
+    public boolean isSharable() {
+        return true;
+    }
 
     @Autowired
     public void setSocketChannelRecorderImpl(SocketChannelRecorder socketChannelRecorder) {
@@ -50,15 +51,13 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
         UsernamePasswordAuthenticationToken user = chatAuthService.findUser(msg.getSession());
 
         if (user == null) {
-            ctx.channel().writeAndFlush(new ServerFailResponseMessage("用户名或密码错误", msg.getRequestId()));
-            log.debug("登录失败: " + msg);
+            log.debug("用户登录失败: " + msg);
         } else {
             UserPrincipal principal = (UserPrincipal) user.getPrincipal();
             ChannelAttrManager.saveToken(ctx, user);
             ChannelAttrManager.saveChannelUserId(ctx, principal.getId());
 
             socketChannelRecorder.saveChannel(principal.getId(), ctx.channel());
-            ctx.channel().writeAndFlush(new ServerSuccessResponseMessage("登录成功", msg.getRequestId()));
             log.debug("登录成功: " + msg);
         }
     }

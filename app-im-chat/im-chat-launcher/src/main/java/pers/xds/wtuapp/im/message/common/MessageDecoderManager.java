@@ -20,8 +20,6 @@ public class MessageDecoderManager {
     static {
         registry(new NoActionParser<>(new AuthRequestMessage.Factory()), AuthRequestMessage.MESSAGE_TYPE);
         registry(new ProtobufToMessageParser<>(ChatMessageProto.ChatMessage.parser(), ChatRequestMessage::new), ChatRequestMessage.MESSAGE_TYPE);
-        registry(new NoActionParser<>(new ServerSuccessResponseMessage.Factory()), ServerSuccessResponseMessage.MESSAGE_TYPE);
-        registry(new NoActionParser<>(new ServerFailResponseMessage.Factory()), ServerFailResponseMessage.MESSAGE_TYPE);
     }
 
     public static void registry(MessageParser<?> parser, int id) {

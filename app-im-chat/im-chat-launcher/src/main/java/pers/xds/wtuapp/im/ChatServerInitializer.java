@@ -24,8 +24,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final MessageCodec MESSAGE_CODEC = new MessageCodec();
 
-    private static final ChannelExceptionHandler CHANNEL_EXCEPTION_HANDLER = new ChannelExceptionHandler();
-
     private SslContext sslContext;
 
     private AuthHandler authHandler;
@@ -71,7 +69,7 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(MESSAGE_CODEC)
                 .addLast(authHandler)
                 .addLast(chatMessageHandler)
-                .addLast(CHANNEL_EXCEPTION_HANDLER);
+                .addLast(new ChannelAckSendHandler());
 
         ch.closeFuture().addListener(future -> {
             log.info("channel已关闭: " + ch);

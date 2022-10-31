@@ -1,10 +1,7 @@
 package pers.xds.wtuapp.im;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -14,12 +11,13 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.xds.wtuapp.im.factory.ServerResponseMessageFactory;
 import pers.xds.wtuapp.im.message.*;
 import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
+import pers.xds.wtuapp.im.message.common.NoActionParser;
 import pers.xds.wtuapp.im.message.common.ProtobufToMessageParser;
 import pers.xds.wtuapp.im.proto.OnlineChatMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
-
 import javax.net.ssl.SSLException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
@@ -38,6 +36,8 @@ public class ServerSocketTest {
 
     public void connect(int port) throws InterruptedException, SSLException {
         MessageDecoderManager.registry(new ProtobufToMessageParser<>(OnlineChatMessageProto.OnlineChatMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
+        MessageDecoderManager.registry(new NoActionParser<>(new ServerResponseMessageFactory()), ServerResponseMessage.MESSAGE_TYPE);
+
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         MessageCodec messageCodec = new MessageCodec();
         SslContext sslContext = SslContextBuilder
@@ -59,6 +59,12 @@ public class ServerSocketTest {
                             @Override
                             protected void channelRead0(ChannelHandlerContext ctx, ChatResponseMessage msg) {
                                 log.info(msg.getMessage().toString());
+                            }
+                        });
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<ServerResponseMessage>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, ServerResponseMessage msg) throws Exception {
+                                log.info("{}, requestId={}", msg, msg.getRequestId());
                             }
                         });
                     }

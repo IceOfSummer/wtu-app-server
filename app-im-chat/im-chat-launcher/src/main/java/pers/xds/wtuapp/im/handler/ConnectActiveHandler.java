@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.im.handler;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.ssl.SslHandler;
@@ -19,12 +18,16 @@ import java.util.concurrent.TimeUnit;
  * @date 2022-09-02 21:37
  */
 @Component
-@ChannelHandler.Sharable
 public class ConnectActiveHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectActiveHandler.class);
 
     private static final int EXPIRE_TIME = 10;
+
+    @Override
+    public boolean isSharable() {
+        return true;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
