@@ -4,6 +4,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     private static final Logger log = LoggerFactory.getLogger(ChatServerInitializer.class);
 
     private static final MessageCodec MESSAGE_CODEC = new MessageCodec();
+
+    private static final IdleEventHandler IDLE_EVENT_HANDLER = new IdleEventHandler();
 
     private SslContext sslContext;
 
@@ -69,7 +72,9 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(MESSAGE_CODEC)
                 .addLast(authHandler)
                 .addLast(chatMessageHandler)
-                .addLast(new ChannelAckSendHandler());
+                .addLast(new ChannelAckSendHandler())
+                .addLast(new IdleStateHandler(20, 0, 0))
+                .addLast(IDLE_EVENT_HANDLER);
 
         ch.closeFuture().addListener(future -> {
             log.info("channel已关闭: " + ch);
