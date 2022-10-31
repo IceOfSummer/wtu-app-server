@@ -13,6 +13,9 @@ public class MessageReceive {
     @TableId
     private Integer uid;
 
+    /**
+     * 当前已经接收到的最大消息id
+     */
     private Integer receiveId;
 
     public MessageReceive() {
