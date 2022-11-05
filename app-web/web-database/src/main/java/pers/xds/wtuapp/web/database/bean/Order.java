@@ -1,23 +1,26 @@
 package pers.xds.wtuapp.web.database.bean;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * 订单结果集，不存在对应的表
- * @see pers.xds.wtuapp.web.database.mapper.FinishedTradeMapper
- * @author DeSen Xu
- * @date 2022-09-18 21:43
+ * 订单表
+ * @author HuPeng
+ * @TableName order
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order {
-
+@TableName(value ="`order`")
+public class Order implements Serializable {
     /**
-     * 交易id
+     * 订单id
      */
+    @TableId(type = IdType.AUTO)
     private Integer orderId;
 
     /**
@@ -26,34 +29,9 @@ public class Order {
     private Integer commodityId;
 
     /**
-     * 商品名称
-     */
-    private String name;
-
-    /**
-     * 商品价格
-     */
-    private Double price;
-
-    /**
-     * 预览图
-     */
-    private String previewImage;
-
-    /**
-     * 麦家id
-     */
-    private Integer ownerId;
-
-    /**
-     * 买家id
+     * 顾客id
      */
     private Integer customerId;
-
-    /**
-     * 是否为失败的订单
-     */
-    private Boolean fail;
 
     /**
      * 备注
@@ -61,41 +39,69 @@ public class Order {
     private String remark;
 
     /**
-     * 完成时间
+     * 卖家id
+     */
+    private Integer ownerId;
+
+    /**
+     * 创建时间
      */
     @JsonSerialize(using = TimestampSerializer.class)
     private Timestamp createTime;
 
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+
+    public Order() {
+    }
+
+    public Order(Integer commodityId, Integer customerId, String remark, Integer ownerId) {
+        this.commodityId = commodityId;
+        this.customerId = customerId;
+        this.remark = remark;
+        this.ownerId = ownerId;
+    }
+
+    /**
+     * 订单id
+     */
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    /**
+     * 订单id
+     */
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    /**
+     * 商品id
+     */
     public Integer getCommodityId() {
         return commodityId;
     }
 
+    /**
+     * 商品id
+     */
     public void setCommodityId(Integer commodityId) {
         this.commodityId = commodityId;
     }
 
-    public String getName() {
-        return name;
+    /**
+     * 顾客id
+     */
+    public Integer getCustomerId() {
+        return customerId;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getPreviewImage() {
-        return previewImage;
-    }
-
-    public void setPreviewImage(String previewImage) {
-        this.previewImage = previewImage;
+    /**
+     * 顾客id
+     */
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public Integer getOwnerId() {
@@ -106,20 +112,18 @@ public class Order {
         this.ownerId = ownerId;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
+    /**
+     * 创建时间
+     */
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
-
-    public Boolean getFail() {
-        return fail;
-    }
-
-    public void setFail(Boolean fail) {
-        this.fail = fail;
+    /**
+     * 创建时间
+     */
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
     public String getRemark() {
@@ -128,21 +132,5 @@ public class Order {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
     }
 }

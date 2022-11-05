@@ -13,7 +13,7 @@
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <resultMap id="Order" type="pers.xds.wtuapp.web.database.bean.Order">
+    <resultMap id="Order" type="pers.xds.wtuapp.web.database.bean.TradeMapping">
         <result property="orderId" column="order_id" jdbcType="INTEGER"/>
         <result property="ownerId" column="owner_id" jdbcType="INTEGER"/>
         <result property="commodityId" column="commodity_id" jdbcType="INTEGER"/>

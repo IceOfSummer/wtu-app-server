@@ -7,19 +7,21 @@ import java.io.Serializable;
 
 /**
  * 账号教务系统信息
+ * @author HuPeng
  */
 @TableName(value ="wtu_user_info")
 public class WtuUserInfo implements Serializable {
     /**
-     * 学号
-     */
-    @TableId
-    private String wtuUsername;
-
-    /**
      * 用户id
      */
+    @TableId
     private Integer userId;
+
+    /**
+     * 学号
+     */
+    private String wtuUsername;
+
 
     /**
      * 姓名

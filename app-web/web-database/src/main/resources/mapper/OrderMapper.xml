@@ -2,23 +2,18 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="pers.xds.wtuapp.web.database.mapper.TradingRecordMapper">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderMapper">
 
-    <resultMap id="BaseResultMap" type="pers.xds.wtuapp.web.database.bean.TradingRecord">
+    <resultMap id="BaseResultMap" type="pers.xds.wtuapp.web.database.bean.Order">
             <id property="orderId" column="order_id" jdbcType="INTEGER"/>
             <result property="commodityId" column="commodity_id" jdbcType="INTEGER"/>
             <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="valid" column="valid" jdbcType="TINYINT"/>
-            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         order_id,commodity_id,customer_id,
-        create_time,valid,remark
+        create_time,status
     </sql>
-
-    <select id="getTradingRecordByCustomerId" resultType="pers.xds.wtuapp.web.database.bean.TradingRecord">
-        SELECT * FROM trading_record WHERE customer_id = #{customerId} AND valid
-    </select>
 </mapper>

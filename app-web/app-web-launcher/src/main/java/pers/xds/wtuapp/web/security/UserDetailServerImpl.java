@@ -29,7 +29,7 @@ public class UserDetailServerImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("no such user found");
         }
-        return new UserPrincipal(username, user.getPassword(), user.getRole(), user.getUserId(), user.getWtuUsername());
+        return new UserPrincipal(username, user.getPassword(), user.getRole(), user.getUserId());
     }
 
 }

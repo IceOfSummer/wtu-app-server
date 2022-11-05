@@ -6,7 +6,7 @@
         <option name="generateConfig">
           <GenerateConfig>
             <option name="annotationType" value="MYBATIS_PLUS3" />
-            <option name="basePackage" value="pers.xds.wtuapp.im.database.bean" />
+            <option name="basePackage" value="pers.xds.wtuapp.web.database" />
             <option name="basePath" value="src/main/java" />
             <option name="classNameStrategy" value="camel" />
             <option name="encoding" value="UTF-8" />
@@ -16,7 +16,7 @@
             <option name="ignoreTablePrefix" value="" />
             <option name="ignoreTableSuffix" value="" />
             <option name="moduleName" value="im-database" />
-            <option name="modulePath" value="$PROJECT_DIR$" />
+            <option name="modulePath" value="$PROJECT_DIR$/app-web/web-database" />
             <option name="moduleUIInfoList">
               <list>
                 <ModuleInfoGo>
@@ -26,7 +26,7 @@
                   <option name="encoding" value="${domain.encoding}" />
                   <option name="fileName" value="${domain.fileName}Mapper" />
                   <option name="fileNameWithSuffix" value="${domain.fileName}Mapper.java" />
-                  <option name="modulePath" value="$PROJECT_DIR$" />
+                  <option name="modulePath" value="$PROJECT_DIR$/app-web/web-database" />
                   <option name="packageName" value="${domain.basePackage}.mapper" />
                 </ModuleInfoGo>
                 <ModuleInfoGo>
@@ -36,20 +36,20 @@
                   <option name="encoding" value="${domain.encoding}" />
                   <option name="fileName" value="${domain.fileName}Mapper" />
                   <option name="fileNameWithSuffix" value="${domain.fileName}Mapper.xml" />
-                  <option name="modulePath" value="$PROJECT_DIR$" />
+                  <option name="modulePath" value="$PROJECT_DIR$/app-web/web-database" />
                   <option name="packageName" value="mapper" />
                 </ModuleInfoGo>
               </list>
             </option>
             <option name="needsComment" value="true" />
             <option name="needsModel" value="true" />
-            <option name="relativePackage" value="domain" />
+            <option name="relativePackage" value="bean" />
             <option name="superClass" value="" />
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="Message" />
-                  <option name="tableName" value="message" />
+                  <option name="className" value="Order" />
+                  <option name="tableName" value="order" />
                 </TableUIInfo>
               </list>
             </option>

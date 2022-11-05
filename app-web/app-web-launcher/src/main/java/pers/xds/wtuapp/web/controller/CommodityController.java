@@ -51,21 +51,21 @@ public class CommodityController {
      * @param id 商品id
      * @return 商品详细信息，可能为空
      */
-    @GetMapping("query")
-    public ResponseTemplate<Commodity> queryCommodity(@RequestParam("i") int id) {
+    @GetMapping("{id}")
+    public ResponseTemplate<Commodity> queryCommodity(@PathVariable int id) {
         return ResponseTemplate.success(commodityService.queryCommodity(id));
     }
 
     /**
      * 锁定某个商品，并创建交易记录，表示买家想要购买这个商品。
-     * @param commodityId 商品id
+     * @param id 商品id
      * @return 是否成功
      */
-    @PostMapping("lock")
-    public ResponseTemplate<Void> lockCommodity(@RequestParam("c") int commodityId,
+    @PostMapping("/{id}/lock")
+    public ResponseTemplate<Void> lockCommodity(@PathVariable int id,
                                         @RequestParam(value = "r", required = false) String remark) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        boolean result = commodityService.lockCommodity(commodityId, userPrincipal.getId(), remark);
+        boolean result = commodityService.lockCommodity(id, userPrincipal.getId(), remark);
         if (result) {
             return ResponseTemplate.success();
         } else {

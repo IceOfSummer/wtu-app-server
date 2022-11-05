@@ -12,20 +12,13 @@ public final class UserPrincipal extends User {
 
     private final int id;
 
-    private final String wtuUsername;
-
-    public UserPrincipal(String username, String password, Integer role, int uid, String wtuUsername) {
+    public UserPrincipal(String username, String password, Integer role, int uid) {
         super(username, password, Roles.parseUserRoles(role));
         this.id = uid;
-        this.wtuUsername = wtuUsername;
     }
 
     public int getId() {
         return id;
-    }
-
-    public String getWtuUsername() {
-        return wtuUsername;
     }
 
 }

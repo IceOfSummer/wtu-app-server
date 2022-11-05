@@ -25,4 +25,12 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
 
     String COLUMN_TRADE_LOCATION = "trade_location";
 
+    String COLUMN_DESCRIPTION = "description";
+
+    String COLUMN_IMAGES = "images";
+
+    String TRADE_LOCATION = "trade_location";
+
+
+
 }

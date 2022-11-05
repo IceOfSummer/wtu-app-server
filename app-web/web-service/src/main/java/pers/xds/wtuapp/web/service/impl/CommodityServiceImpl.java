@@ -6,11 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pers.xds.wtuapp.web.database.bean.Order;
+import pers.xds.wtuapp.web.database.mapper.OrderMapper;
+import pers.xds.wtuapp.web.database.mapper.UserTradeMapper;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
-import pers.xds.wtuapp.web.database.bean.TradingRecord;
 import pers.xds.wtuapp.web.database.mapper.CommodityMapper;
-import pers.xds.wtuapp.web.database.mapper.TradingRecordMapper;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.es.repository.CommodityRepository;
 
@@ -32,11 +33,18 @@ public class CommodityServiceImpl implements CommodityService {
 
     private CommodityRepository commodityRepository;
 
-    private TradingRecordMapper tradingRecordMapper;
+    private OrderMapper orderMapper;
+
+    private UserTradeMapper userTradeMapper;
 
     @Autowired
-    public void setTradingRecordMapper(TradingRecordMapper tradingRecordMapper) {
-        this.tradingRecordMapper = tradingRecordMapper;
+    public void setUserTradeMapper(UserTradeMapper userTradeMapper) {
+        this.userTradeMapper = userTradeMapper;
+    }
+
+    @Autowired
+    public void setOrderMapper(OrderMapper orderMapper) {
+        this.orderMapper = orderMapper;
     }
 
     @Autowired
@@ -74,20 +82,23 @@ public class CommodityServiceImpl implements CommodityService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean lockCommodity(int commodityId, int userId, String remark) {
-        Commodity com = commodityMapper.selectById(commodityId);
-        if (com == null) {
+        Commodity commodity = commodityMapper.selectById(commodityId);
+        if (commodity == null) {
             return false;
         }
-        if (com.getStatus() != Commodity.STATUS_ACTIVE) {
+        if (commodity.getStatus() != Commodity.STATUS_ACTIVE) {
             return false;
         }
-        Commodity commodity = new Commodity();
-        commodity.setCommodityId(commodityId);
-        commodity.setStatus(Commodity.STATUS_TRADING);
-        commodity.setVersion(com.getVersion());
-        if (commodityMapper.updateById(commodity) == 1) {
+        Commodity updateCommodity = new Commodity();
+        updateCommodity.setCommodityId(commodityId);
+        updateCommodity.setStatus(Commodity.STATUS_TRADING);
+        updateCommodity.setVersion(commodity.getVersion());
+        if (commodityMapper.updateById(updateCommodity) == 1) {
+            int ownerId = commodity.getOwnerId();
             // 添加交易记录
-            tradingRecordMapper.insert(new TradingRecord(commodityId, userId, remark));
+            Order order = new Order(commodityId, userId, remark, ownerId);
+            orderMapper.insert(order);
+            userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId);
             return true;
         }
         return false;

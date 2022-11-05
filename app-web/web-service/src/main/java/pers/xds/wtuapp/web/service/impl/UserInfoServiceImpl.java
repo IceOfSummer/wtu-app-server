@@ -11,6 +11,7 @@ import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.bean.WtuUserInfo;
 import pers.xds.wtuapp.web.database.mapper.UserMapper;
 import pers.xds.wtuapp.web.database.mapper.WtuUserInfoMapper;
+import pers.xds.wtuapp.web.service.common.DataBeanCombiner;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +61,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         return wtuUserInfoMapper.selectById(username);
     }
 
+    private static final DataBeanCombiner<User, WtuUserInfo, UserInfo> USER_COMBINER =
+            new DataBeanCombiner<>(UserInfo::new, (user, wtuUserInfo) -> user.getUserId().equals(wtuUserInfo.getUserId()));
+
     /**
      * @param ids 用户id 一次最多查30个, 若超出该长度会直接返回空数组
      */
@@ -74,29 +78,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<String> collect = userList.stream().map(User::getWtuUsername).collect(Collectors.toList());
+        List<Integer> uid = userList.stream().map(User::getUserId).collect(Collectors.toList());
 
-        QueryWrapper<WtuUserInfo> wtuUserInfoWrapper = new QueryWrapper<WtuUserInfo>().in(WtuUserInfoMapper.COLUMN_WTU_USERNAME, collect);
+        QueryWrapper<WtuUserInfo> wtuUserInfoWrapper = new QueryWrapper<WtuUserInfo>().in(WtuUserInfoMapper.COLUMN_WTU_USERNAME, uid);
         List<WtuUserInfo> wtuUserInfos = wtuUserInfoMapper.selectList(wtuUserInfoWrapper);
-        ArrayList<UserInfo> userInfos = new ArrayList<>(userList.size());
-
-        // userList的长度大于等于userInfos的长度
-        Iterator<User> uIterator = userList.iterator();
-        Iterator<WtuUserInfo> wIterator = wtuUserInfos.iterator();
-        WtuUserInfo unspent = null;
-        while (uIterator.hasNext()) {
-            User next = uIterator.next();
-            if (unspent == null) {
-                unspent = wIterator.next();
-            }
-            if (unspent.getUserId().equals(next.getUserId())) {
-                userInfos.add(new UserInfo(next, unspent));
-                unspent = null;
-            } else {
-                userInfos.add(new UserInfo(next, null));
-            }
-        }
-
-        return userInfos;
+        return USER_COMBINER.combine(userList, wtuUserInfos);
     }
 }

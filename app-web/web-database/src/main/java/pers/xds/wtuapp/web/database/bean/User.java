@@ -31,11 +31,6 @@ public class User implements Serializable {
     private String password;
 
     /**
-     * 教务系统用户名
-     */
-    private String wtuUsername;
-
-    /**
      * 用户状态;0表示正常用户，其它数字根据需要设置，如1代表用户被封禁
      */
     private Integer status;
@@ -62,6 +57,15 @@ public class User implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public User() {
+    }
+
+    public User(String username, String password, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+    }
 
     /**
      * 用户id
@@ -103,20 +107,6 @@ public class User implements Serializable {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * 教务系统用户名
-     */
-    public String getWtuUsername() {
-        return wtuUsername;
-    }
-
-    /**
-     * 教务系统用户名
-     */
-    public void setWtuUsername(String wtuUsername) {
-        this.wtuUsername = wtuUsername;
     }
 
     /**

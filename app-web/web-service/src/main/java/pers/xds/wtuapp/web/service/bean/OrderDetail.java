@@ -1,30 +1,20 @@
 package pers.xds.wtuapp.web.service.bean;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import pers.xds.wtuapp.web.database.bean.Commodity;
-import pers.xds.wtuapp.web.database.bean.TradingRecord;
+import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
-import pers.xds.wtuapp.web.database.mapper.CommodityMapper;
 
 import java.sql.Timestamp;
 
 /**
- * 正在进行的交易记录
+ * 订单详细记录
  * @author DeSen Xu
- * @date 2022-10-01 16:36
+ * @date 2022-11-03 15:57
  */
-public class TradingInfo {
-
-    /**
-     * 需要从commodity表中拿去的列
-     */
-    public static final String[] REQUIRED_COMMODITY_COLUMN = {
-            CommodityMapper.COLUMN_OWNER_ID,
-            CommodityMapper.COLUMN_NAME,
-            CommodityMapper.COLUMN_PRICE,
-            CommodityMapper.COLUMN_PREVIEW_IMAGE,
-            CommodityMapper.COLUMN_TRADE_LOCATION
-    };
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class OrderDetail {
 
     private int orderId;
 
@@ -41,20 +31,21 @@ public class TradingInfo {
 
     private double price;
 
-    private String previewImage;
-
     private String tradeLocation;
 
+    private Integer status;
 
-    public TradingInfo(Commodity commodity, TradingRecord record) {
-        this.orderId = record.getOrderId();
-        this.commodityId = record.getCommodityId();
-        this.createTime = record.getCreateTime();
-        this.remark = record.getRemark();
+    public OrderDetail() {
+    }
+
+    public OrderDetail(Order order, Commodity commodity) {
+        this.orderId = order.getOrderId();
+        this.commodityId = commodity.getCommodityId();
+        this.createTime = order.getCreateTime();
+        this.remark = order.getRemark();
         this.ownerId = commodity.getOwnerId();
         this.name = commodity.getName();
         this.price = commodity.getPrice();
-        this.previewImage = commodity.getPreviewImage();
         this.tradeLocation = commodity.getTradeLocation();
     }
 
@@ -114,14 +105,6 @@ public class TradingInfo {
         this.price = price;
     }
 
-    public String getPreviewImage() {
-        return previewImage;
-    }
-
-    public void setPreviewImage(String previewImage) {
-        this.previewImage = previewImage;
-    }
-
     public String getTradeLocation() {
         return tradeLocation;
     }
@@ -130,18 +113,11 @@ public class TradingInfo {
         this.tradeLocation = tradeLocation;
     }
 
-    @Override
-    public String toString() {
-        return "TradingInfo{" +
-                "orderId=" + orderId +
-                ", commodityId=" + commodityId +
-                ", createTime=" + createTime +
-                ", remark='" + remark + '\'' +
-                ", ownerId=" + ownerId +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", previewImage='" + previewImage + '\'' +
-                ", tradeLocation='" + tradeLocation + '\'' +
-                '}';
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }
