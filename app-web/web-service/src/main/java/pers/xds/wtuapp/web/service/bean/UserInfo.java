@@ -57,6 +57,7 @@ public class UserInfo {
         this.uid = user.getUserId();
         this.credit = user.getCredit();
         this.username = user.getUsername();
+        this.nickname = user.getNickname();
         if (wtuUserInfo != null) {
             this.name = wtuUserInfo.getName();
             this.bedroom = wtuUserInfo.getBedroom();
@@ -112,4 +113,7 @@ public class UserInfo {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+
+
 }
