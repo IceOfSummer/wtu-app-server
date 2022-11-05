@@ -13,5 +13,6 @@ public interface WtuUserInfoMapper extends BaseMapper<WtuUserInfo> {
 
     String COLUMN_WTU_USERNAME = "wtu_username";
 
+    String COLUMN_USER_ID = "user_id";
 
 }

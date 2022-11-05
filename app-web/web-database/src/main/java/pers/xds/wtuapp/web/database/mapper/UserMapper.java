@@ -15,6 +15,12 @@ public interface UserMapper extends BaseMapper<User> {
 
     String COLUMN_USER_ID = "user_id";
 
+    String COLUMN_USERNAME = "username";
+
+    String COLUMN_CREDIT = "credit";
+
+    String COLUMN_NICKNAME = "nickname";
+
     /**
      * 根据用户名查找用户
      * @param username 用户名

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author HuPeng
  */
-public interface UserInfoService {
+public interface UserService {
 
     /**
      * 查询用户信息

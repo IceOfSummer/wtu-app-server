@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
-import pers.xds.wtuapp.web.service.UserInfoService;
+import pers.xds.wtuapp.web.service.UserService;
 import pers.xds.wtuapp.web.service.bean.UserInfo;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.bean.WtuUserInfo;
@@ -21,11 +22,18 @@ import java.util.stream.Collectors;
  * @date 2022-10-23 14:59
  */
 @Service
-public class UserInfoServiceImpl implements UserInfoService {
+public class UserServiceImpl implements UserService {
 
     private UserMapper userMapper;
 
     private WtuUserInfoMapper wtuUserInfoMapper;
+
+    private static final String[] USER_DATA_COL = new String[]{
+            UserMapper.COLUMN_USER_ID,
+            UserMapper.COLUMN_USERNAME,
+            UserMapper.COLUMN_NICKNAME,
+            UserMapper.COLUMN_CREDIT
+    };
 
     @Autowired
     public void setWtuUserInfoMapper(WtuUserInfoMapper wtuUserInfoMapper) {
@@ -38,27 +46,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    @Cacheable(cacheNames = "user", key = "#userId")
     public UserInfo queryUserInfo(int userId) {
-        User user = selectUserById(userId);
+        QueryWrapper<User> eq = new QueryWrapper<User>().select(USER_DATA_COL).eq(UserMapper.COLUMN_USER_ID, userId);
+        User user = userMapper.selectOne(eq);
         if (user == null) {
             return null;
         }
-        WtuUserInfo wtuUserInfo = selectWtuUserByUsername(user.getUsername());
-        if (wtuUserInfo == null) {
-            return null;
-        }
-        return new UserInfo(user, wtuUserInfo);
-    }
-
-    @Cacheable(cacheNames = "user", key = "#userId")
-    @Nullable
-    public User selectUserById(int userId) {
-        return userMapper.selectById(userId);
-    }
-
-    @Cacheable(cacheNames = "wtuUser", key = "#username")
-    public WtuUserInfo selectWtuUserByUsername(String username) {
-        return wtuUserInfoMapper.selectById(username);
+        return new UserInfo(user, wtuUserInfoMapper.selectById(user.getUserId()));
     }
 
     private static final DataBeanCombiner<User, WtuUserInfo, UserInfo> USER_COMBINER =
@@ -73,14 +68,15 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (ids.size() > maxLen || ids.isEmpty()) {
             return null;
         }
-        QueryWrapper<User> userQueryWrapper = new QueryWrapper<User>().in(UserMapper.COLUMN_USER_ID, ids);
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<User>()
+                .select(USER_DATA_COL)
+                .in(UserMapper.COLUMN_USER_ID, ids);
         List<User> userList = userMapper.selectList(userQueryWrapper);
         if (userList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Integer> uid = userList.stream().map(User::getUserId).collect(Collectors.toList());
 
-        QueryWrapper<WtuUserInfo> wtuUserInfoWrapper = new QueryWrapper<WtuUserInfo>().in(WtuUserInfoMapper.COLUMN_WTU_USERNAME, uid);
+        QueryWrapper<WtuUserInfo> wtuUserInfoWrapper = new QueryWrapper<WtuUserInfo>().in(WtuUserInfoMapper.COLUMN_USER_ID, ids);
         List<WtuUserInfo> wtuUserInfos = wtuUserInfoMapper.selectList(wtuUserInfoWrapper);
         return USER_COMBINER.combine(userList, wtuUserInfos);
     }

@@ -85,7 +85,7 @@ public class DataBeanCombiner<T, U, R> {
         while (it1.hasNext()) {
             T next = it1.next();
             R apply;
-            if (compareFunction.apply(next, last)) {
+            if (last != null && compareFunction.apply(next, last)) {
                 // 可以合并
                 apply = combineFunction.apply(next, last);
                 if (it2.hasNext()) {

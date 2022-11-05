@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pers.xds.wtuapp.security.SecurityConstant;
-import pers.xds.wtuapp.web.service.UserInfoService;
+import pers.xds.wtuapp.web.service.UserService;
 import pers.xds.wtuapp.web.service.bean.UserInfo;
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
@@ -16,24 +16,25 @@ import java.util.List;
  * @date 2022-09-16 22:15
  */
 @RestController
-@RequestMapping("/user/info")
+@RequestMapping("user")
 @PreAuthorize(SecurityConstant.EL_AUTHENTICATED)
-public class UserInfoController {
+public class UserController {
 
-    private UserInfoService userInfoService;
+    private UserService userService;
 
     @Autowired
-    public void setUserInfoService(UserInfoService userInfoService) {
-        this.userInfoService = userInfoService;
+    public void setUserInfoService(UserService userService) {
+        this.userService = userService;
     }
+
     /**
      * 查询用户信息
      * @param id 用户id
      * @return 用户信息
      */
-    @GetMapping("{id}")
+    @GetMapping("/info/{id}")
     public ResponseTemplate<UserInfo> queryUserInfo(@PathVariable int id) {
-        return ResponseTemplate.success(userInfoService.queryUserInfo(id));
+        return ResponseTemplate.success(userService.queryUserInfo(id));
     }
 
     /**
@@ -41,7 +42,7 @@ public class UserInfoController {
      * @param uid 用户id
      * @return 多个用户的信息
      */
-    @GetMapping("/multi_query")
+    @GetMapping("/info/multi_query")
     public ResponseTemplate<List<UserInfo>> queryMultiUserInfo(@RequestParam(name = "i") String uid) {
         final char splitter = ',';
         final int maxSize = 30;
@@ -49,7 +50,7 @@ public class UserInfoController {
         if (integers == null) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
-        List<UserInfo> userInfoViews = userInfoService.queryMultiUserInfo(integers);
+        List<UserInfo> userInfoViews = userService.queryMultiUserInfo(integers);
         if (userInfoViews == null) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }

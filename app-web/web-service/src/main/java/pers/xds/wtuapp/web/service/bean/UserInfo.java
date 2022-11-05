@@ -21,6 +21,12 @@ public class UserInfo {
     private Integer uid;
 
     /**
+     * 用户名
+     */
+    @JsonProperty("un")
+    private String username;
+
+    /**
      * 用户<b>真实</b>姓名
      */
     @JsonProperty("n")
@@ -44,9 +50,13 @@ public class UserInfo {
     @JsonProperty("i")
     private String nickname;
 
+    public UserInfo() {
+    }
+
     public UserInfo(User user, WtuUserInfo wtuUserInfo) {
         this.uid = user.getUserId();
         this.credit = user.getCredit();
+        this.username = user.getUsername();
         if (wtuUserInfo != null) {
             this.name = wtuUserInfo.getName();
             this.bedroom = wtuUserInfo.getBedroom();
@@ -85,5 +95,21 @@ public class UserInfo {
 
     public void setCredit(Integer credit) {
         this.credit = credit;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

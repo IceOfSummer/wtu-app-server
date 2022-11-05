@@ -46,11 +46,6 @@ public class User implements Serializable {
     private Integer credit;
 
     /**
-     * 
-     */
-    private String avatar;
-
-    /**
      * 昵称
      */
     private String nickname;
@@ -149,20 +144,6 @@ public class User implements Serializable {
      */
     public void setCredit(Integer credit) {
         this.credit = credit;
-    }
-
-    /**
-     * 
-     */
-    public String getAvatar() {
-        return avatar;
-    }
-
-    /**
-     * 
-     */
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 
     @Nullable
