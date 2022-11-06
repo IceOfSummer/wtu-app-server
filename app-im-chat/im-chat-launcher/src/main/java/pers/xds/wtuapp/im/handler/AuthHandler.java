@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.message.AuthRequestMessage;
+import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.common.ResponseCode;
 import pers.xds.wtuapp.im.service.ChatAuthService;
 import pers.xds.wtuapp.security.UserPrincipal;
 
@@ -44,12 +46,7 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthRequestMessage msg) {
-        if (ChannelAttrManager.isChannelInsecure(ctx)) {
-            // 通道不安全，不处理
-            return;
-        }
         UsernamePasswordAuthenticationToken user = chatAuthService.findUser(msg.getSession());
-
         if (user == null) {
             log.debug("用户登录失败: " + msg);
         } else {
@@ -58,7 +55,10 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
             ChannelAttrManager.saveChannelUserId(ctx, principal.getId());
 
             socketChannelRecorder.saveChannel(principal.getId(), ctx.channel());
-            log.debug("登录成功: " + msg);
+            log.debug("用户id: {}, 登录成功: {}", principal.getId(), msg);
+            final short requestId = msg.getRequestId();
+            ctx.writeAndFlush(new ServerResponseMessage(ResponseCode.SUCCESS, requestId));
         }
     }
+
 }

@@ -16,7 +16,7 @@ public class ServerResponseMessageFactory implements MessageFactory<ServerRespon
     public ServerResponseMessage createInstance(byte[] data) {
         int res = 0;
         for(int i = 0; i < data.length; i++){
-            res += (data[i] & 0xff) << (i * 8);
+            res += (data[3 - i] & 0xff) << (i * 8);
         }
         return new ServerResponseMessage(ResponseCode.values()[res], (short) 0);
     }

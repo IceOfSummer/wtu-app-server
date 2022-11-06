@@ -14,7 +14,7 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
      */
     private OnlineChatMessageProto.OnlineChatMessage message;
 
-    public static final byte MESSAGE_TYPE = 126;
+    public static final byte MESSAGE_TYPE = 4;
 
     private ChatResponseMessage(short requestId) {
         super(MESSAGE_TYPE, requestId);
@@ -35,7 +35,7 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
      * <b>DEBUG使用</b>
      */
     public ChatResponseMessage(OnlineChatMessageProto.OnlineChatMessage message) {
-        this(REQUEST_ID_ZERO);
+        this(SERVER_REQUEST_CODE);
         this.message = message;
     }
 

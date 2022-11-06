@@ -32,9 +32,9 @@ public abstract class Message {
     protected byte orderType;
 
     /**
-     * 统一short
+     * 当服务器主动给客户端发送消息时，使用该requestId来进行区分
      */
-    public static final short REQUEST_ID_ZERO = 0;
+    public static final short SERVER_REQUEST_CODE = -1;
 
     /**
      * 请求序号
@@ -53,7 +53,7 @@ public abstract class Message {
     /**
      * 构造一个消息
      * @param orderType 消息类型
-     * @param requestId 请求序号, 若不需要填，则直接使用{@link Message#REQUEST_ID_ZERO}
+     * @param requestId 请求序号
      */
     public Message(byte orderType, short requestId) {
         this.orderType = orderType;

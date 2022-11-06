@@ -2,7 +2,6 @@ package pers.xds.wtuapp.im.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,13 +38,5 @@ public class ConnectActiveHandler extends ChannelInboundHandlerAdapter {
             }
         }, EXPIRE_TIME, TimeUnit.SECONDS);
         super.channelActive(ctx);
-
-        // 标记通道是安全的
-        ctx.pipeline().get(SslHandler.class).handshakeFuture().addListener(
-                future -> {
-                    ChannelAttrManager.setChannelSecure(ctx);
-                    log.debug("Channel Active: " + ctx.channel());
-                }
-        );
     }
 }

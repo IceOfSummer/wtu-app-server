@@ -18,7 +18,7 @@ public class AuthRequestMessage extends Message{
 
 
     private AuthRequestMessage(String session) {
-        super(MESSAGE_TYPE, REQUEST_ID_ZERO);
+        super(MESSAGE_TYPE, SERVER_REQUEST_CODE);
         this.session = session;
     }
 

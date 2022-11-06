@@ -18,9 +18,11 @@ public class IdleEventHandler extends ChannelDuplexHandler {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        IdleStateEvent event = (IdleStateEvent) evt;
-        if (event.state() == IdleState.READER_IDLE) {
-            ctx.channel().close();
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                ctx.channel().close();
+            }
         }
     }
 }

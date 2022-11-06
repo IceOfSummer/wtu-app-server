@@ -22,12 +22,13 @@
 所有协议中的内容，最后都会被转换为`pers.xds.wtuapp.chat.message.Message`的实现类，
 每一条消息都用于用一个唯一的消息类型代替
 
-| 类型id |    消息名称     |                  实现类                  |
-|:----:|:-----------:|:-------------------------------------:|
-|  0   |   登录请求消息    |         `AuthRequestMessage`          |
-|  1   |   聊天请求消息    |         `ChatRequestMessage`          |
-|  2   | 服务器返回请求成功响应 |    `ServerSuccessResponseMessage`     |
-|  3   |  服务器返回失败响应  |      `ServerFailResponseMessage`      |
+| 类型id |    消息名称     |              实现类               |
+|:----:|:-----------:|:------------------------------:|
+|  0   |   登录请求消息    |      `AuthRequestMessage`      |
+|  1   |   聊天请求消息    |      `ChatRequestMessage`      |
+|  2   | 服务器返回请求成功响应 | `ServerSuccessResponseMessage` |
+|  3   |  服务器返回失败响应  |  `ServerFailResponseMessage`   |
+|  4   |   聊天请求响应    |     `ChatResponseMessage`      |
 
 
 实现类在`pers.xds.wtuapp.chat.message`包下

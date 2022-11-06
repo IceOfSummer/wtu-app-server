@@ -25,10 +25,11 @@ public enum ResponseCode {
     ResponseCode(int code) {
         this.code = code;
         this.byteCode = new byte[4];
-        byteCode[0] = (byte) (code & 0xff);
-        byteCode[1] = (byte) (code >> 8 & 0xff);
-        byteCode[2] = (byte) (code >> 16 & 0xff);
-        byteCode[3] = (byte) (code >> 24 & 0xff);
+        // 大端写入
+        byteCode[3] = (byte) (code & 0xff);
+        byteCode[2] = (byte) (code >> 8 & 0xff);
+        byteCode[1] = (byte) (code >> 16 & 0xff);
+        byteCode[0] = (byte) (code >> 24 & 0xff);
     }
 
     public int getCode() {

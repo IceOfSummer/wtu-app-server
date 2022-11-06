@@ -13,6 +13,8 @@ import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.message.ChatRequestMessage;
 import pers.xds.wtuapp.im.message.ChatResponseMessage;
+import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.common.ResponseCode;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 import java.lang.ref.WeakReference;
@@ -82,11 +84,19 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
             }
         }
 
+        final short requestId = msg.getRequestId();
         if (ch == null) {
             // 发送离线消息
             chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
+            ctx.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), requestId));
         } else {
-            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), msg.getRequestId()));
+            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), requestId), ch.newPromise().addListener(future -> {
+                if (future.isSuccess()) {
+                    ctx.writeAndFlush(new ServerResponseMessage(requestId));
+                } else {
+                    ctx.writeAndFlush(new ServerResponseMessage(ResponseCode.SERVER_ERROR, requestId));
+                }
+            }));
         }
         log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
     }

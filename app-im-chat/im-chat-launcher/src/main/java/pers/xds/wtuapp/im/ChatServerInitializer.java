@@ -27,6 +27,7 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final IdleEventHandler IDLE_EVENT_HANDLER = new IdleEventHandler();
 
+    private static final ChannelExceptionHandler CHANNEL_EXCEPTION_HANDLER = new ChannelExceptionHandler();
     private SslContext sslContext;
 
     private AuthHandler authHandler;
@@ -36,6 +37,7 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     private ConnectActiveHandler connectActiveHandler;
 
     private SocketChannelRecorder socketChannelRecorder;
+
 
     @Autowired
     public void setSocketChannelRecorder(SocketChannelRecorder socketChannelRecorder) {
@@ -67,14 +69,14 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(sslContext.newHandler(ch.alloc()))
+                .addLast(new IdleStateHandler(1000, 0, 0))
+                .addLast(IDLE_EVENT_HANDLER)
                 .addLast(new Message.MessageFrameDecoder())
                 .addLast(connectActiveHandler)
                 .addLast(MESSAGE_CODEC)
                 .addLast(authHandler)
                 .addLast(chatMessageHandler)
-                .addLast(new ChannelAckSendHandler())
-                .addLast(new IdleStateHandler(20, 0, 0))
-                .addLast(IDLE_EVENT_HANDLER);
+                .addLast(CHANNEL_EXCEPTION_HANDLER);
 
         ch.closeFuture().addListener(future -> {
             log.info("channel已关闭: " + ch);

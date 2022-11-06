@@ -71,23 +71,5 @@ public class ChannelAttrManager {
         ctx.channel().attr(CHANNEL_USER_ID).set(userId);
     }
 
-    /**
-     * 客户端是否建立安全连接
-     */
-    public static final AttributeKey<Boolean> IS_SECURE = AttributeKey.valueOf("isSecure");
-
-    public static boolean isChannelInsecure(ChannelHandlerContext ctx) {
-        Boolean secure = ctx.channel().attr(IS_SECURE).get();
-        return secure == null || !secure;
-    }
-
-    public static void setChannelSecure(ChannelHandlerContext ctx, boolean secure) {
-        ctx.channel().attr(IS_SECURE).set(secure);
-    }
-
-    public static void setChannelSecure(ChannelHandlerContext ctx) {
-        setChannelSecure(ctx, true);
-    }
-
 
 }

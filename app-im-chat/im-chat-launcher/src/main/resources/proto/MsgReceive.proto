@@ -1,3 +1,6 @@
+/*
+ * 消息响应, 用于ServerResponseMessage
+ */
 syntax = "proto3";
 
 option java_package = "pers.xds.wtuapp.im.proto";

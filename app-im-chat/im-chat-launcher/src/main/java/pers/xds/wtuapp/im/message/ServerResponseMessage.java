@@ -18,6 +18,10 @@ public class ServerResponseMessage extends Message{
         this.code = code;
     }
 
+    public ServerResponseMessage(short requestId) {
+        this(ResponseCode.SUCCESS, requestId);
+    }
+
     @Override
     public byte[] encode() {
         return code.getByteCode();
