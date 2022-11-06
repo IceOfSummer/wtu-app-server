@@ -46,6 +46,10 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthRequestMessage msg) {
+        if (ChannelAttrManager.getPrincipal(ctx) != null) {
+            // 已经登录了
+            return;
+        }
         UsernamePasswordAuthenticationToken user = chatAuthService.findUser(msg.getSession());
         if (user == null) {
             log.debug("用户登录失败: " + msg);

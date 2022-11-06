@@ -88,9 +88,9 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         if (ch == null) {
             // 发送离线消息
             chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
-            ctx.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), requestId));
+            ctx.writeAndFlush(new ServerResponseMessage(requestId));
         } else {
-            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), requestId), ch.newPromise().addListener(future -> {
+            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId()), ch.newPromise().addListener(future -> {
                 if (future.isSuccess()) {
                     ctx.writeAndFlush(new ServerResponseMessage(requestId));
                 } else {
