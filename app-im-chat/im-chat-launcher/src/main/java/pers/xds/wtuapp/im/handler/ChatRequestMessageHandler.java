@@ -3,8 +3,6 @@ package pers.xds.wtuapp.im.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,6 @@ import pers.xds.wtuapp.im.message.ServerResponseMessage;
 import pers.xds.wtuapp.im.message.common.ResponseCode;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
-import java.lang.ref.WeakReference;
 
 /**
  * @author DeSen Xu
@@ -27,8 +24,6 @@ import java.lang.ref.WeakReference;
 public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatRequestMessage> {
 
     private static final Logger log = LoggerFactory.getLogger(ChatRequestMessageHandler.class);
-
-    private static final AttributeKey<WeakReference<Channel>> RECENT_TALK_KEY = AttributeKey.valueOf("recentTalk");
 
 
     private ChatService chatService;
@@ -58,31 +53,9 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
             // 用户未登录, 不做响应
             return;
         }
-        // 先找缓存
-        Attribute<WeakReference<Channel>> attr = ctx.channel().attr(RECENT_TALK_KEY);
-        WeakReference<Channel> channelWeakReference = attr.get();
-        Channel ch = null;
-        if (channelWeakReference != null) {
-            // 拿Channel缓存
-            Channel channel = channelWeakReference.get();
-            if (channel == null || ChannelAttrManager.getChannelUserId(channel) != msg.getTo()) {
-                // Channel已经被清理 || 缓存的channel不是目标
-                // 释放弱键
-                attr.set(null);
-            } else {
-                ch = channel;
-            }
-        }
 
         // 从服务中拿Channel
-        if (ch == null) {
-            Channel target = socketChannelRecorder.getChannel(msg.getTo());
-            if (target != null) {
-                ch = target;
-                // 放缓存
-                attr.set(new RecentTalkToChannel(target));
-            }
-        }
+        Channel ch = socketChannelRecorder.getChannel(msg.getTo());
 
         final short requestId = msg.getRequestId();
         if (ch == null) {
@@ -101,17 +74,4 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
     }
 
-
-    /**
-     * 保存最近聊天的channel
-     * <p>
-     * 为了防止内存溢出，使用弱引用保存
-     */
-    private static class RecentTalkToChannel extends WeakReference<Channel> {
-
-        public RecentTalkToChannel(Channel referent) {
-            super(referent);
-        }
-
-    }
 }
