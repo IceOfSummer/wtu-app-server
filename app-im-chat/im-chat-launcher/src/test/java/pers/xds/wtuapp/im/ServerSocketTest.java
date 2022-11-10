@@ -16,7 +16,7 @@ import pers.xds.wtuapp.im.message.*;
 import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
 import pers.xds.wtuapp.im.message.common.NoActionParser;
 import pers.xds.wtuapp.im.message.common.ProtobufToMessageParser;
-import pers.xds.wtuapp.im.proto.OnlineChatMessageProto;
+import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
 import javax.net.ssl.SSLException;
 import java.net.InetSocketAddress;
@@ -35,7 +35,7 @@ public class ServerSocketTest {
     short requestId = 0;
 
     public void connect(int port) throws InterruptedException, SSLException {
-        MessageDecoderManager.registry(new ProtobufToMessageParser<>(OnlineChatMessageProto.OnlineChatMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
+        MessageDecoderManager.registry(new ProtobufToMessageParser<>(ChatResponseMessageProto.ChatResponseMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
         MessageDecoderManager.registry(new NoActionParser<>(new ServerResponseMessageFactory()), ServerResponseMessage.MESSAGE_TYPE);
 
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
@@ -44,8 +44,11 @@ public class ServerSocketTest {
                 .forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
                 .build();
+
+        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+
         Channel channel = new Bootstrap()
-                .group(new NioEventLoopGroup())
+                .group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<>() {
                     @Override
@@ -63,7 +66,7 @@ public class ServerSocketTest {
                         });
                         ch.pipeline().addLast(new SimpleChannelInboundHandler<ServerResponseMessage>() {
                             @Override
-                            protected void channelRead0(ChannelHandlerContext ctx, ServerResponseMessage msg) throws Exception {
+                            protected void channelRead0(ChannelHandlerContext ctx, ServerResponseMessage msg) {
                                 log.info("{}, requestId={}", msg, msg.getRequestId());
                             }
                         });
@@ -73,7 +76,11 @@ public class ServerSocketTest {
                 .sync()
                 .channel();
 
-        channel.closeFuture().addListener(future -> System.out.println("channel closed "));
+        channel.closeFuture().addListener(future -> {
+            System.out.println("channel closed ");
+            eventLoopGroup.shutdownGracefully();
+            System.exit(0);
+        });
         Scanner sc = new Scanner(System.in);
         System.out.print("请输入Session: ");
         String session = sc.nextLine();

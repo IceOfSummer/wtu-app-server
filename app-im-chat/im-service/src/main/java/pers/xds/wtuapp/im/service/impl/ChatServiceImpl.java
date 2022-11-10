@@ -3,9 +3,11 @@ package pers.xds.wtuapp.im.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pers.xds.wtuapp.im.database.MessageReceiveMapper;
 import pers.xds.wtuapp.im.database.UserMessageMapper;
 import pers.xds.wtuapp.im.database.bean.Message;
-import pers.xds.wtuapp.im.redis.UserCache;
+import pers.xds.wtuapp.im.database.bean.MessageReceive;
+import pers.xds.wtuapp.im.redis.MessageCache;
 import pers.xds.wtuapp.im.service.ChatService;
 
 import java.util.NoSuchElementException;
@@ -19,11 +21,18 @@ public class ChatServiceImpl implements ChatService {
 
     private UserMessageMapper userMessageMapper;
 
-    private UserCache userCache;
+    private MessageCache messageCache;
+
+    private MessageReceiveMapper messageReceiveMapper;
 
     @Autowired
-    public void setUserCache(UserCache userCache) {
-        this.userCache = userCache;
+    public void setMessageReceiveMapper(MessageReceiveMapper messageReceiveMapper) {
+        this.messageReceiveMapper = messageReceiveMapper;
+    }
+
+    @Autowired
+    public void setMessageCache(MessageCache messageCache) {
+        this.messageCache = messageCache;
     }
 
     @Autowired
@@ -32,12 +41,29 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
+    /**
+     * 先保存到数据库，然后保存到redis用作消息同步
+     * 对于同一个to参数，并发调用可能会存在问题
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveOfflineMessage(String content, int sender, int to) throws NoSuchElementException {
-        if (!userCache.isUserNotExist(to)) {
-            throw new NoSuchElementException("用户不存在");
+    public int saveMessage(String content, int sender, int to, boolean sync) throws NoSuchElementException {
+        // 理论上应该要检查用户是否存在，但实现起来有点麻烦
+        Integer receiveId = messageReceiveMapper.selectReceivedId(to);
+        int msgId;
+        if (receiveId == null) {
+            msgId = 0;
+            messageReceiveMapper.insert(new MessageReceive(to));
+        } else {
+            msgId = receiveId;
+            messageReceiveMapper.increaseReceivedId(to);
         }
-        userMessageMapper.insert(new Message(to, sender, content));
+        Message message = new Message(to, msgId, sender, content);
+        userMessageMapper.insert(message);
+        if (sync) {
+            messageCache.saveMessage(message);
+        }
+        return msgId;
     }
+
 }

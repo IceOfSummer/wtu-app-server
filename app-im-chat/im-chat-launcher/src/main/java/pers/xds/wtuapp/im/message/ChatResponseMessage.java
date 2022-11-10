@@ -1,6 +1,6 @@
 package pers.xds.wtuapp.im.message;
 
-import pers.xds.wtuapp.im.proto.OnlineChatMessageProto;
+import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
 
 /**
  * 用于解析消息的响应
@@ -12,7 +12,7 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
     /**
      * 要发送的消息
      */
-    private OnlineChatMessageProto.OnlineChatMessage message;
+    private ChatResponseMessageProto.ChatResponseMessage message;
 
     public static final byte MESSAGE_TYPE = 4;
 
@@ -20,11 +20,12 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
         super(MESSAGE_TYPE, SERVER_REQUEST_CODE);
     }
 
-    public ChatResponseMessage(ChatRequestMessage message, int sender) {
+    public ChatResponseMessage(ChatRequestMessage message, int sender, int msgId) {
         this();
-        this.message = OnlineChatMessageProto.OnlineChatMessage
+        this.message = ChatResponseMessageProto.ChatResponseMessage
                 .newBuilder()
-                .setTo(message.getTo())
+                .setMsgId(msgId)
+                .setFrom(message.getFrom())
                 .setFrom(sender)
                 .setContent(message.getMessage())
                 .setCreateTime(System.currentTimeMillis())
@@ -34,7 +35,7 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
     /**
      * <b>DEBUG使用</b>
      */
-    public ChatResponseMessage(OnlineChatMessageProto.OnlineChatMessage message) {
+    public ChatResponseMessage(ChatResponseMessageProto.ChatResponseMessage message) {
         this();
         this.message = message;
     }
@@ -44,13 +45,11 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
         return message.toByteArray();
     }
 
-    public OnlineChatMessageProto.OnlineChatMessage getMessage() {
+    public ChatResponseMessageProto.ChatResponseMessage getMessage() {
         return message;
     }
 
-    public void setMessage(OnlineChatMessageProto.OnlineChatMessage message) {
+    public void setMessage(ChatResponseMessageProto.ChatResponseMessage message) {
         this.message = message;
     }
-
-
 }

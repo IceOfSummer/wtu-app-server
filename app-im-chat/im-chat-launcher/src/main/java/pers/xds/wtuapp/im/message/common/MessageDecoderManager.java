@@ -3,7 +3,7 @@ package pers.xds.wtuapp.im.message.common;
 
 import pers.xds.wtuapp.im.exception.UnknownProtocolException;
 import pers.xds.wtuapp.im.message.*;
-import pers.xds.wtuapp.im.proto.ChatMessageProto;
+import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
 
 /**
  * 用于管理各种消息的<b>解码</b>, 一般只针对请求类的消息<p/>
@@ -19,7 +19,7 @@ public class MessageDecoderManager {
 
     static {
         registry(new NoActionParser<>(new AuthRequestMessage.Factory()), AuthRequestMessage.MESSAGE_TYPE);
-        registry(new ProtobufToMessageParser<>(ChatMessageProto.ChatMessage.parser(), ChatRequestMessage::new), ChatRequestMessage.MESSAGE_TYPE);
+        registry(new ProtobufToMessageParser<>(ChatRequestMessageProto.ChatRequestMessage.parser(), ChatRequestMessage::new), ChatRequestMessage.MESSAGE_TYPE);
     }
 
     public static void registry(MessageParser<?> parser, int id) {

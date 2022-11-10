@@ -55,15 +55,15 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         }
 
         // 从服务中拿Channel
-        Channel ch = socketChannelRecorder.getChannel(msg.getTo());
+        Channel ch = socketChannelRecorder.getChannel(msg.getFrom());
 
         final short requestId = msg.getRequestId();
-        if (ch == null) {
-            // 发送离线消息
-            chatService.saveOfflineMessage(msg.getMessage(), principal.getId(), msg.getTo());
-            ctx.writeAndFlush(new ServerResponseMessage(requestId));
-        } else {
-            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId()), ch.newPromise().addListener(future -> {
+        // 保存消息
+        boolean sync = ch != null;
+        int msgId = chatService.saveMessage(msg.getMessage(), principal.getId(), msg.getFrom(), sync);
+        if (sync) {
+            // 发送在线消息
+            ch.writeAndFlush(new ChatResponseMessage(msg, principal.getId(), msgId), ch.newPromise().addListener(future -> {
                 if (future.isSuccess()) {
                     ctx.writeAndFlush(new ServerResponseMessage(requestId));
                 } else {
@@ -71,7 +71,7 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
                 }
             }));
         }
-        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
+        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getFrom(), msg.getMessage());
     }
 
 }

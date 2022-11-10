@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "ChatResponseMessageProto";
+option optimize_for = SPEED;
+
+message ChatResponseMessage {
+  // 消息id
+  int32 msgId = 1;
+  // 谁发的
+  int32 from = 2;
+  // 内容
+  string content = 3;
+  // 创建时间
+  int64 createTime = 4;
+}
+
+message ChatResponseMessageGroup {
+  repeated ChatResponseMessage messages = 1;
+}

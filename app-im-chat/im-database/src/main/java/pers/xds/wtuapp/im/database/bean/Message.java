@@ -3,7 +3,7 @@ package pers.xds.wtuapp.im.database.bean;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.sql.Timestamp;
+import java.io.Serializable;
 
 /**
  * message表<p>
@@ -13,7 +13,9 @@ import java.sql.Timestamp;
  * @date 2022-10-29 18:36
  */
 @TableName("message")
-public class Message {
+public class Message implements Serializable {
+
+    private static final long serialVersionUID = 123L;
 
     private Integer uid;
 
@@ -27,7 +29,7 @@ public class Message {
 
     private String content;
 
-    private Timestamp createTime;
+    private Integer createTime;
 
     public Integer getMsgId() {
         return msgId;
@@ -37,10 +39,15 @@ public class Message {
     }
 
     public Message(Integer uid, Integer from, String content) {
+        this(uid, null, from, content);
+    }
+
+    public Message(Integer uid, Integer msgId, Integer from, String content) {
         this.uid = uid;
+        this.msgId = msgId;
         this.from = from;
         this.content = content;
-        this.createTime = new Timestamp(System.currentTimeMillis());
+        this.createTime = Math.toIntExact((System.currentTimeMillis() / 1000));
     }
 
     public void setMsgId(Integer msgId) {
@@ -71,11 +78,11 @@ public class Message {
         this.content = content;
     }
 
-    public Timestamp getCreateTime() {
+    public Integer getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Integer createTime) {
         this.createTime = createTime;
     }
 }

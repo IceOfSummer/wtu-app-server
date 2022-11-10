@@ -1,7 +1,7 @@
 package pers.xds.wtuapp.im.message;
 
 
-import pers.xds.wtuapp.im.proto.ChatMessageProto;
+import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
 
 /**
  * 私聊请求消息
@@ -10,7 +10,7 @@ import pers.xds.wtuapp.im.proto.ChatMessageProto;
  */
 public class ChatRequestMessage extends Message {
 
-    private final int to;
+    private final int from;
 
     private final String message;
 
@@ -19,31 +19,31 @@ public class ChatRequestMessage extends Message {
     /**
      * Parser专用
      */
-    public ChatRequestMessage(ChatMessageProto.ChatMessage chatMessageAttach) {
+    public ChatRequestMessage(ChatRequestMessageProto.ChatRequestMessage chatMessageAttach) {
         super(MESSAGE_TYPE, (short) 0);
         this.message = chatMessageAttach.getContent();
-        this.to = chatMessageAttach.getTo();
+        this.from = chatMessageAttach.getTo();
     }
 
-    public ChatRequestMessage(String message, int to, short requestId) {
+    public ChatRequestMessage(String message, int from, short requestId) {
         super(MESSAGE_TYPE, requestId);
         this.message = message;
-        this.to = to;
+        this.from = from;
         this.requestId = requestId;
     }
 
     @Override
     public byte[] encode() {
-        return ChatMessageProto.ChatMessage
+        return ChatRequestMessageProto.ChatRequestMessage
                 .newBuilder()
                 .setContent(message)
-                .setTo(to)
+                .setTo(from)
                 .build()
                 .toByteArray();
     }
 
-    public int getTo() {
-        return to;
+    public int getFrom() {
+        return from;
     }
 
     public String getMessage() {
@@ -53,7 +53,7 @@ public class ChatRequestMessage extends Message {
     @Override
     public String toString() {
         return "ChatRequestMessage{" +
-                "to=" + to +
+                "to=" + from +
                 ", message='" + message + '\'' +
                 '}';
     }
