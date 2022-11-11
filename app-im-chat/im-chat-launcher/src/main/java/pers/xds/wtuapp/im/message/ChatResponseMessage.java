@@ -20,15 +20,14 @@ public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
         super(MESSAGE_TYPE, SERVER_REQUEST_CODE);
     }
 
-    public ChatResponseMessage(ChatRequestMessage message, int sender, int msgId) {
+    public ChatResponseMessage(pers.xds.wtuapp.im.database.bean.Message message) {
         this();
         this.message = ChatResponseMessageProto.ChatResponseMessage
                 .newBuilder()
-                .setMsgId(msgId)
+                .setMsgId(message.getMsgId())
                 .setFrom(message.getFrom())
-                .setFrom(sender)
-                .setContent(message.getMessage())
-                .setCreateTime(System.currentTimeMillis())
+                .setContent(message.getContent())
+                .setCreateTime(message.getCreateTime())
                 .build();
     }
 

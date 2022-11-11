@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int saveMessage(String content, int sender, int to, boolean sync) throws NoSuchElementException {
+    public Message saveMessage(String content, int sender, int to, boolean sync) throws NoSuchElementException {
         // 理论上应该要检查用户是否存在，但实现起来有点麻烦
         Integer receiveId = messageReceiveMapper.selectReceivedId(to);
         int msgId;
@@ -63,7 +63,7 @@ public class ChatServiceImpl implements ChatService {
         if (sync) {
             messageCache.saveMessage(message);
         }
-        return msgId;
+        return message;
     }
 
 }

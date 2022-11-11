@@ -11,8 +11,8 @@ message ChatResponseMessage {
   int32 from = 2;
   // 内容
   string content = 3;
-  // 创建时间
-  int64 createTime = 4;
+  // 创建时间, 秒级别时间戳
+  int32 createTime = 4;
 }
 
 message ChatResponseMessageGroup {
