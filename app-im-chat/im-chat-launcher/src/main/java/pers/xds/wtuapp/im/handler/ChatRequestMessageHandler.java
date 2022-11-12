@@ -50,11 +50,9 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ChatRequestMessage msg) {
         UserPrincipal principal = ChannelAttrManager.getPrincipal(ctx);
-        if (principal == null) {
-            // 用户未登录, 不做响应
+        if (principal == null || msg.getTo() == principal.getId()) {
             return;
         }
-
         // 从服务中拿Channel
         Channel ch = socketChannelRecorder.getChannel(msg.getTo());
 
