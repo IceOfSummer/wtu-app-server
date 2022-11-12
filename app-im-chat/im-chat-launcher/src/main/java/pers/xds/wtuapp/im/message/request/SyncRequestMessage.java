@@ -1,5 +1,6 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.request;
 
+import pers.xds.wtuapp.im.message.RequestMessage;
 import pers.xds.wtuapp.im.proto.SyncRequestMessageProto;
 
 /**
@@ -7,7 +8,7 @@ import pers.xds.wtuapp.im.proto.SyncRequestMessageProto;
  * @author DeSen Xu
  * @date 2022-11-12 16:09
  */
-public class SyncRequestMessage extends Message {
+public class SyncRequestMessage extends RequestMessage {
 
     public static final byte MESSAGE_TYPE = 5;
 

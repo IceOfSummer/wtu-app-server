@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.exception.UnknownProtocolException;
 import pers.xds.wtuapp.im.message.Message;
-import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
+import pers.xds.wtuapp.im.message.MessageDecoderManager;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, Message> {
         ByteBuf buffer = ctx.alloc().buffer();
         buffer.writeShort(Message.MAGIC_NUMBER);
         buffer.writeByte(Message.VERSION);
-        buffer.writeByte(msg.getOrderType());
+        buffer.writeByte(msg.getMessageType());
         buffer.writeShort(msg.getRequestId());
         byte[] data = msg.encode();
         buffer.writeInt(data.length);

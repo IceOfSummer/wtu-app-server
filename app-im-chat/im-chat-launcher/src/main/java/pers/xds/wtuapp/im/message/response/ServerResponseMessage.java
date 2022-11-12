@@ -1,5 +1,6 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.response;
 
+import pers.xds.wtuapp.im.message.ResponseMessage;
 import pers.xds.wtuapp.im.proto.ServerResponseMessageProto;
 
 /**
@@ -7,7 +8,7 @@ import pers.xds.wtuapp.im.proto.ServerResponseMessageProto;
  * @author DeSen Xu
  * @date 2022-10-31 0:14
  */
-public class ServerResponseMessage extends Message{
+public class ServerResponseMessage extends ResponseMessage {
 
     private final ServerResponseMessageProto.ServerResponseMessage message;
 

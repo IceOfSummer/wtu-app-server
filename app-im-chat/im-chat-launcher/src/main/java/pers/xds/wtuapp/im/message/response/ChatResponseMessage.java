@@ -1,5 +1,6 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.response;
 
+import pers.xds.wtuapp.im.message.ResponseMessage;
 import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
 
 /**
@@ -7,7 +8,7 @@ import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
  * @author DeSen Xu
  * @date 2022-09-03 18:19
  */
-public class ChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
+public class ChatResponseMessage extends ResponseMessage {
 
     /**
      * 要发送的消息

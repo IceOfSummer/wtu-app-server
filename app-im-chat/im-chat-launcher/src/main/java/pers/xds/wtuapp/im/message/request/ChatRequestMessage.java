@@ -1,6 +1,7 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.request;
 
 
+import pers.xds.wtuapp.im.message.RequestMessage;
 import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
 
 /**
@@ -8,7 +9,7 @@ import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
  * @author DeSen Xu
  * @date 2022-09-02 12:41
  */
-public class ChatRequestMessage extends Message {
+public class ChatRequestMessage extends RequestMessage {
 
     private final int to;
 
@@ -16,20 +17,10 @@ public class ChatRequestMessage extends Message {
 
     public static final byte MESSAGE_TYPE = 1;
 
-    /**
-     * Parser专用
-     */
     public ChatRequestMessage(ChatRequestMessageProto.ChatRequestMessage chatMessageAttach) {
-        super(MESSAGE_TYPE, (short) 0);
+        super(MESSAGE_TYPE);
         this.message = chatMessageAttach.getContent();
         this.to = chatMessageAttach.getTo();
-    }
-
-    public ChatRequestMessage(String message, int to, short requestId) {
-        super(MESSAGE_TYPE, requestId);
-        this.message = message;
-        this.to = to;
-        this.requestId = requestId;
     }
 
     @Override

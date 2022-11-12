@@ -1,7 +1,10 @@
 package pers.xds.wtuapp.im;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -11,13 +14,17 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pers.xds.wtuapp.im.factory.ServerResponseMessageFactory;
-import pers.xds.wtuapp.im.message.*;
-import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
-import pers.xds.wtuapp.im.message.common.NoActionParser;
-import pers.xds.wtuapp.im.message.common.ProtobufToMessageParser;
+import pers.xds.wtuapp.im.message.Message;
+import pers.xds.wtuapp.im.message.MessageDecoderManager;
+import pers.xds.wtuapp.im.message.request.AuthRequestMessage;
+import pers.xds.wtuapp.im.message.request.ChatRequestMessage;
+import pers.xds.wtuapp.im.message.request.QueryReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.response.ChatResponseMessage;
+import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
+import pers.xds.wtuapp.im.parser.ChatResponseMessageParser;
 import pers.xds.wtuapp.im.parser.ReceiveStatusMessageParser;
-import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
+import pers.xds.wtuapp.im.parser.ServerResponseMessageParser;
+import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
 import javax.net.ssl.SSLException;
 import java.net.InetSocketAddress;
@@ -38,9 +45,9 @@ public class ServerSocketTest {
     static Scanner sc = new Scanner(System.in);
 
     public void connect(int port) throws InterruptedException, SSLException {
-        MessageDecoderManager.registry(new ProtobufToMessageParser<>(ChatResponseMessageProto.ChatResponseMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
-        MessageDecoderManager.registry(new NoActionParser<>(new ServerResponseMessageFactory()), ServerResponseMessage.MESSAGE_TYPE);
-        MessageDecoderManager.registry(new ReceiveStatusMessageParser(), ReceiveStatusMessage.MESSAGE_TYPE);
+        MessageDecoderManager.registry(new ChatResponseMessageParser());
+        MessageDecoderManager.registry(new ServerResponseMessageParser());
+        MessageDecoderManager.registry(new ReceiveStatusMessageParser());
 
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         MessageCodec messageCodec = new MessageCodec();
@@ -88,7 +95,7 @@ public class ServerSocketTest {
 
         System.out.print("请输入Session: ");
         String session = sc.nextLine();
-        channel.writeAndFlush(new AuthRequestMessage(++requestId, session));
+        channel.writeAndFlush(new AuthRequestMessage(session));
         while (true) {
             // 先让别的线程打印完，不然看不到菜单
             Thread.sleep(600);
@@ -113,7 +120,11 @@ public class ServerSocketTest {
         System.out.print("消息内容: ");
         sc.nextLine();
         String line = sc.nextLine();
-        ChatRequestMessage chatRequestMessage = new ChatRequestMessage(line, to, ++requestId);
+
+        ChatRequestMessage chatRequestMessage = new ChatRequestMessage(ChatRequestMessageProto.ChatRequestMessage.newBuilder()
+                .setContent(line)
+                .setTo(to).build());
+        chatRequestMessage.setRequestId(++requestId);
         channel.writeAndFlush(chatRequestMessage);
         log.info("发送消息: {}", chatRequestMessage);
     }

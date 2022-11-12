@@ -1,5 +1,6 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.response;
 
+import pers.xds.wtuapp.im.message.ResponseMessage;
 import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
 import pers.xds.wtuapp.im.database.bean.Message;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * @author DeSen Xu
  * @date 2022-11-12 16:22
  */
-public class MultiChatResponseMessage extends pers.xds.wtuapp.im.message.Message {
+public class MultiChatResponseMessage extends ResponseMessage {
 
     private final ChatResponseMessageProto.ChatResponseMessageGroup messageGroup;
 

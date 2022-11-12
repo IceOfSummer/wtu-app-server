@@ -29,7 +29,7 @@ public abstract class Message {
     /**
      * 消息类型
      */
-    protected byte orderType;
+    protected byte messageType;
 
     /**
      * 当服务器主动给客户端发送消息时，使用该requestId来进行区分
@@ -45,17 +45,17 @@ public abstract class Message {
      * 构造一个消息，但不提供requestId，一般用于解析用户发来的请求时，自动填上requestId
      * @see Message#Message(byte, short)
      */
-    public Message(byte orderType) {
-        this.orderType = orderType;
+    public Message(byte messageType) {
+        this.messageType = messageType;
     }
 
     /**
      * 构造一个消息
-     * @param orderType 消息类型
+     * @param messageType 消息类型
      * @param requestId 请求序号
      */
-    public Message(byte orderType, short requestId) {
-        this.orderType = orderType;
+    public Message(byte messageType, short requestId) {
+        this.messageType = messageType;
         this.requestId = requestId;
     }
 
@@ -82,12 +82,12 @@ public abstract class Message {
         this.requestId = requestId;
     }
 
-    public byte getOrderType() {
-        return orderType;
+    public byte getMessageType() {
+        return messageType;
     }
 
-    public void setOrderType(byte orderType) {
-        this.orderType = orderType;
+    public void setMessageType(byte messageType) {
+        this.messageType = messageType;
     }
 
 }

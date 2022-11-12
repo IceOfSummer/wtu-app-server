@@ -4,7 +4,7 @@ import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.xds.wtuapp.im.ChannelAttrManager;
-import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
 
 /**
  * Channel异常处理器, 可以被共享

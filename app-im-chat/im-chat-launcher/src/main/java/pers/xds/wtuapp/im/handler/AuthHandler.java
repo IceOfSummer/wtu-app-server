@@ -9,8 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
-import pers.xds.wtuapp.im.message.AuthRequestMessage;
-import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.request.AuthRequestMessage;
+import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
 import pers.xds.wtuapp.im.service.ChatAuthService;
 import pers.xds.wtuapp.security.UserPrincipal;
 

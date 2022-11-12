@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.database.bean.Message;
-import pers.xds.wtuapp.im.message.MultiChatResponseMessage;
-import pers.xds.wtuapp.im.message.SyncRequestMessage;
+import pers.xds.wtuapp.im.message.response.MultiChatResponseMessage;
+import pers.xds.wtuapp.im.message.request.SyncRequestMessage;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 

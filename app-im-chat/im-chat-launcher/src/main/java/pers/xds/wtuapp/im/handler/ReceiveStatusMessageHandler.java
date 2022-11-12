@@ -5,8 +5,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
-import pers.xds.wtuapp.im.message.QueryReceiveStatusMessage;
-import pers.xds.wtuapp.im.message.ReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.request.QueryReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.response.ReceiveStatusMessage;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 

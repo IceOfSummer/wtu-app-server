@@ -1,11 +1,11 @@
-package pers.xds.wtuapp.im.message.common;
+package pers.xds.wtuapp.im.message;
 
 
 import pers.xds.wtuapp.im.exception.UnknownProtocolException;
-import pers.xds.wtuapp.im.message.*;
-import pers.xds.wtuapp.im.message.factory.QueryStatusMessageFactory;
-import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
-import pers.xds.wtuapp.im.proto.SyncRequestMessageProto;
+import pers.xds.wtuapp.im.message.parser.AuthRequestMessageParser;
+import pers.xds.wtuapp.im.message.parser.ChatRequestMessagetParser;
+import pers.xds.wtuapp.im.message.parser.QueryReceiveStatusParser;
+import pers.xds.wtuapp.im.message.parser.SyncRequestMessageParser;
 
 /**
  * 用于管理各种消息的<b>解码</b>, 一般只针对请求类的消息<p/>
@@ -20,16 +20,10 @@ public class MessageDecoderManager {
     private MessageDecoderManager() {}
 
     static {
-        registry(new NoActionParser<>(new AuthRequestMessage.Factory()), AuthRequestMessage.MESSAGE_TYPE);
-        registry(
-                new ProtobufToMessageParser<>(ChatRequestMessageProto.ChatRequestMessage.parser(), ChatRequestMessage::new),
-                ChatRequestMessage.MESSAGE_TYPE
-        );
-        registry(
-                new ProtobufToMessageParser<>(SyncRequestMessageProto.SyncRequestMessage.parser(), SyncRequestMessage::new),
-                SyncRequestMessage.MESSAGE_TYPE
-        );
-        registry(new NoActionParser<>(new QueryStatusMessageFactory()), QueryReceiveStatusMessage.MESSAGE_TYPE);
+        registry(new AuthRequestMessageParser());
+        registry(new ChatRequestMessagetParser());
+        registry(new SyncRequestMessageParser());
+        registry(new QueryReceiveStatusParser());
     }
 
     public static void registry(MessageParser<?> parser, int id) {
@@ -37,6 +31,10 @@ public class MessageDecoderManager {
             throw new IllegalArgumentException("该id已经被注册了: " + MESSAGE_CLAZZ[id]);
         }
         MESSAGE_CLAZZ[id] = parser;
+    }
+
+    public static void registry(MessageParser<?> parser) {
+        registry(parser, parser.getMessageType());
     }
 
     public static Message decode(byte[] message, byte type) throws Exception {

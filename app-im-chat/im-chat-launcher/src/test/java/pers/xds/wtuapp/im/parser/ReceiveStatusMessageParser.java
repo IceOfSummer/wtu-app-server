@@ -1,7 +1,7 @@
 package pers.xds.wtuapp.im.parser;
 
-import pers.xds.wtuapp.im.message.ReceiveStatusMessage;
-import pers.xds.wtuapp.im.message.common.MessageParser;
+import pers.xds.wtuapp.im.message.response.ReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.MessageParser;
 import pers.xds.wtuapp.im.proto.ReceiveStatusMessageProto;
 
 /**
@@ -13,6 +13,11 @@ public class ReceiveStatusMessageParser implements MessageParser<ReceiveStatusMe
     @Override
     public ReceiveStatusMessage parseFrom(byte[] bytes) throws Exception {
         return new ReceiveStatusMessage(ReceiveStatusMessageProto.ReceiveStatus.parseFrom(bytes));
+    }
+
+    @Override
+    public byte getMessageType() {
+        return ReceiveStatusMessage.MESSAGE_TYPE;
     }
 
 }

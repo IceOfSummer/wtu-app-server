@@ -1,5 +1,7 @@
-package pers.xds.wtuapp.im.message;
+package pers.xds.wtuapp.im.message.response;
 
+import pers.xds.wtuapp.im.message.ResponseMessage;
+import pers.xds.wtuapp.im.message.request.QueryReceiveStatusMessage;
 import pers.xds.wtuapp.im.proto.ReceiveStatusMessageProto;
 
 /**
@@ -8,7 +10,7 @@ import pers.xds.wtuapp.im.proto.ReceiveStatusMessageProto;
  * @author DeSen Xu
  * @date 2022-11-12 18:14
  */
-public class ReceiveStatusMessage extends Message{
+public class ReceiveStatusMessage extends ResponseMessage {
 
     public static final byte MESSAGE_TYPE = 8;
 

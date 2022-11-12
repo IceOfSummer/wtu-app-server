@@ -2,7 +2,7 @@ package pers.xds.wtuapp.im.factory;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.springframework.lang.NonNull;
-import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
 import pers.xds.wtuapp.im.message.common.MessageFactory;
 import pers.xds.wtuapp.im.proto.ServerResponseMessageProto;
 

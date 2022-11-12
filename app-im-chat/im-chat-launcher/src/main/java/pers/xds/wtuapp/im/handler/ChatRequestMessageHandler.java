@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.database.bean.Message;
-import pers.xds.wtuapp.im.message.ChatRequestMessage;
-import pers.xds.wtuapp.im.message.ChatResponseMessage;
-import pers.xds.wtuapp.im.message.ServerResponseMessage;
+import pers.xds.wtuapp.im.message.request.ChatRequestMessage;
+import pers.xds.wtuapp.im.message.response.ChatResponseMessage;
+import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 

@@ -1,7 +1,6 @@
-package pers.xds.wtuapp.im.message.common;
+package pers.xds.wtuapp.im.message;
 
 
-import pers.xds.wtuapp.im.message.Message;
 
 /**
  * @author DeSen Xu
@@ -17,5 +16,11 @@ public interface MessageParser<T extends Message> {
      * @throws Exception ex
      */
     T parseFrom(byte[] bytes) throws Exception;
+
+    /**
+     * 获取消息类型
+     * @return 消息类型
+     */
+    byte getMessageType();
 
 }

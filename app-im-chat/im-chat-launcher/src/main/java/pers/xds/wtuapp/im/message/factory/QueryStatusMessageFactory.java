@@ -1,7 +1,7 @@
 package pers.xds.wtuapp.im.message.factory;
 
 import org.jetbrains.annotations.NotNull;
-import pers.xds.wtuapp.im.message.QueryReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.request.QueryReceiveStatusMessage;
 import pers.xds.wtuapp.im.message.common.MessageFactory;
 
 /**
