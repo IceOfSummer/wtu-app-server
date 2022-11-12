@@ -14,12 +14,12 @@
 |--------|--------|--------|-------|-------|-------|
 | 0xAC66 | 1byte  | 1byte  | 2byte | 4byte | ?byte |
 
-魔数(~~刷算法的后遗症2333~~)占俩字节
+魔数占俩字节
 
 
 #### 消息类型
 
-所有协议中的内容，最后都会被转换为`pers.xds.wtuapp.chat.message.Message`的实现类，
+所有协议中的内容，最后都会被转换为`pers.xds.wtuapp.im.message.Message`的实现类，
 每一条消息都用于用一个唯一的消息类型代替
 
 | 类型id |    消息名称     |              实现类               |        备注         |
@@ -39,11 +39,9 @@
 
 ### 协议解析过程
 
-为了节省空间，在消息传输的时候使用了`Google`的`protobuf`。但由于生成`protobuf`的类很大，
-有些只有一个属性的消息就不编码，直接传输过去。
-
 #### 消息解码管理类
-`pers.xds.wtuapp.chat.message.common.MessageDecoderManager`类专门用于管理消息的解析。
+[MessageDecoderManager](./im-chat-launcher/src/main/java/pers/xds/wtuapp/im/message/MessageDecoderManager.java)
+用于管理消息的解析。
 
 消息在这里需要先静态注册一个解析器，之后消息在根据消息类型，找到对应的解析器来进行解码。有些消息是单向的，并不会去注册解析器。
 
