@@ -28,6 +28,7 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     private static final IdleEventHandler IDLE_EVENT_HANDLER = new IdleEventHandler();
 
     private static final ChannelExceptionHandler CHANNEL_EXCEPTION_HANDLER = new ChannelExceptionHandler();
+
     private SslContext sslContext;
 
     private AuthHandler authHandler;
@@ -37,6 +38,20 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     private ConnectActiveHandler connectActiveHandler;
 
     private SocketChannelRecorder socketChannelRecorder;
+
+    private SyncRequestMessageHandler syncRequestMessageHandler;
+
+    private ReceiveStatusMessageHandler receiveStatusMessageHandler;
+
+    @Autowired
+    public void setReceiveStatusMessageHandler(ReceiveStatusMessageHandler receiveStatusMessageHandler) {
+        this.receiveStatusMessageHandler = receiveStatusMessageHandler;
+    }
+
+    @Autowired
+    public void setSyncRequestMessageHandler(SyncRequestMessageHandler syncRequestMessageHandler) {
+        this.syncRequestMessageHandler = syncRequestMessageHandler;
+    }
 
 
     @Autowired
@@ -76,6 +91,8 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(MESSAGE_CODEC)
                 .addLast(authHandler)
                 .addLast(chatMessageHandler)
+                .addLast(syncRequestMessageHandler)
+                .addLast(receiveStatusMessageHandler)
                 .addLast(CHANNEL_EXCEPTION_HANDLER);
 
         ch.closeFuture().addListener(future -> {

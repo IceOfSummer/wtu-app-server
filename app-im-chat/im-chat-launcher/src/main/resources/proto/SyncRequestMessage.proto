@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "SyncRequestMessageProto";
+option optimize_for = SPEED;
+
+// 在线消息同步请求
+message SyncRequestMessage {
+  // 是否用于拉取离线消息
+  bool offline = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
+

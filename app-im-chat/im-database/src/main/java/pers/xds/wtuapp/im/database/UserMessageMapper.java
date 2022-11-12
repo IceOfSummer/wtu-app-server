@@ -3,7 +3,10 @@ package pers.xds.wtuapp.im.database;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import pers.xds.wtuapp.im.database.bean.Message;
+
+import java.util.List;
 
 
 /**
@@ -24,5 +27,15 @@ public interface UserMessageMapper extends BaseMapper<Message> {
                                     @Param("receiveId") int receiveId,
                                     @Param("sendId") int sendId);
 
+
+    /**
+     * 选择一个范围内的消息
+     * @param uid 用户id
+     * @param start 开始id(包括)
+     * @param end 结束id(不包括)
+     * @return 消息
+     */
+    @Select("SELECT * FROM message WHERE uid = #{uid} AND msg_id >= #{start} AND msg_id <= #{end}")
+    List<Message> selectRange(@Param("uid") int uid, @Param("start") int start, @Param("end") int end);
 
 }

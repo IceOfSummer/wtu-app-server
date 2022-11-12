@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "ReceiveStatusMessageProto";
+option optimize_for = SPEED;
+
+message ReceiveStatus {
+  // 当前最大已经接收到的消息id
+  int32 receivedId = 1;
+}
+

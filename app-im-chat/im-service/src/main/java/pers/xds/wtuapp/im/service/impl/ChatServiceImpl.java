@@ -11,6 +11,7 @@ import pers.xds.wtuapp.im.database.bean.MessageReceive;
 import pers.xds.wtuapp.im.redis.MessageCache;
 import pers.xds.wtuapp.im.service.ChatService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -64,6 +65,44 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
+     * 从redis同步, 如果还是漏了就让客户端主动从数据库同步{@link ChatServiceImpl#syncOfflineMessage(int, int, int)}
+     * <p>
+     * 每次最多同步100条
+     */
+    @Override
+    public List<Message> syncOnlineMessage(int uid, int start, int end) {
+        final int limit = 100;
+        int len = Math.min(limit, end - start);
+
+        ArrayList<String> ids = new ArrayList<>(len);
+        for (int i = end - 1; i >= end - len; i--) {
+            ids.add(String.valueOf(i));
+        }
+
+        return messageCache.queryCachedMessage(uid, ids);
+    }
+
+    /**
+     * 从数据库同步, 每次最多同步200条，多的分批次同步即可
+     */
+    @Override
+    public List<Message> syncOfflineMessage(int uid, int start, int end) {
+        final int limit = 100;
+        return userMessageMapper.selectRange(uid, end - Math.min(limit, end - start), end);
+    }
+
+    @Override
+    public int queryMaxMessageId(int uid) {
+        Integer id = messageReceiveMapper.selectReceivedId(uid);
+        if (id == null) {
+            // insert
+            messageReceiveMapper.insert(new MessageReceive(uid));
+            id = 0;
+        }
+        return id;
+    }
+
+    /**
      * 确保对应的实体存在并且返回对应的接收id
      * <p>
      * <b>在返回前会自动为其字段加一</b>
@@ -81,7 +120,7 @@ public class ChatServiceImpl implements ChatService {
         if (receives.size() == 1) {
             // 插入一个
             int target = sender;
-            if (receives.get(0).getUid() != target) {
+            if (receives.get(0).getUid() == target) {
                 target = receiver;
             }
             messageReceiveMapper.insert(new MessageReceive(target));

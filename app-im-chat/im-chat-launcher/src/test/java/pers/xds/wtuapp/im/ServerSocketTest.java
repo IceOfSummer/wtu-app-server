@@ -16,6 +16,7 @@ import pers.xds.wtuapp.im.message.*;
 import pers.xds.wtuapp.im.message.common.MessageDecoderManager;
 import pers.xds.wtuapp.im.message.common.NoActionParser;
 import pers.xds.wtuapp.im.message.common.ProtobufToMessageParser;
+import pers.xds.wtuapp.im.parser.ReceiveStatusMessageParser;
 import pers.xds.wtuapp.im.proto.ChatResponseMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
 import javax.net.ssl.SSLException;
@@ -34,9 +35,12 @@ public class ServerSocketTest {
 
     short requestId = 0;
 
+    static Scanner sc = new Scanner(System.in);
+
     public void connect(int port) throws InterruptedException, SSLException {
         MessageDecoderManager.registry(new ProtobufToMessageParser<>(ChatResponseMessageProto.ChatResponseMessage.parser(), ChatResponseMessage::new), ChatResponseMessage.MESSAGE_TYPE);
         MessageDecoderManager.registry(new NoActionParser<>(new ServerResponseMessageFactory()), ServerResponseMessage.MESSAGE_TYPE);
+        MessageDecoderManager.registry(new ReceiveStatusMessageParser(), ReceiveStatusMessage.MESSAGE_TYPE);
 
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         MessageCodec messageCodec = new MessageCodec();
@@ -81,7 +85,7 @@ public class ServerSocketTest {
             eventLoopGroup.shutdownGracefully();
             System.exit(0);
         });
-        Scanner sc = new Scanner(System.in);
+
         System.out.print("请输入Session: ");
         String session = sc.nextLine();
         channel.writeAndFlush(new AuthRequestMessage(++requestId, session));
@@ -90,16 +94,19 @@ public class ServerSocketTest {
             Thread.sleep(600);
             System.out.print("=============Menu=============\n" +
                     "1: 和某人私聊\n" +
+                    "2: 获取消息接收状态\n" +
                     "==============================\n" +
                     "请输入: ");
             int order = sc.nextInt();
             if (order == 1) {
-                chatWithSomeone(sc, channel);
+                chatWithSomeone(channel);
+            } else if (order == 2) {
+                queryReceiveStatus(channel);
             }
         }
     }
 
-    public void chatWithSomeone(Scanner sc, Channel channel) {
+    public void chatWithSomeone(Channel channel) {
         // send msg
         System.out.print("要发给谁: ");
         int to = sc.nextInt();
@@ -110,6 +117,11 @@ public class ServerSocketTest {
         channel.writeAndFlush(chatRequestMessage);
         log.info("发送消息: {}", chatRequestMessage);
     }
+
+    public void queryReceiveStatus(Channel channel) {
+        channel.writeAndFlush(new QueryReceiveStatusMessage());
+    }
+
     public static void main(String[] args) throws Exception {
         new ServerSocketTest().connect(PORT);
     }

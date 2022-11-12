@@ -42,9 +42,8 @@ public abstract class Message {
     protected short requestId;
 
     /**
-     * 构造一个消息，但不提供requestId
+     * 构造一个消息，但不提供requestId，一般用于解析用户发来的请求时，自动填上requestId
      * @see Message#Message(byte, short)
-     * @deprecated 为防止忘填requestId, 请使用{@link Message#Message(byte, short)}
      */
     public Message(byte orderType) {
         this.orderType = orderType;
