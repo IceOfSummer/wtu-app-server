@@ -10,7 +10,7 @@ import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
  */
 public class ChatRequestMessage extends Message {
 
-    private final int from;
+    private final int to;
 
     private final String message;
 
@@ -22,13 +22,13 @@ public class ChatRequestMessage extends Message {
     public ChatRequestMessage(ChatRequestMessageProto.ChatRequestMessage chatMessageAttach) {
         super(MESSAGE_TYPE, (short) 0);
         this.message = chatMessageAttach.getContent();
-        this.from = chatMessageAttach.getTo();
+        this.to = chatMessageAttach.getTo();
     }
 
-    public ChatRequestMessage(String message, int from, short requestId) {
+    public ChatRequestMessage(String message, int to, short requestId) {
         super(MESSAGE_TYPE, requestId);
         this.message = message;
-        this.from = from;
+        this.to = to;
         this.requestId = requestId;
     }
 
@@ -37,13 +37,13 @@ public class ChatRequestMessage extends Message {
         return ChatRequestMessageProto.ChatRequestMessage
                 .newBuilder()
                 .setContent(message)
-                .setTo(from)
+                .setTo(to)
                 .build()
                 .toByteArray();
     }
 
-    public int getFrom() {
-        return from;
+    public int getTo() {
+        return to;
     }
 
     public String getMessage() {
@@ -53,7 +53,7 @@ public class ChatRequestMessage extends Message {
     @Override
     public String toString() {
         return "ChatRequestMessage{" +
-                "to=" + from +
+                "to=" + to +
                 ", message='" + message + '\'' +
                 '}';
     }

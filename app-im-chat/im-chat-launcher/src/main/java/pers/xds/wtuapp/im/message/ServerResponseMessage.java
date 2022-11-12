@@ -1,6 +1,6 @@
 package pers.xds.wtuapp.im.message;
 
-import pers.xds.wtuapp.im.message.common.ResponseCode;
+import pers.xds.wtuapp.im.proto.ServerResponseMessageProto;
 
 /**
  * 服务器用于响应时的消息
@@ -9,27 +9,41 @@ import pers.xds.wtuapp.im.message.common.ResponseCode;
  */
 public class ServerResponseMessage extends Message{
 
+    private final ServerResponseMessageProto.ServerResponseMessage message;
+
     public static final byte MESSAGE_TYPE = 2;
 
-    private final ResponseCode code;
-
-    public ServerResponseMessage(ResponseCode code, short requestId) {
+    public ServerResponseMessage(boolean success, short requestId, String data) {
         super(MESSAGE_TYPE, requestId);
-        this.code = code;
+        ServerResponseMessageProto.ServerResponseMessage.Builder builder = ServerResponseMessageProto.ServerResponseMessage.newBuilder()
+                .setSuccess(success)
+                .setRequestId(requestId);
+        if (data != null) {
+            builder.setData(data);
+        }
+        this.message = builder.build();
+    }
+
+    public ServerResponseMessage(boolean success, short requestId) {
+        this(success, requestId, null);
     }
 
     public ServerResponseMessage(short requestId) {
-        this(ResponseCode.SUCCESS, requestId);
+        this(true, requestId, null);
+    }
+
+    public ServerResponseMessage(short requestId, String data) {
+        this(true, requestId, data);
     }
 
     @Override
     public byte[] encode() {
-        return code.getByteCode();
+        return message.toByteArray();
     }
 
     @Override
     public String toString() {
-        return "ServerResponseMessage[code=\"" + code.getCode() + "\"]";
+        return "ServerResponseMessage[" + message + "]";
     }
 
 }

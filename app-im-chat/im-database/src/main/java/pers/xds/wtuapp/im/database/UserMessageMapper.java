@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import pers.xds.wtuapp.im.database.bean.Message;
 
-import java.util.List;
 
 /**
  * @author HuPeng
@@ -15,10 +14,15 @@ import java.util.List;
 public interface UserMessageMapper extends BaseMapper<Message> {
 
     /**
-     * 获取用户未接收的消息，每次最多获取100条
-     * @param userid 用户id
-     * @return 未接收的消息
+     * 插入两条消息, 一条是给自己的，另外一条是给别人发的
+     * @param message 消息内容，请使用该构造器{@link Message#Message(Integer, Integer, String)}，该对象的uid参数应该为接收者id，
+     *               而to参数应该为发送者的id
+     * @param receiveId 消息接受者的下次信息id
+     * @param sendId 消息发送者的下次信息id
      */
-    List<Message> queryUnreceivedMessage(@Param("userid") int userid);
+    void insertSelfAndTargetMessage(@Param("msg") Message message,
+                                    @Param("receiveId") int receiveId,
+                                    @Param("sendId") int sendId);
+
 
 }

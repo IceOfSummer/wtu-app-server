@@ -11,7 +11,6 @@ import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
 import pers.xds.wtuapp.im.message.AuthRequestMessage;
 import pers.xds.wtuapp.im.message.ServerResponseMessage;
-import pers.xds.wtuapp.im.message.common.ResponseCode;
 import pers.xds.wtuapp.im.service.ChatAuthService;
 import pers.xds.wtuapp.security.UserPrincipal;
 
@@ -61,7 +60,7 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
             socketChannelRecorder.saveChannel(principal.getId(), ctx.channel());
             log.debug("用户id: {}, 登录成功: {}", principal.getId(), msg);
             final short requestId = msg.getRequestId();
-            ctx.writeAndFlush(new ServerResponseMessage(ResponseCode.SUCCESS, requestId));
+            ctx.writeAndFlush(new ServerResponseMessage(requestId));
         }
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.database.bean.Message;
 import pers.xds.wtuapp.im.redis.MessageCache;
@@ -49,6 +50,7 @@ public class MessageCacheImpl implements MessageCache {
     }
 
     @Override
+    @Async
     public void saveMessage(Message message) {
         String messageKey = getMessageKey(message.getUid());
         opsForHash().put(messageKey, String.valueOf(message.getMsgId()), message);

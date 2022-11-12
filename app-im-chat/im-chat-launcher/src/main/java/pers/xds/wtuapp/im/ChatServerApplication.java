@@ -3,6 +3,7 @@ package pers.xds.wtuapp.im;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author DeSen Xu
@@ -10,6 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
  */
 @SpringBootApplication
 @EnableCaching
+@EnableAsync
 public class ChatServerApplication {
 
     public static void main(String[] args) {

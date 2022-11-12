@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "pers.xds.wtuapp.im.proto";
+option java_outer_classname = "ServerResponseMessageProto";
+option optimize_for = SPEED;
+
+message ServerResponseMessage {
+  int32 requestId = 1;
+  bool success = 2;
+  optional string data = 3;
+}
+

@@ -19,17 +19,22 @@ public class Message implements Serializable {
 
     private Integer uid;
 
+    @TableField(value = "`to`")
+    private Integer to;
+
     /**
      * 消息id，自增
      */
     private Integer msgId;
 
-    @TableField(value = "`from`")
-    private Integer from;
-
     private String content;
 
     private Integer createTime;
+
+    /**
+     * 0为接收，1为发送
+     */
+    private Integer type;
 
     public Integer getMsgId() {
         return msgId;
@@ -38,17 +43,13 @@ public class Message implements Serializable {
     public Message() {
     }
 
-    public Message(Integer uid, Integer from, String content) {
-        this(uid, null, from, content);
-    }
-
-    public Message(Integer uid, Integer msgId, Integer from, String content) {
+    public Message(Integer uid, Integer to, String content) {
         this.uid = uid;
-        this.msgId = msgId;
-        this.from = from;
+        this.to = to;
         this.content = content;
         this.createTime = Math.toIntExact((System.currentTimeMillis() / 1000));
     }
+
 
     public void setMsgId(Integer msgId) {
         this.msgId = msgId;
@@ -62,12 +63,12 @@ public class Message implements Serializable {
         this.uid = uid;
     }
 
-    public Integer getFrom() {
-        return from;
+    public Integer getTo() {
+        return to;
     }
 
-    public void setFrom(Integer from) {
-        this.from = from;
+    public void setTo(Integer to) {
+        this.to = to;
     }
 
     public String getContent() {
@@ -84,5 +85,13 @@ public class Message implements Serializable {
 
     public void setCreateTime(Integer createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

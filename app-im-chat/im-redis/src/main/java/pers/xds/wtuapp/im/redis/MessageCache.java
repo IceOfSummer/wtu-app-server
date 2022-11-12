@@ -23,6 +23,8 @@ public interface MessageCache {
 
     /**
      * 将消息保存到缓存中
+     * <p>
+     * 该方法应为<b>异步操作</b>
      * @param message 消息
      */
     void saveMessage(Message message);

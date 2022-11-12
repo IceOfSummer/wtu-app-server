@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
@@ -13,7 +14,6 @@ import pers.xds.wtuapp.im.database.bean.Message;
 import pers.xds.wtuapp.im.message.ChatRequestMessage;
 import pers.xds.wtuapp.im.message.ChatResponseMessage;
 import pers.xds.wtuapp.im.message.ServerResponseMessage;
-import pers.xds.wtuapp.im.message.common.ResponseCode;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 
@@ -56,25 +56,26 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         }
 
         // 从服务中拿Channel
-        Channel ch = socketChannelRecorder.getChannel(msg.getFrom());
+        Channel ch = socketChannelRecorder.getChannel(msg.getTo());
 
         final short requestId = msg.getRequestId();
         // 保存消息
         boolean sync = ch != null;
-        Message message = chatService.saveMessage(msg.getMessage(), principal.getId(), msg.getFrom(), sync);
+        Message message = new Message(msg.getTo(), principal.getId(), msg.getMessage());
+        Pair<Integer, Integer> pair = chatService.saveMessage(message, sync);
         if (sync) {
             // 发送在线消息
-            ch.writeAndFlush(new ChatResponseMessage(message), ch.newPromise().addListener(future -> {
+            ch.writeAndFlush(new ChatResponseMessage(message, pair.getSecond()), ch.newPromise().addListener(future -> {
                 if (future.isSuccess()) {
-                    ctx.writeAndFlush(new ServerResponseMessage(requestId));
+                    ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(pair.getFirst())));
                 } else {
-                    ctx.writeAndFlush(new ServerResponseMessage(ResponseCode.SERVER_ERROR, requestId));
+                    ctx.writeAndFlush(new ServerResponseMessage(false, requestId));
                 }
             }));
         } else {
-            ctx.writeAndFlush(new ServerResponseMessage(requestId));
+            ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(pair.getFirst())));
         }
-        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getFrom(), msg.getMessage());
+        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
     }
 
 }

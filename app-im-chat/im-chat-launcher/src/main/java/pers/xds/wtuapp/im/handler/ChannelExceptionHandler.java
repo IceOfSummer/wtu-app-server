@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.message.ServerResponseMessage;
-import pers.xds.wtuapp.im.message.common.ResponseCode;
 
 /**
  * Channel异常处理器, 可以被共享
@@ -27,7 +26,7 @@ public class ChannelExceptionHandler extends ChannelDuplexHandler {
         if (ctx.channel().isWritable()) {
             Short id = ChannelAttrManager.getRequestId(ctx);
             if (id != null) {
-                ctx.channel().writeAndFlush(new ServerResponseMessage(ResponseCode.SERVER_ERROR, id));
+                ctx.channel().writeAndFlush(new ServerResponseMessage(false, id));
             }
         }
     }
