@@ -13,6 +13,8 @@ message ChatResponseMessage {
   string content = 3;
   // 创建时间, 秒级别时间戳
   int32 createTime = 4;
+  // 消息类型
+  optional int32 type = 5;
 }
 
 message ChatResponseMessageGroup {

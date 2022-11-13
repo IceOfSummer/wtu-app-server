@@ -31,6 +31,7 @@ public class MultiChatResponseMessage extends ResponseMessage {
                 .setContent(message.getContent())
                 .setCreateTime(message.getCreateTime())
                 .setFrom(message.getTo())
+                .setType(message.getType())
                 .build();
     }
 

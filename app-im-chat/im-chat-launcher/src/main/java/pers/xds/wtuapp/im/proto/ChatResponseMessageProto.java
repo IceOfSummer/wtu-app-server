@@ -60,13 +60,32 @@ public final class ChatResponseMessageProto {
 
     /**
      * <pre>
-     * 创建时间
+     * 创建时间, 秒级别时间戳
      * </pre>
      *
-     * <code>int64 createTime = 4;</code>
+     * <code>int32 createTime = 4;</code>
      * @return The createTime.
      */
-    long getCreateTime();
+    int getCreateTime();
+
+    /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
+     * <code>optional int32 type = 5;</code>
+     * @return Whether the type field is set.
+     */
+    boolean hasType();
+    /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
+     * <code>optional int32 type = 5;</code>
+     * @return The type.
+     */
+    int getType();
   }
   /**
    * Protobuf type {@code ChatResponseMessage}
@@ -104,6 +123,7 @@ public final class ChatResponseMessageProto {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -132,7 +152,12 @@ public final class ChatResponseMessageProto {
             }
             case 32: {
 
-              createTime_ = input.readInt64();
+              createTime_ = input.readInt32();
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000001;
+              type_ = input.readInt32();
               break;
             }
             default: {
@@ -169,6 +194,7 @@ public final class ChatResponseMessageProto {
               pers.xds.wtuapp.im.proto.ChatResponseMessageProto.ChatResponseMessage.class, pers.xds.wtuapp.im.proto.ChatResponseMessageProto.ChatResponseMessage.Builder.class);
     }
 
+    private int bitField0_;
     public static final int MSGID_FIELD_NUMBER = 1;
     private int msgId_;
     /**
@@ -246,18 +272,45 @@ public final class ChatResponseMessageProto {
     }
 
     public static final int CREATETIME_FIELD_NUMBER = 4;
-    private long createTime_;
+    private int createTime_;
     /**
      * <pre>
-     * 创建时间
+     * 创建时间, 秒级别时间戳
      * </pre>
      *
-     * <code>int64 createTime = 4;</code>
+     * <code>int32 createTime = 4;</code>
      * @return The createTime.
      */
     @java.lang.Override
-    public long getCreateTime() {
+    public int getCreateTime() {
       return createTime_;
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 5;
+    private int type_;
+    /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
+     * <code>optional int32 type = 5;</code>
+     * @return Whether the type field is set.
+     */
+    @java.lang.Override
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     * 消息类型
+     * </pre>
+     *
+     * <code>optional int32 type = 5;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public int getType() {
+      return type_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -283,8 +336,11 @@ public final class ChatResponseMessageProto {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, content_);
       }
-      if (createTime_ != 0L) {
-        output.writeInt64(4, createTime_);
+      if (createTime_ != 0) {
+        output.writeInt32(4, createTime_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeInt32(5, type_);
       }
       unknownFields.writeTo(output);
     }
@@ -306,9 +362,13 @@ public final class ChatResponseMessageProto {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, content_);
       }
-      if (createTime_ != 0L) {
+      if (createTime_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, createTime_);
+          .computeInt32Size(4, createTime_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, type_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -333,6 +393,11 @@ public final class ChatResponseMessageProto {
           .equals(other.getContent())) return false;
       if (getCreateTime()
           != other.getCreateTime()) return false;
+      if (hasType() != other.hasType()) return false;
+      if (hasType()) {
+        if (getType()
+            != other.getType()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -351,8 +416,11 @@ public final class ChatResponseMessageProto {
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
       hash = (37 * hash) + CREATETIME_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getCreateTime());
+      hash = (53 * hash) + getCreateTime();
+      if (hasType()) {
+        hash = (37 * hash) + TYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getType();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -492,8 +560,10 @@ public final class ChatResponseMessageProto {
 
         content_ = "";
 
-        createTime_ = 0L;
+        createTime_ = 0;
 
+        type_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -520,10 +590,17 @@ public final class ChatResponseMessageProto {
       @java.lang.Override
       public pers.xds.wtuapp.im.proto.ChatResponseMessageProto.ChatResponseMessage buildPartial() {
         pers.xds.wtuapp.im.proto.ChatResponseMessageProto.ChatResponseMessage result = new pers.xds.wtuapp.im.proto.ChatResponseMessageProto.ChatResponseMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.msgId_ = msgId_;
         result.from_ = from_;
         result.content_ = content_;
         result.createTime_ = createTime_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.type_ = type_;
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -582,8 +659,11 @@ public final class ChatResponseMessageProto {
           content_ = other.content_;
           onChanged();
         }
-        if (other.getCreateTime() != 0L) {
+        if (other.getCreateTime() != 0) {
           setCreateTime(other.getCreateTime());
+        }
+        if (other.hasType()) {
+          setType(other.getType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -613,6 +693,7 @@ public final class ChatResponseMessageProto {
         }
         return this;
       }
+      private int bitField0_;
 
       private int msgId_ ;
       /**
@@ -796,29 +877,29 @@ public final class ChatResponseMessageProto {
         return this;
       }
 
-      private long createTime_ ;
+      private int createTime_ ;
       /**
        * <pre>
-       * 创建时间
+       * 创建时间, 秒级别时间戳
        * </pre>
        *
-       * <code>int64 createTime = 4;</code>
+       * <code>int32 createTime = 4;</code>
        * @return The createTime.
        */
       @java.lang.Override
-      public long getCreateTime() {
+      public int getCreateTime() {
         return createTime_;
       }
       /**
        * <pre>
-       * 创建时间
+       * 创建时间, 秒级别时间戳
        * </pre>
        *
-       * <code>int64 createTime = 4;</code>
+       * <code>int32 createTime = 4;</code>
        * @param value The createTime to set.
        * @return This builder for chaining.
        */
-      public Builder setCreateTime(long value) {
+      public Builder setCreateTime(int value) {
         
         createTime_ = value;
         onChanged();
@@ -826,15 +907,70 @@ public final class ChatResponseMessageProto {
       }
       /**
        * <pre>
-       * 创建时间
+       * 创建时间, 秒级别时间戳
        * </pre>
        *
-       * <code>int64 createTime = 4;</code>
+       * <code>int32 createTime = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearCreateTime() {
         
-        createTime_ = 0L;
+        createTime_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int type_ ;
+      /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
+       * <code>optional int32 type = 5;</code>
+       * @return Whether the type field is set.
+       */
+      @java.lang.Override
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
+       * <code>optional int32 type = 5;</code>
+       * @return The type.
+       */
+      @java.lang.Override
+      public int getType() {
+        return type_;
+      }
+      /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
+       * <code>optional int32 type = 5;</code>
+       * @param value The type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setType(int value) {
+        bitField0_ |= 0x00000001;
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息类型
+       * </pre>
+       *
+       * <code>optional int32 type = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearType() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        type_ = 0;
         onChanged();
         return this;
       }
@@ -1705,13 +1841,13 @@ public final class ChatResponseMessageProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\031ChatResponseMessage.proto\"W\n\023ChatRespo" +
+      "\n\031ChatResponseMessage.proto\"s\n\023ChatRespo" +
       "nseMessage\022\r\n\005msgId\030\001 \001(\005\022\014\n\004from\030\002 \001(\005\022" +
-      "\017\n\007content\030\003 \001(\t\022\022\n\ncreateTime\030\004 \001(\003\"B\n\030" +
-      "ChatResponseMessageGroup\022&\n\010messages\030\001 \003" +
-      "(\0132\024.ChatResponseMessageB6\n\030pers.xds.wtu" +
-      "app.im.protoB\030ChatResponseMessageProtoH\001" +
-      "b\006proto3"
+      "\017\n\007content\030\003 \001(\t\022\022\n\ncreateTime\030\004 \001(\005\022\021\n\004" +
+      "type\030\005 \001(\005H\000\210\001\001B\007\n\005_type\"B\n\030ChatResponse" +
+      "MessageGroup\022&\n\010messages\030\001 \003(\0132\024.ChatRes" +
+      "ponseMessageB6\n\030pers.xds.wtuapp.im.proto" +
+      "B\030ChatResponseMessageProtoH\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1722,7 +1858,7 @@ public final class ChatResponseMessageProto {
     internal_static_ChatResponseMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ChatResponseMessage_descriptor,
-        new java.lang.String[] { "MsgId", "From", "Content", "CreateTime", });
+        new java.lang.String[] { "MsgId", "From", "Content", "CreateTime", "Type", "Type", });
     internal_static_ChatResponseMessageGroup_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_ChatResponseMessageGroup_fieldAccessorTable = new
