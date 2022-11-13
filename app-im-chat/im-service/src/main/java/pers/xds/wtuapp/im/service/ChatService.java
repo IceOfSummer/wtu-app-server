@@ -17,7 +17,7 @@ public interface ChatService {
     /**
      * 保存消息, 消息会在发送者和接收者两边都会保存
      * @param message 消息内容，请使用该构造器{@link Message#Message(Integer, Integer, String)}，该对象的uid参数应该为接收者id，
-     *                而to参数应该为发送者的id
+     *                而to参数应该为发送者的id，即{@link Message#getType()}应该为{@link Message#RECEIVE}
      * @param sync 是否需要同步. 若用户在线，则应该设置为true以加快消息漏发时的恢复。<b>只会同步接收者的消息</b>
      * @return 消息id, 第一个为发送者的消息id，第二个为接受者的消息id
      */
@@ -30,7 +30,7 @@ public interface ChatService {
      * @param uid 用户id
      * @param start 从哪个消息id开始(包括)
      * @param end 从哪个消息id结束(不包括)
-     * @return 消息内容
+     * @return 消息内容, 没有查到的消息会返回null
      */
     List<Message> syncOnlineMessage(int uid, int start, int end);
 

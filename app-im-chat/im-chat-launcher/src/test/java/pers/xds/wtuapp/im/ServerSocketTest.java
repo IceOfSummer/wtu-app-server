@@ -19,12 +19,15 @@ import pers.xds.wtuapp.im.message.MessageDecoderManager;
 import pers.xds.wtuapp.im.message.request.AuthRequestMessage;
 import pers.xds.wtuapp.im.message.request.ChatRequestMessage;
 import pers.xds.wtuapp.im.message.request.QueryReceiveStatusMessage;
+import pers.xds.wtuapp.im.message.request.SyncRequestMessage;
 import pers.xds.wtuapp.im.message.response.ChatResponseMessage;
 import pers.xds.wtuapp.im.message.response.ServerResponseMessage;
 import pers.xds.wtuapp.im.parser.ChatResponseMessageParser;
+import pers.xds.wtuapp.im.parser.MultiChatResponseMessageParser;
 import pers.xds.wtuapp.im.parser.ReceiveStatusMessageParser;
 import pers.xds.wtuapp.im.parser.ServerResponseMessageParser;
 import pers.xds.wtuapp.im.proto.ChatRequestMessageProto;
+import pers.xds.wtuapp.im.proto.SyncRequestMessageProto;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
 import javax.net.ssl.SSLException;
 import java.net.InetSocketAddress;
@@ -48,6 +51,7 @@ public class ServerSocketTest {
         MessageDecoderManager.registry(new ChatResponseMessageParser());
         MessageDecoderManager.registry(new ServerResponseMessageParser());
         MessageDecoderManager.registry(new ReceiveStatusMessageParser());
+        MessageDecoderManager.registry(new MultiChatResponseMessageParser());
 
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         MessageCodec messageCodec = new MessageCodec();
@@ -102,6 +106,8 @@ public class ServerSocketTest {
             System.out.print("=============Menu=============\n" +
                     "1: 和某人私聊\n" +
                     "2: 获取消息接收状态\n" +
+                    "3: 同步在线消息\n" +
+                    "4: 同步离线消息\n" +
                     "==============================\n" +
                     "请输入: ");
             int order = sc.nextInt();
@@ -109,6 +115,10 @@ public class ServerSocketTest {
                 chatWithSomeone(channel);
             } else if (order == 2) {
                 queryReceiveStatus(channel);
+            } else if (order == 3) {
+                syncMessage(channel, false);
+            } else if (order == 4) {
+                syncMessage(channel, true);
             }
         }
     }
@@ -131,6 +141,20 @@ public class ServerSocketTest {
 
     public void queryReceiveStatus(Channel channel) {
         channel.writeAndFlush(new QueryReceiveStatusMessage());
+    }
+
+    public void syncMessage(Channel channel, boolean offline) {
+        System.out.print("起始id: ");
+        int start = sc.nextInt();
+        System.out.print("结束id: ");
+        int end = sc.nextInt();
+        channel.writeAndFlush(
+                new SyncRequestMessage(SyncRequestMessageProto.SyncRequestMessage.newBuilder()
+                .setStart(start)
+                .setEnd(end)
+                .setOffline(offline)
+                .build())
+        );
     }
 
     public static void main(String[] args) throws Exception {

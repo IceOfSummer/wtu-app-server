@@ -23,12 +23,12 @@ class MessageCacheImplTest {
 
     @Test
     void testSaveAndQuery() {
-        Message hello = new Message(1, 1, "hello");
+        final int receiver = 1;
+        final int sender = 2;
+        Message hello = new Message(receiver, sender, "hello");
         hello.setMsgId(1);
-        messageCache.saveMessage(hello);
-        hello.setMsgId(2);
-        messageCache.saveMessage(hello);
-        List<String> ids = List.of("1", "2");
+        messageCache.saveMessage(hello, 4, 9);
+        List<String> ids = List.of("4");
         Assertions.assertEquals(messageCache.queryCachedMessage(1, ids).size(), ids.size());
     }
 

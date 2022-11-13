@@ -51,10 +51,19 @@ public class MessageCacheImpl implements MessageCache {
 
     @Override
     @Async
-    public void saveMessage(Message message) {
+    public void saveMessage(Message message, int receiveId, int sendId) {
         String messageKey = getMessageKey(message.getUid());
-        opsForHash().put(messageKey, String.valueOf(message.getMsgId()), message);
+        message.setMsgId(receiveId);
+        opsForHash().put(messageKey, String.valueOf(receiveId), message);
         redisTemplate.expire(messageKey, MESSAGE_EXPIRE_TIME);
+        // swap
+        messageKey = getMessageKey(message.getTo());
+        message.setMsgId(sendId);
+        int temp = message.getUid();
+        message.setUid(message.getTo());
+        message.setTo(temp);
+        message.setType(Message.SEND);
+        opsForHash().put(messageKey, String.valueOf(sendId), message);
     }
 
 }

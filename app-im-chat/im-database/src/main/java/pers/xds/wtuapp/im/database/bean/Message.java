@@ -31,6 +31,10 @@ public class Message implements Serializable {
 
     private Integer createTime;
 
+    public static final int SEND = 1;
+
+    public static final int RECEIVE = 0;
+
     /**
      * 0为接收，1为发送
      */

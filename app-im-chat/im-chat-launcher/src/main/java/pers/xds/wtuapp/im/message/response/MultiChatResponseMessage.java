@@ -20,9 +20,19 @@ public class MultiChatResponseMessage extends ResponseMessage {
         super(MESSAGE_TYPE, requestId);
         ChatResponseMessageProto.ChatResponseMessageGroup.Builder builder = ChatResponseMessageProto.ChatResponseMessageGroup.newBuilder();
         for (Message message : messages) {
-            builder.addMessages(buildSingle(message));
+            if (message != null) {
+                builder.addMessages(buildSingle(message));
+            }
         }
         this.messageGroup = builder.build();
+    }
+
+    /**
+     * for test
+     */
+    public MultiChatResponseMessage(ChatResponseMessageProto.ChatResponseMessageGroup messageGroup) {
+        super(MESSAGE_TYPE);
+        this.messageGroup = messageGroup;
     }
 
     private ChatResponseMessageProto.ChatResponseMessage buildSingle(Message message) {
@@ -39,5 +49,12 @@ public class MultiChatResponseMessage extends ResponseMessage {
     @Override
     public byte[] encode() {
         return messageGroup.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return "MultiChatResponseMessage{" +
+                "messageGroup=" + messageGroup.getMessagesList() +
+                '}';
     }
 }

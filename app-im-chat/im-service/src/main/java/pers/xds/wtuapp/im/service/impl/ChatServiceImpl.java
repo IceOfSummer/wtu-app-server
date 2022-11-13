@@ -59,7 +59,7 @@ public class ChatServiceImpl implements ChatService {
         int receiverId = pair.getSecond();
         userMessageMapper.insertSelfAndTargetMessage(message, receiverId, senderId);
         if (sync) {
-            messageCache.saveMessage(message);
+            messageCache.saveMessage(message, receiverId, senderId);
         }
         return pair;
     }
