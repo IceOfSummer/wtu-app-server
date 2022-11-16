@@ -17,7 +17,7 @@ public class MultiChatResponseMessage extends ResponseMessage {
     public static final byte MESSAGE_TYPE = 6;
 
     public MultiChatResponseMessage(short requestId, List<Message> messages) {
-        super(MESSAGE_TYPE, requestId);
+        super(requestId);
         ChatResponseMessageProto.ChatResponseMessageGroup.Builder builder = ChatResponseMessageProto.ChatResponseMessageGroup.newBuilder();
         for (Message message : messages) {
             if (message != null) {
@@ -45,6 +45,11 @@ public class MultiChatResponseMessage extends ResponseMessage {
                 .build();
     }
 
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
+    }
 
     @Override
     public byte[] encode() {

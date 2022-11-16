@@ -11,8 +11,9 @@ public class QueryReceiveStatusMessage extends RequestMessage {
     public static final byte MESSAGE_TYPE = 7;
 
 
-    public QueryReceiveStatusMessage() {
-        super(MESSAGE_TYPE);
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     @Override

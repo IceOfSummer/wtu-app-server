@@ -18,9 +18,13 @@ public class ChatRequestMessage extends RequestMessage {
     public static final byte MESSAGE_TYPE = 1;
 
     public ChatRequestMessage(ChatRequestMessageProto.ChatRequestMessage chatMessageAttach) {
-        super(MESSAGE_TYPE);
         this.message = chatMessageAttach.getContent();
         this.to = chatMessageAttach.getTo();
+    }
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     @Override

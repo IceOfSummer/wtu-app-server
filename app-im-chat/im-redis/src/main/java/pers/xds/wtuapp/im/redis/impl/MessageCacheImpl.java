@@ -54,6 +54,7 @@ public class MessageCacheImpl implements MessageCache {
     public void saveMessage(Message message, int receiveId, int sendId) {
         String messageKey = getMessageKey(message.getUid());
         message.setMsgId(receiveId);
+        message.setType(Message.RECEIVE);
         opsForHash().put(messageKey, String.valueOf(receiveId), message);
         redisTemplate.expire(messageKey, MESSAGE_EXPIRE_TIME);
         // swap

@@ -17,12 +17,8 @@ public class ChatResponseMessage extends ResponseMessage {
 
     public static final byte MESSAGE_TYPE = 4;
 
-    private ChatResponseMessage() {
-        super(MESSAGE_TYPE, SERVER_REQUEST_CODE);
-    }
 
     public ChatResponseMessage(pers.xds.wtuapp.im.database.bean.Message message, int msgId) {
-        this();
         this.message = ChatResponseMessageProto.ChatResponseMessage
                 .newBuilder()
                 .setMsgId(msgId)
@@ -36,8 +32,12 @@ public class ChatResponseMessage extends ResponseMessage {
      * <b>DEBUG使用</b>
      */
     public ChatResponseMessage(ChatResponseMessageProto.ChatResponseMessage message) {
-        this();
         this.message = message;
+    }
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     @Override

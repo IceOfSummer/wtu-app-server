@@ -23,8 +23,13 @@ public class ReceiveStatusMessage extends ResponseMessage {
     }
 
     public ReceiveStatusMessage(ReceiveStatusMessageProto.ReceiveStatus status) {
-        super(MESSAGE_TYPE, SERVER_REQUEST_CODE);
+        super(SERVER_REQUEST_CODE);
         this.status =  status;
+    }
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     @Override

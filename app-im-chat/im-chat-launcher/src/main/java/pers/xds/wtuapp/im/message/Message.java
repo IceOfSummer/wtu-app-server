@@ -28,8 +28,9 @@ public abstract class Message {
 
     /**
      * 消息类型
+     * @return 消息类型
      */
-    protected byte messageType;
+    public abstract byte getMessageType();
 
     /**
      * 当服务器主动给客户端发送消息时，使用该requestId来进行区分
@@ -43,19 +44,14 @@ public abstract class Message {
 
     /**
      * 构造一个消息，但不提供requestId，一般用于解析用户发来的请求时，自动填上requestId
-     * @see Message#Message(byte, short)
      */
-    public Message(byte messageType) {
-        this.messageType = messageType;
-    }
+    public Message() {}
 
     /**
      * 构造一个消息
-     * @param messageType 消息类型
      * @param requestId 请求序号
      */
-    public Message(byte messageType, short requestId) {
-        this.messageType = messageType;
+    public Message(short requestId) {
         this.requestId = requestId;
     }
 
@@ -67,6 +63,8 @@ public abstract class Message {
         }
 
     }
+
+
 
     /**
      * 将消息的<b>数据体</b>进行编码
@@ -80,14 +78,6 @@ public abstract class Message {
 
     public void setRequestId(short requestId) {
         this.requestId = requestId;
-    }
-
-    public byte getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(byte messageType) {
-        this.messageType = messageType;
     }
 
 }

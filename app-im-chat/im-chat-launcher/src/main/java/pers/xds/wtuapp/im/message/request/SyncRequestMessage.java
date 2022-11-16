@@ -15,8 +15,12 @@ public class SyncRequestMessage extends RequestMessage {
     private final SyncRequestMessageProto.SyncRequestMessage message;
 
     public SyncRequestMessage(SyncRequestMessageProto.SyncRequestMessage syncRequestMessage) {
-        super(MESSAGE_TYPE);
         this.message = syncRequestMessage;
+    }
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     @Override

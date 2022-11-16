@@ -7,8 +7,4 @@ package pers.xds.wtuapp.im.message;
  */
 public abstract class RequestMessage extends Message {
 
-    public RequestMessage(byte orderType) {
-        super(orderType);
-    }
-
 }

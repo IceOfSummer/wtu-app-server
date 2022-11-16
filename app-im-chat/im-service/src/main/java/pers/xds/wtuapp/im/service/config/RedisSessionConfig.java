@@ -1,4 +1,4 @@
-package pers.xds.wtuapp.im.config;
+package pers.xds.wtuapp.im.service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

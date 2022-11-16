@@ -15,7 +15,7 @@ public class ServerResponseMessage extends ResponseMessage {
     public static final byte MESSAGE_TYPE = 2;
 
     public ServerResponseMessage(boolean success, short requestId, String data) {
-        super(MESSAGE_TYPE, requestId);
+        super(requestId);
         ServerResponseMessageProto.ServerResponseMessage.Builder builder = ServerResponseMessageProto.ServerResponseMessage.newBuilder()
                 .setSuccess(success)
                 .setRequestId(requestId);
@@ -27,6 +27,11 @@ public class ServerResponseMessage extends ResponseMessage {
 
     public ServerResponseMessage(boolean success, short requestId) {
         this(success, requestId, null);
+    }
+
+    @Override
+    public byte getMessageType() {
+        return MESSAGE_TYPE;
     }
 
     public ServerResponseMessage(short requestId) {
