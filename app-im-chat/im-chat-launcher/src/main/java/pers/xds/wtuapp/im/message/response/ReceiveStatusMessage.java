@@ -16,15 +16,19 @@ public class ReceiveStatusMessage extends ResponseMessage {
 
     private final ReceiveStatusMessageProto.ReceiveStatus status;
 
-    public ReceiveStatusMessage(int receivedId) {
-        this(ReceiveStatusMessageProto.ReceiveStatus.newBuilder()
+    public ReceiveStatusMessage(int receivedId, short requestId) {
+        super(requestId);
+        this.status = ReceiveStatusMessageProto.ReceiveStatus.newBuilder()
                 .setReceivedId(receivedId)
-                .build());
+                .build();
     }
 
+    /**
+     * for test
+     */
     public ReceiveStatusMessage(ReceiveStatusMessageProto.ReceiveStatus status) {
         super(SERVER_REQUEST_CODE);
-        this.status =  status;
+        this.status = status;
     }
 
     @Override

@@ -35,6 +35,6 @@ public class ReceiveStatusMessageHandler extends SimpleChannelInboundHandler<Que
         if (principal == null) {
             return;
         }
-        ctx.writeAndFlush(new ReceiveStatusMessage(chatService.queryMaxMessageId(principal.getId())));
+        ctx.writeAndFlush(new ReceiveStatusMessage(chatService.queryMaxMessageId(principal.getId()), msg.getRequestId()));
     }
 }
