@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pers.xds.wtuapp.im.config.IdleHandlerFactory;
 import pers.xds.wtuapp.im.handler.*;
 import pers.xds.wtuapp.im.message.Message;
 import pers.xds.wtuapp.im.protocol.MessageCodec;
@@ -25,9 +26,9 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final MessageCodec MESSAGE_CODEC = new MessageCodec();
 
-    private static final IdleEventHandler IDLE_EVENT_HANDLER = new IdleEventHandler();
-
     private static final ChannelExceptionHandler CHANNEL_EXCEPTION_HANDLER = new ChannelExceptionHandler();
+
+    public static final IdleEventHandler IDLE_EVENT_HANDLER = new IdleEventHandler();
 
     private SslContext sslContext;
 
@@ -42,6 +43,12 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
     private SyncRequestMessageHandler syncRequestMessageHandler;
 
     private ReceiveStatusMessageHandler receiveStatusMessageHandler;
+    private IdleHandlerFactory idleHandlerFactory;
+
+    @Autowired
+    public void setIdleHandlerFactory(IdleHandlerFactory idleHandlerFactory) {
+        this.idleHandlerFactory = idleHandlerFactory;
+    }
 
     @Autowired
     public void setReceiveStatusMessageHandler(ReceiveStatusMessageHandler receiveStatusMessageHandler) {
@@ -85,6 +92,7 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
         pipeline.addLast(sslContext.newHandler(ch.alloc()))
                 .addLast(new IdleStateHandler(1000, 0, 0))
+                .addLast(idleHandlerFactory.idleStateHandler())
                 .addLast(IDLE_EVENT_HANDLER)
                 .addLast(new Message.MessageFrameDecoder())
                 .addLast(connectActiveHandler)

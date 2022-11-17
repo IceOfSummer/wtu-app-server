@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author HuPeng
  * @date 2022-10-25 22:02
  */
-@ConfigurationProperties(prefix = "chat.ssl")
+@ConfigurationProperties(prefix = "im.ssl")
 public class SslConfigurationProperties {
 
     private String keyPath;

@@ -5,7 +5,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 
 import java.util.concurrent.TimeUnit;
@@ -16,12 +15,15 @@ import java.util.concurrent.TimeUnit;
  * @author DeSen Xu
  * @date 2022-09-02 21:37
  */
-@Component
 public class ConnectActiveHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectActiveHandler.class);
 
-    private static final int EXPIRE_TIME = 10;
+    public ConnectActiveHandler(int expireTime) {
+        this.expireTime = expireTime;
+    }
+
+    public int expireTime;
 
     @Override
     public boolean isSharable() {
@@ -36,7 +38,7 @@ public class ConnectActiveHandler extends ChannelInboundHandlerAdapter {
                 ctx.channel().close();
                 log.debug("{}长时间未登录，已经关闭连接", ctx);
             }
-        }, EXPIRE_TIME, TimeUnit.SECONDS);
+        }, expireTime, TimeUnit.SECONDS);
         super.channelActive(ctx);
     }
 }
