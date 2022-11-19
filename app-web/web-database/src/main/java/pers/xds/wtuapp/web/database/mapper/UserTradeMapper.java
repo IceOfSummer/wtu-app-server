@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import pers.xds.wtuapp.web.database.bean.UserTrade;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+
 /**
 * @author HuPeng
 * @description 针对表【user_trade(用户交易记录表)】的数据库操作Mapper
@@ -14,12 +15,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 @Mapper
 public interface UserTradeMapper extends BaseMapper<UserTrade> {
 
-    String COLUMN_USER_ID = "user_id";
-
-    String COLUMN_STATUS = "status";
-
-    String COLUMN_ORDER_ID = "order_id";
-
     /**
      * 添加用户交易记录
      * @param orderId 订单id
@@ -27,6 +22,7 @@ public interface UserTradeMapper extends BaseMapper<UserTrade> {
      * @param seller 卖家
      */
     void addUserTrade(@Param("order_id") int orderId, @Param("buyer") int buyer, @Param("seller") int seller);
+
 }
 
 

@@ -13,14 +13,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
 
-    String COLUMN_ORDER_ID = "order_id";
-
-    String COLUMN_COMMODITY_ID = "commodity_id";
-
-    String COLUMN_CREATE_TIME = "create_time";
-
-    String COLUMN_REMARK = "remark";
-
 }
 
 

@@ -8,7 +8,7 @@ import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.OrderService;
-import pers.xds.wtuapp.web.service.bean.OrderDetail;
+import pers.xds.wtuapp.web.database.view.OrderDetail;
 
 import java.util.List;
 

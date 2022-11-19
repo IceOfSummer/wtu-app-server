@@ -1,9 +1,10 @@
-package pers.xds.wtuapp.web.service.bean;
+package pers.xds.wtuapp.web.database.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.database.bean.Order;
+import pers.xds.wtuapp.web.database.bean.UserTrade;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
 
 import java.sql.Timestamp;
@@ -25,15 +26,21 @@ public class OrderDetail {
 
     private String remark;
 
-    private int ownerId;
-
     private String name;
 
     private double price;
 
     private String tradeLocation;
 
+    /**
+     * @see UserTrade#getStatus()
+     */
     private Integer status;
+
+    /**
+     * @see UserTrade#getType()
+     */
+    private Integer type;
 
     public OrderDetail() {
     }
@@ -43,7 +50,6 @@ public class OrderDetail {
         this.commodityId = commodity.getCommodityId();
         this.createTime = order.getCreateTime();
         this.remark = order.getRemark();
-        this.ownerId = commodity.getOwnerId();
         this.name = commodity.getName();
         this.price = commodity.getPrice();
         this.tradeLocation = commodity.getTradeLocation();
@@ -81,14 +87,6 @@ public class OrderDetail {
         this.remark = remark;
     }
 
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public String getName() {
         return name;
     }
@@ -119,5 +117,28 @@ public class OrderDetail {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "orderId=" + orderId +
+                ", commodityId=" + commodityId +
+                ", createTime=" + createTime +
+                ", remark='" + remark + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", tradeLocation='" + tradeLocation + '\'' +
+                ", status=" + status +
+                ", type=" + type +
+                '}';
     }
 }

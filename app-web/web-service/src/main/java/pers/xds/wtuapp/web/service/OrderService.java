@@ -1,6 +1,6 @@
 package pers.xds.wtuapp.web.service;
 
-import pers.xds.wtuapp.web.service.bean.OrderDetail;
+import pers.xds.wtuapp.web.database.view.OrderDetail;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import java.util.List;
 public interface OrderService {
 
     /**
-     * 获取用户正在交易的商品记录
+     * 获取用户交易记录(不管是否已经完成)
      * @param userid 用户id
-     * @param page 第几页
+     * @param page 第几页, 从0开始
      * @param size 每页最多显示多少行
      * @return 正在交易的商品记录
      */

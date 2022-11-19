@@ -4,16 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderMapper">
 
-    <resultMap id="BaseResultMap" type="pers.xds.wtuapp.web.database.bean.Order">
-            <id property="orderId" column="order_id" jdbcType="INTEGER"/>
-            <result property="commodityId" column="commodity_id" jdbcType="INTEGER"/>
-            <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        order_id,commodity_id,customer_id,
-        create_time,status
-    </sql>
 </mapper>

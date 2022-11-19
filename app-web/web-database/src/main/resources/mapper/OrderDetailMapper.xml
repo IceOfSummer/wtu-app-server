@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderDetailMapper">
+
+
+    <select id="selectOrders" resultType="pers.xds.wtuapp.web.database.view.OrderDetail">
+        SELECT
+            ut.order_id as orderId,
+            o.commodity_id as `commodityId`,
+            o.create_time as `createTime`,
+            o.remark as `remark`,
+            c.name as `name`,
+            c.price as `price`,
+            c.trade_location as `tradeLocation`,
+            ut.status as `status`,
+            ut.type as type
+        FROM user_trade ut
+                 LEFT JOIN `order` o USING(order_id)
+                 LEFT JOIN `commodity` c USING(commodity_id)
+        WHERE ut.user_id = #{uid}
+        <if test="status != null">
+            AND ut.status = #{status}
+        </if>
+    </select>
+</mapper>
