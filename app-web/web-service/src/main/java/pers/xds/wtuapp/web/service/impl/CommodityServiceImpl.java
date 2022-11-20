@@ -7,7 +7,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
+import pers.xds.wtuapp.web.database.bean.TradeStat;
 import pers.xds.wtuapp.web.database.mapper.OrderMapper;
+import pers.xds.wtuapp.web.database.mapper.TradeStatMapper;
 import pers.xds.wtuapp.web.database.mapper.UserTradeMapper;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
@@ -37,6 +39,13 @@ public class CommodityServiceImpl implements CommodityService {
 
     private UserTradeMapper userTradeMapper;
 
+    private TradeStatMapper tradeStatMapper;
+
+    @Autowired
+    public void setTradeStatMapper(TradeStatMapper tradeStatMapper) {
+        this.tradeStatMapper = tradeStatMapper;
+    }
+
     @Autowired
     public void setUserTradeMapper(UserTradeMapper userTradeMapper) {
         this.userTradeMapper = userTradeMapper;
@@ -57,9 +66,28 @@ public class CommodityServiceImpl implements CommodityService {
         this.commodityMapper = commodityMapper;
     }
 
+    /**
+     * 每个人最多可以发布的商品数量
+     */
+    public static final int MAX_ACTIVE_COMMODITY = 10;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertCommodity(Commodity commodity) {
+    public int insertCommodity(Commodity commodity) {
+        Integer ownerId = commodity.getOwnerId();
+        if (ownerId == null) {
+            return -1;
+        }
+        Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
+        if (cnt == null) {
+            TradeStat tradeStat = new TradeStat(ownerId);
+            tradeStat.setSellingCount(1);
+            tradeStatMapper.insert(tradeStat);
+        } else if (cnt > MAX_ACTIVE_COMMODITY) {
+            return -2;
+        } else {
+            tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
+        }
         // 使用自动生成的id
         commodity.setCommodityId(null);
         commodityMapper.insert(commodity);
@@ -71,6 +99,7 @@ public class CommodityServiceImpl implements CommodityService {
                 commodity.getPreviewImage(),
                 commodity.getTradeLocation()
         ));
+        return commodity.getCommodityId();
     }
 
     @Nullable
@@ -116,6 +145,12 @@ public class CommodityServiceImpl implements CommodityService {
         }
         Page<EsCommodity> esCommodities = commodityRepository.searchByName(commodityName, Pageable.ofSize(size).withPage(page));
         return esCommodities.toList();
+    }
+
+    @Override
+    public int querySellingCount(int uid) {
+        Integer count = tradeStatMapper.selectSellingCount(uid);
+        return count == null ? 0 : count;
     }
 
 

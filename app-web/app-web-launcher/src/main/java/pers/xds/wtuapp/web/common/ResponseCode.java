@@ -20,7 +20,7 @@ public enum ResponseCode {
     /**
      * 用户名或密码错误
      */
-    WRONG_CREDENTIALS(2, "用户名或密码错误"),
+    WRONG_CREDENTIALS(2, "用户名或密码错误", HttpStatus.FORBIDDEN),
     /**
      * 目标不可用
      */
@@ -36,7 +36,12 @@ public enum ResponseCode {
     /**
      * 流量限制
      */
-    RATE_LIMIT(6, "您的请求次数过于频繁，请稍后再试");
+    RATE_LIMIT(6, "您的请求次数过于频繁"),
+    /**
+     * 数量限制
+     * 例如添加某个记录到达了上限
+     */
+    COUNT_LIMIT(7, "数量限制");
 
     public final int code;
 

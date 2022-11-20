@@ -42,8 +42,13 @@ public class CommodityController {
     public ResponseTemplate<Integer> createCommodity(@Validated Commodity commodity) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         commodity.setOwnerId(userPrincipal.getId());
-        commodityService.insertCommodity(commodity);
-        return ResponseTemplate.success(commodity.getCommodityId());
+        int id = commodityService.insertCommodity(commodity);
+        if (id == -1) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        } else if (id == -2) {
+            return ResponseTemplate.fail(ResponseCode.COUNT_LIMIT);
+        }
+        return ResponseTemplate.success(id);
     }
 
     /**
@@ -92,6 +97,15 @@ public class CommodityController {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST, null);
         }
         return ResponseTemplate.success(commodityService.searchCommodityByName(search, page, size));
+    }
+
+    /**
+     * 获取用户正在售卖的商品数量
+     */
+    @GetMapping("selling_count")
+    public ResponseTemplate<Integer> getSellingCount() {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        return ResponseTemplate.success(commodityService.querySellingCount(userPrincipal.getId()));
     }
 
 }

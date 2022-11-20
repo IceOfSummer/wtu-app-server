@@ -1,17 +1,15 @@
 package pers.xds.wtuapp.web.database.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import net.minidev.json.annotate.JsonIgnore;
-import java.io.Serializable;
 
 /**
  * 交易统计
  * @author DeSen Xu
  */
 @TableName(value ="trade_stat")
-public class TradeStat implements Serializable {
+public class TradeStat {
     /**
      * 用户id
      */
@@ -39,8 +37,17 @@ public class TradeStat implements Serializable {
      */
     private Integer successOrder;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 当前正在售卖的商品数量
+     */
+    private Integer sellingCount;
+
+    public TradeStat() {
+    }
+
+    public TradeStat(Integer userId) {
+        this.userId = userId;
+    }
 
     /**
      * 用户id
@@ -112,16 +119,23 @@ public class TradeStat implements Serializable {
         this.successOrder = successOrder;
     }
 
+    public Integer getSellingCount() {
+        return sellingCount;
+    }
+
+    public void setSellingCount(Integer sellingCount) {
+        this.sellingCount = sellingCount;
+    }
+
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-                " [" +
-                ", userId=" + userId +
+        return "TradeStat{" +
+                "userId=" + userId +
                 ", income=" + income +
                 ", expenditure=" + expenditure +
                 ", sumOrder=" + sumOrder +
                 ", successOrder=" + successOrder +
-                ", serialVersionUID=" + serialVersionUID +
-                "]";
+                ", sellingCount=" + sellingCount +
+                '}';
     }
 }

@@ -14,8 +14,9 @@ public interface CommodityService {
     /**
      * 插入货物
      * @param commodity 货物, <b>插入成功后会自动为其id字段赋值</b>
+     * @return 新增货物的id, 当返回-1时表示参数有误，当返回-2时，表示用户已经到达的商品发布的数量上限
      */
-    void insertCommodity(Commodity commodity);
+    int insertCommodity(Commodity commodity);
 
     /**
      * 查询商品
@@ -51,6 +52,13 @@ public interface CommodityService {
      * @return 相关商品内容
      */
     List<EsCommodity> searchCommodityByName(String commodityName, int page, int size);
+
+    /**
+     * 获取用户正在出售的商品数量
+     * @param uid 用户id
+     * @return 正在出售的商品数量
+     */
+    int querySellingCount(int uid);
 
 
 }

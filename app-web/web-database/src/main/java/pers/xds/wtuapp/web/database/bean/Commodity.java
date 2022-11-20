@@ -36,7 +36,7 @@ public class Commodity {
      * 商品id
      */
     @TableId(type = IdType.AUTO)
-    @NotNull
+    @Null
     private Integer commodityId;
 
     /**
