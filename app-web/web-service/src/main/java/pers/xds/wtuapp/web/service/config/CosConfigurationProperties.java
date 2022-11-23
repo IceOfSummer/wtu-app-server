@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author DeSen Xu
  * @date 2022-09-11 17:04
  */
-@ConfigurationProperties(prefix = "cdn")
-public class CdnConfigurationProperties {
+@ConfigurationProperties(prefix = "cos")
+public class CosConfigurationProperties {
 
     /**
      * secretId
@@ -38,7 +38,7 @@ public class CdnConfigurationProperties {
     private String region;
 
     /**
-     * 运行的操作
+     * 允许的操作
      */
     private String[] allowActions;
 

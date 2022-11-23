@@ -42,7 +42,6 @@
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>pers.xds.wtuapp.web</groupId>

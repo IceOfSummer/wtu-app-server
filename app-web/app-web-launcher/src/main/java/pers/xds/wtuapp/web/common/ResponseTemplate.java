@@ -1,12 +1,12 @@
 package pers.xds.wtuapp.web.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 响应体模板<p/>
@@ -32,18 +32,21 @@ public class ResponseTemplate<D> {
     @Nullable
     public D data;
 
-    @JsonIgnore
-    private final HttpStatus httpStatus;
-
     public ResponseTemplate(ResponseCode responseCode) {
         this(responseCode, null);
     }
 
     public ResponseTemplate(ResponseCode responseCode, @Nullable D data) {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes != null) {
+            HttpServletResponse response = requestAttributes.getResponse();
+            if (response != null) {
+                response.setStatus(responseCode.httpStatus.value());
+            }
+        }
         code = responseCode.code;
         message = responseCode.message;
         this.data = data;
-        this.httpStatus = responseCode.httpStatus;
     }
 
     public static ResponseTemplate<Void> success() {
@@ -72,10 +75,6 @@ public class ResponseTemplate<D> {
             e.printStackTrace();
             return JSON_FALLBACK_MESSAGE;
         }
-    }
-
-    public ResponseEntity<ResponseTemplate<D>> toResponseEntity() {
-        return ResponseEntity.status(httpStatus).body(this);
     }
 
 }

@@ -10,3 +10,7 @@ spring:
 mybatis-plus:
   configuration:
     cache-enabled: false
+
+cos:
+  allowActions:
+    - 'name/cos:PutObject'
