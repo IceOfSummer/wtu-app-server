@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.minidev.json.annotate.JsonIgnore;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
+
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
@@ -55,6 +57,7 @@ public class Commodity {
      * 商品描述
      */
     @NotNull
+    @NotEmpty
     @Size(max = 255)
     private String description;
 

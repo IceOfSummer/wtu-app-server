@@ -57,6 +57,7 @@ public class CommodityController {
      * @return 商品详细信息，可能为空
      */
     @GetMapping("{id}")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<Commodity> queryCommodity(@PathVariable int id) {
         return ResponseTemplate.success(commodityService.queryCommodity(id));
     }
@@ -70,6 +71,10 @@ public class CommodityController {
     public ResponseTemplate<Void> lockCommodity(@PathVariable int id,
                                         @RequestParam(value = "r", required = false) String remark) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        if (id == userPrincipal.getId()) {
+            // 不能自己锁自己的商品
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
         boolean result = commodityService.lockCommodity(id, userPrincipal.getId(), remark);
         if (result) {
             return ResponseTemplate.success();
@@ -90,6 +95,7 @@ public class CommodityController {
      * @return 搜索内容
      */
     @GetMapping("search")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<EsCommodity>> searchCommodityByName(@RequestParam("s") String search,
                                                                      @RequestParam(value = "z", required = false, defaultValue = "10") int size,
                                                                      @RequestParam(value = "p", required = false, defaultValue = "0") int page) {

@@ -41,8 +41,9 @@ public class CosController {
     @GetMapping("/secret/userspace")
     public ResponseTemplate<SignWrapper> getUserSpaceUploadSecret(int count,
                                                               @RequestParam(required = false, defaultValue = "") String type) {
+        final int maxTypeLength = 5;
         final int maxAllUploadCount = 5;
-        if (count >= maxAllUploadCount) {
+        if (type.length() > maxTypeLength || count >= maxAllUploadCount) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();

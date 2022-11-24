@@ -19,4 +19,8 @@ public interface SecurityConstant {
      */
     String EL_AUTHENTICATED = "isAuthenticated()";
 
+    /**
+     * 允许所有用户访问
+     */
+    String EL_PERMIT_ALL = "permitAll";
 }

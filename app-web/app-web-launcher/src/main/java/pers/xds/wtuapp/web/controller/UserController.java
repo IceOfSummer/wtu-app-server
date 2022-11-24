@@ -33,6 +33,7 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("/info/{id}")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<UserInfo> queryUserInfo(@PathVariable int id) {
         return ResponseTemplate.success(userService.queryUserInfo(id));
     }
