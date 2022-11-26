@@ -24,12 +24,6 @@ public class CosConfiguration {
 
     @Bean
     CosProvider cosProvider() {
-        return new TencentCloudCosProviderImpl(
-                cosConfigurationProperties.getSecretKey(),
-                cosConfigurationProperties.getSecretId(),
-                cosConfigurationProperties.getDurationSeconds(),
-                cosConfigurationProperties.getBucket(),
-                cosConfigurationProperties.getRegion()
-        );
+        return new TencentCloudCosProviderImpl(cosConfigurationProperties);
     }
 }

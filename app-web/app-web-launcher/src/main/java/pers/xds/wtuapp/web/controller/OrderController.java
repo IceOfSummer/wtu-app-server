@@ -45,6 +45,7 @@ public class OrderController {
      * @return 用户出售的商品
      */
     @GetMapping("/{id}/sold")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<OrderDetail>> queryUserSoldRecordSimply(@PathVariable int id,
                                                                           @RequestParam(value = "p", required = false, defaultValue = "0") int page,
                                                                           @RequestParam(value = "s", required = false, defaultValue = "5") int size) {

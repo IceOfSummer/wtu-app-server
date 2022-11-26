@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.web.redis.CosCache;
 import pers.xds.wtuapp.web.service.CosService;
-import pers.xds.wtuapp.web.service.bean.SignWrapper;
 import pers.xds.wtuapp.web.service.config.cos.CosProvider;
 import pers.xds.wtuapp.web.service.config.cos.SignInfo;
 import pers.xds.wtuapp.web.service.config.cos.tencent.TencentCloudCosProviderImpl;
@@ -37,15 +36,14 @@ public class TencentCloudCosServiceImpl implements CosService {
 
 
     @Override
-    public SignWrapper requireUserspaceUploadSign(int uid, String[] filenames)  {
+    public SignInfo[] requireUserspaceUploadSign(int uid, String[] filenames)  {
         final int maxAllowTimes = 20;
         int keyGenerateTimes = cosCache.getKeyGenerateTimes(uid);
         if (keyGenerateTimes > maxAllowTimes) {
             return null;
         }
         try {
-            SignInfo[] signInfos = cosProvider.signUserspaceUpload(uid, filenames);
-            return new SignWrapper(cosProvider.getToken(), signInfos);
+            return cosProvider.signUserspaceUpload(uid, filenames);
         } catch (Exception e) {
             log.error("", e);
             return null;

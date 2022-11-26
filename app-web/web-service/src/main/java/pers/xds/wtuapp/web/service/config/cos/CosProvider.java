@@ -17,11 +17,6 @@ public interface CosProvider {
      */
     SignInfo[] signUserspaceUpload(int uid, String[] filenames) throws Exception;
 
-    /**
-     * 获取token
-     * @return token
-     * @throws Exception 生成临时密匙错误
-     */
-    String getToken() throws Exception;
+
 
 }

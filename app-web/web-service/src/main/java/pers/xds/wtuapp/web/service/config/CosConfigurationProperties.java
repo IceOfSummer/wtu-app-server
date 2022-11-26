@@ -42,6 +42,15 @@ public class CosConfigurationProperties {
      */
     private String[] allowActions;
 
+    /**
+     * 图像处理队列id
+     */
+    private String imageProcessQueueId;
+
+    /**
+     * webp转换的模板id
+     */
+    private String webpCastTemplateId;
 
     public String getSecretId() {
         return secretId;
@@ -89,5 +98,21 @@ public class CosConfigurationProperties {
 
     public void setAllowActions(String[] allowActions) {
         this.allowActions = allowActions;
+    }
+
+    public String getWebpCastTemplateId() {
+        return webpCastTemplateId;
+    }
+
+    public void setWebpCastTemplateId(String webpCastTemplateId) {
+        this.webpCastTemplateId = webpCastTemplateId;
+    }
+
+    public String getImageProcessQueueId() {
+        return imageProcessQueueId;
+    }
+
+    public void setImageProcessQueueId(String imageProcessQueueId) {
+        this.imageProcessQueueId = imageProcessQueueId;
     }
 }

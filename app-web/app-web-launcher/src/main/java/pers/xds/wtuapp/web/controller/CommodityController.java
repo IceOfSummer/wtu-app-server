@@ -34,7 +34,16 @@ public class CommodityController {
 
 
     /**
-     * 创建一个商品
+     * 创建一个商品。
+     * <p>
+     * 商品的预览图与上传文件下发的指定路径不同，{@link pers.xds.wtuapp.web.service.config.cos.SignInfo#path}一般为<code>image/todo/xx</code>
+     * 该路径下一般存放未处理(未压缩和格式转换)的图片，在图片处理完毕后，图片将自动移动到用户空间下。
+     * <p>
+     * 例如用户1上传了文件到 <code>image/todo/file.png</code>，在服务器进行处理后，会将图片转换并存放到<code>image/1/file.webp</code>下
+     * <p>
+     * 例如用户2上传了文件到 <code>image/todo/file-xxx.png</code>，在服务器进行处理后，会将图片转换并存放到<code>image/2/file-xxx.webp</code>下
+     * <p>
+     * <b>因此commodity的图片格式一定要满足：<code>image/{用户id}/xxx.webp</code></b>
      * @param commodity 商品参数
      * @return 创建成功后的商品id
      */

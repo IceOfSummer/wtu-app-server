@@ -9,7 +9,7 @@ import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.CosService;
-import pers.xds.wtuapp.web.service.bean.SignWrapper;
+import pers.xds.wtuapp.web.service.config.cos.SignInfo;
 
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public class CosController {
      * @return 对象存储桶访问密匙
      */
     @GetMapping("/secret/userspace")
-    public ResponseTemplate<SignWrapper> getUserSpaceUploadSecret(int count,
+    public ResponseTemplate<SignInfo[]> getUserSpaceUploadSecret(int count,
                                                               @RequestParam(required = false, defaultValue = "") String type) {
         final int maxTypeLength = 5;
         final int maxAllUploadCount = 5;
@@ -51,11 +51,11 @@ public class CosController {
         for (int i = 0; i < count; i++) {
             filenames[i] = UUID.randomUUID() + type;
         }
-        SignWrapper response = cosService.requireUserspaceUploadSign(userPrincipal.getId(), filenames);
-        if (response == null) {
+        SignInfo[] signInfos = cosService.requireUserspaceUploadSign(userPrincipal.getId(), filenames);
+        if (signInfos == null) {
             return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
         }
-        return ResponseTemplate.success(response);
+        return ResponseTemplate.success(signInfos);
     }
 
 }

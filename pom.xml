@@ -29,6 +29,7 @@
         <rocket-mq.version>4.9.1</rocket-mq.version>
         <cos-api.version>5.6.89</cos-api.version>
         <cos-sts-api.version>3.1.0</cos-sts-api.version>
+        <dom4j.version>1.6.1</dom4j.version>
     </properties>
 
     <dependencyManagement>
@@ -84,6 +85,11 @@
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos-sts_api</artifactId>
                 <version>${cos-sts-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
