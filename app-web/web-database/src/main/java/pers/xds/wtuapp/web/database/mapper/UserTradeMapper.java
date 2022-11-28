@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface UserTradeMapper extends BaseMapper<UserTrade> {
 
     /**
-     * 添加用户交易记录
+     * 添加用户交易记录，该操作会分别为卖家和买家添加记录
      * @param orderId 订单id
      * @param buyer 买家
      * @param seller 卖家

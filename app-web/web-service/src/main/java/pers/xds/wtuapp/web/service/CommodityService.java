@@ -14,9 +14,11 @@ public interface CommodityService {
     /**
      * 插入货物
      * @param commodity 货物, <b>插入成功后会自动为其id字段赋值</b>
-     * @return 新增货物的id, 当返回-1时表示参数有误，当返回-2时，表示用户已经到达的商品发布的数量上限
+     * @return 新增货物的id<p>
+     * - {@link ServiceCode#NOT_EXIST} 表示商品不存在<p>
+     * - {@link ServiceCode#NOT_AVAILABLE} 表示用户已经达到商品上传上限<p>
      */
-    int insertCommodity(Commodity commodity);
+    ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity);
 
     /**
      * 查询商品
@@ -31,10 +33,15 @@ public interface CommodityService {
      * 锁定商品，并创建交易记录
      * @param commodityId 商品id
      * @param userId 用户id
+     * @param count 要锁定多少个
      * @param remark 用户备注
-     * @return 是否锁定成功, 若返回false，表示商品已经被锁定了，<b>或者商品不存在</b>
+     * @return
+     * - {@link ServiceCode#BAD_REQUEST}表示商品数量不足;<p>
+     * - {@link ServiceCode#NOT_EXIST}表示商品不存在;<p>
+     * - {@link ServiceCode#NOT_AVAILABLE}表示商品不可用，如商品下架或者用户自己买自己的商品<p>
+     * - {@link ServiceCode#CONCURRENT_ERROR}表示暂时锁定失败，稍后再试
      */
-    boolean lockCommodity(int commodityId, int userId, String remark);
+    ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark);
 
     /**
      * 搜索货物, 按照默认排序

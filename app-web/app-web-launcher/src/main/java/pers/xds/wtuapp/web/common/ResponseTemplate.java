@@ -37,6 +37,7 @@ public class ResponseTemplate<D> {
     }
 
     public ResponseTemplate(ResponseCode responseCode, @Nullable D data) {
+        this(responseCode.code, responseCode.message, data);
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
             HttpServletResponse response = requestAttributes.getResponse();
@@ -44,8 +45,11 @@ public class ResponseTemplate<D> {
                 response.setStatus(responseCode.httpStatus.value());
             }
         }
-        code = responseCode.code;
-        message = responseCode.message;
+    }
+
+    public ResponseTemplate(int code, String message, @Nullable D data) {
+        this.code = code;
+        this.message = message;
         this.data = data;
     }
 
@@ -63,6 +67,10 @@ public class ResponseTemplate<D> {
 
     public static <D> ResponseTemplate<D> fail(ResponseCode code, @Nullable D data) {
         return new ResponseTemplate<>(code, data);
+    }
+
+    public static <D> ResponseTemplate<D> fail(ResponseCode code, String customMessage) {
+        return new ResponseTemplate<>(code.code, customMessage, null);
     }
 
     private static final String JSON_FALLBACK_MESSAGE = "{code:-1}";

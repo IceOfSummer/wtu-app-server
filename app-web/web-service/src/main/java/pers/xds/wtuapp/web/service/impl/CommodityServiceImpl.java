@@ -16,6 +16,8 @@ import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.database.mapper.CommodityMapper;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.es.repository.CommodityRepository;
+import pers.xds.wtuapp.web.service.ServiceCode;
+import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 
 import java.util.List;
 
@@ -73,10 +75,10 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertCommodity(Commodity commodity) {
+    public ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity) {
         Integer ownerId = commodity.getOwnerId();
         if (ownerId == null) {
-            return -1;
+            return ServiceCodeWrapper.fail(ServiceCode.NOT_EXIST);
         }
         Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
         if (cnt == null) {
@@ -84,7 +86,7 @@ public class CommodityServiceImpl implements CommodityService {
             tradeStat.setSellingCount(1);
             tradeStatMapper.insert(tradeStat);
         } else if (cnt > MAX_ACTIVE_COMMODITY) {
-            return -2;
+            return ServiceCodeWrapper.fail(ServiceCode.NOT_AVAILABLE);
         } else {
             tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
         }
@@ -99,7 +101,7 @@ public class CommodityServiceImpl implements CommodityService {
                 commodity.getPreviewImage(),
                 commodity.getTradeLocation()
         ));
-        return commodity.getCommodityId();
+        return ServiceCodeWrapper.success(commodity.getCommodityId());
     }
 
     @Nullable
@@ -110,27 +112,26 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean lockCommodity(int commodityId, int userId, String remark) {
-        Commodity commodity = commodityMapper.selectById(commodityId);
+    public ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark) {
+        Commodity commodity = commodityMapper.selectCountInfo(commodityId);
         if (commodity == null) {
-            return false;
+            return ServiceCodeWrapper.fail(ServiceCode.NOT_EXIST);
         }
-        if (commodity.getStatus() != Commodity.STATUS_ACTIVE) {
-            return false;
+        if (commodity.getStatus() != Commodity.STATUS_ACTIVE || commodity.getOwnerId() == userId) {
+            return ServiceCodeWrapper.fail(ServiceCode.NOT_AVAILABLE);
         }
-        Commodity updateCommodity = new Commodity();
-        updateCommodity.setCommodityId(commodityId);
-        updateCommodity.setStatus(Commodity.STATUS_TRADING);
-        updateCommodity.setVersion(commodity.getVersion());
-        if (commodityMapper.updateById(updateCommodity) == 1) {
+        if (commodity.getCount() < count) {
+            return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
+        }
+        if (commodityMapper.updateCommodity(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
             int ownerId = commodity.getOwnerId();
             // 添加交易记录
-            Order order = new Order(commodityId, userId, remark, ownerId);
+            Order order = new Order(commodityId, userId, remark, ownerId, count);
             orderMapper.insert(order);
             userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId);
-            return true;
+            return ServiceCodeWrapper.success(order.getOrderId());
         }
-        return false;
+        return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public int querySellingCount(int uid) {
-        Integer count = tradeStatMapper.selectSellingCount(uid);
+        Integer count = commodityMapper.getSellingCount(uid);
         return count == null ? 0 : count;
     }
 

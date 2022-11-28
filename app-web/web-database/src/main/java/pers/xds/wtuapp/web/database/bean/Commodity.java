@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.minidev.json.annotate.JsonIgnore;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.sql.Timestamp;
 
 /**
@@ -25,14 +22,9 @@ public class Commodity {
     public static final int STATUS_ACTIVE = 0;
 
     /**
-     * 当前商品正在交易
+     * 当前商品已经下架了
      */
-    public static final int STATUS_TRADING = 1;
-
-    /**
-     * 当前商品已经交易完毕了
-     */
-    public static final int STATUS_DONE = 2;
+    public static final int STATUS_INACTIVE = 1;
 
     /**
      * 商品id
@@ -51,6 +43,7 @@ public class Commodity {
      * 商品名称
      */
     @NotNull
+    @Size(max = 30)
     private String name;
 
     /**
@@ -72,6 +65,7 @@ public class Commodity {
      * 售价
      */
     @NotNull
+    @Min(0)
     private Double price;
 
     /**
@@ -108,6 +102,13 @@ public class Commodity {
     @JsonIgnore
     private Integer version;
 
+    /**
+     * 商品数量
+     */
+    @Min(1)
+    @NotNull
+    private Integer count;
+
     public Commodity() {
     }
 
@@ -119,6 +120,14 @@ public class Commodity {
         this.tradeLocation = tradeLocation;
         this.previewImage = previewImage;
         this.images = images;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
     public Integer getCommodityId() {
@@ -208,4 +217,6 @@ public class Commodity {
     public void setImages(String images) {
         this.images = images;
     }
+
+
 }

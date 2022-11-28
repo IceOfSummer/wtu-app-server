@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.security.SecurityConstant;
@@ -12,6 +13,9 @@ import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
+import pers.xds.wtuapp.web.service.ServiceCode;
+import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
+
 import java.util.List;
 
 
@@ -51,13 +55,15 @@ public class CommodityController {
     public ResponseTemplate<Integer> createCommodity(@Validated Commodity commodity) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         commodity.setOwnerId(userPrincipal.getId());
-        int id = commodityService.insertCommodity(commodity);
-        if (id == -1) {
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
-        } else if (id == -2) {
-            return ResponseTemplate.fail(ResponseCode.COUNT_LIMIT);
+        ServiceCodeWrapper<Integer> wrapper = commodityService.insertCommodity(commodity);
+        ServiceCode code = wrapper.code;
+        if (wrapper.isSuccess()) {
+            return ResponseTemplate.success(wrapper.data);
+        } else if (code == ServiceCode.NOT_AVAILABLE) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已达到商品发布数量上限");
+        } else {
+            return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
         }
-        return ResponseTemplate.success(id);
     }
 
     /**
@@ -73,21 +79,22 @@ public class CommodityController {
 
     /**
      * 锁定某个商品，并创建交易记录，表示买家想要购买这个商品。
+     * todo 返回订单id
      * @param id 商品id
      * @return 是否成功
      */
     @PostMapping("/{id}/lock")
-    public ResponseTemplate<Void> lockCommodity(@PathVariable int id,
+    public ResponseTemplate<Integer> lockCommodity(@PathVariable int id,
+                                        @RequestParam(value = "c", required = false, defaultValue = "1") int count,
                                         @RequestParam(value = "r", required = false) String remark) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        if (id == userPrincipal.getId()) {
-            // 不能自己锁自己的商品
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
-        }
-        boolean result = commodityService.lockCommodity(id, userPrincipal.getId(), remark);
-        if (result) {
-            return ResponseTemplate.success();
-        } else {
+        ServiceCodeWrapper<Integer> wrapper = commodityService.lockCommodity(id, userPrincipal.getId(), count, remark);
+        ServiceCode code = wrapper.code;
+        if (code == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success(wrapper.data);
+        } else if (code == ServiceCode.CONCURRENT_ERROR){
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
+        }else {
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE);
         }
     }

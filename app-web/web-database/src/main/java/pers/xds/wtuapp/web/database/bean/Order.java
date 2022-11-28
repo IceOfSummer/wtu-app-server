@@ -1,13 +1,11 @@
 package pers.xds.wtuapp.web.database.bean;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -16,7 +14,7 @@ import java.sql.Timestamp;
  * @TableName order
  */
 @TableName(value ="`order`")
-public class Order implements Serializable {
+public class Order  {
     /**
      * 订单id
      */
@@ -49,17 +47,23 @@ public class Order implements Serializable {
     @JsonSerialize(using = TimestampSerializer.class)
     private Timestamp createTime;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 商品数量
+     */
+    private Integer count;
 
     public Order() {
     }
 
-    public Order(Integer commodityId, Integer customerId, String remark, Integer ownerId) {
+    /**
+     * 数据库用
+     */
+    public Order(Integer commodityId, Integer customerId, String remark, Integer ownerId, int count) {
         this.commodityId = commodityId;
         this.customerId = customerId;
         this.remark = remark;
         this.ownerId = ownerId;
+        this.count = count;
     }
 
     /**
@@ -132,5 +136,13 @@ public class Order implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }
