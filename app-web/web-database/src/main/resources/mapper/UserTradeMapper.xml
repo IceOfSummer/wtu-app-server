@@ -5,8 +5,21 @@
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.UserTradeMapper">
 
 
+    <sql id="type_buy">
+        '${@pers.xds.wtuapp.web.database.bean.UserTrade@TYPE_BUY}'
+    </sql>
+
+
     <insert id="addUserTrade">
         INSERT INTO user_trade(user_id, order_id, type)
         VALUE (#{buyer},#{order_id},0),(#{seller},#{order_id},1)
     </insert>
+
+    <update id="modifyTradeStatus">
+        UPDATE user_trade
+        SET status = #{status}
+        WHERE user_id = #{userId}
+          AND order_id = #{orderId}
+          AND type = #{type};
+    </update>
 </mapper>

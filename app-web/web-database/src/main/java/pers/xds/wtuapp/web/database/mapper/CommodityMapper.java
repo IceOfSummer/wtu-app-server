@@ -19,7 +19,7 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      * @param uid 用户id
      * @return 正在出售的商品数量
      */
-    @Select("SELECT COUNT FROM commodity WHERE owner_id = #{uid} AND `status` = 0")
+    @Select("SELECT COUNT(*) FROM commodity WHERE owner_id = #{uid} AND `status` = 0")
     Integer getSellingCount(@Param("uid") int uid);
 
     /**
@@ -40,5 +40,6 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      */
     @Update("UPDATE commodity SET version = version + 1, `count` = #{count} WHERE commodity_id = #{id} AND version = #{version}")
     int updateCommodity(@Param("id") int commodityId, @Param("count") int count, @Param("version") int version);
+
 
 }

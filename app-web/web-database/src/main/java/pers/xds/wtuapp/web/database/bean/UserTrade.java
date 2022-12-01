@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.web.database.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -31,13 +30,14 @@ public class UserTrade implements Serializable {
 
     private Integer status;
 
+    public static final int TYPE_BUY = 0;
+
+    public static final int TYPE_SELL = 1;
+
     /**
      * 交易类型;0为买，1为卖
      */
     private Integer type;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     /**
      * 用户id

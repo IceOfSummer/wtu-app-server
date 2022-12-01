@@ -4,6 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderDetailMapper">
 
+    <sql id="status_trading">
+        '${@pers.xds.wtuapp.web.database.bean.UserTrade@STATUS_TRADING}'
+    </sql>
+
+    <sql id="type_sell">
+        '${@pers.xds.wtuapp.web.database.bean.UserTrade@TYPE_SELL}'
+    </sql>
+
 
     <select id="selectOrders" resultType="pers.xds.wtuapp.web.database.view.OrderDetail">
         SELECT
@@ -15,7 +23,10 @@
             c.price as `price`,
             c.trade_location as `tradeLocation`,
             ut.status as `status`,
-            ut.type as type
+            ut.type as type,
+            o.count as count,
+            c.preview_image as previewImage,
+            c.owner_id as ownerId
         FROM user_trade ut
                  LEFT JOIN `order` o USING(order_id)
                  LEFT JOIN `commodity` c USING(commodity_id)
@@ -23,5 +34,68 @@
         <if test="status != null">
             AND ut.status = #{status}
         </if>
+    </select>
+
+    <select id="selectActiveOrderByType" resultType="pers.xds.wtuapp.web.database.view.OrderDetail">
+        SELECT
+            ut.order_id as orderId,
+            o.commodity_id as `commodityId`,
+            o.create_time as `createTime`,
+            o.remark as `remark`,
+            c.name as `name`,
+            c.price as `price`,
+            c.trade_location as `tradeLocation`,
+            ut.status as `status`,
+            o.count as count,
+            c.preview_image as previewImage,
+            c.owner_id as ownerId
+        FROM user_trade ut
+                 LEFT JOIN `order` o USING(order_id)
+                 LEFT JOIN `commodity` c USING(commodity_id)
+        WHERE ut.user_id = #{uid}
+          AND type = #{type}
+          AND ut.status = <include refid="status_trading"/>
+    </select>
+
+    <select id="selectAllOrder" resultType="pers.xds.wtuapp.web.database.view.OrderDetail">
+        SELECT
+        ut.order_id as orderId,
+        o.commodity_id as `commodityId`,
+        o.create_time as `createTime`,
+        o.remark as `remark`,
+        c.name as `name`,
+        c.price as `price`,
+        c.trade_location as `tradeLocation`,
+        ut.status as `status`,
+        o.count as count,
+        c.preview_image as previewImage,
+        c.owner_id as ownerId,
+        ut.type as type
+        FROM user_trade ut
+            LEFT JOIN `order` o USING(order_id)
+            LEFT JOIN `commodity` c USING(commodity_id)
+        WHERE ut.user_id = #{uid}
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectAllSoldOrder" resultType="pers.xds.wtuapp.web.database.view.OrderDetail">
+        SELECT
+            ut.order_id as orderId,
+            o.commodity_id as `commodityId`,
+            o.create_time as `createTime`,
+            o.remark as `remark`,
+            c.name as `name`,
+            c.price as `price`,
+            c.trade_location as `tradeLocation`,
+            ut.status as `status`,
+            o.count as count,
+            c.preview_image as previewImage,
+            c.owner_id as ownerId,
+            ut.type as type
+        FROM user_trade ut
+                 LEFT JOIN `order` o USING(order_id)
+                 LEFT JOIN `commodity` c USING(commodity_id)
+        WHERE ut.user_id = #{uid}
+            AND ut.type = <include refid="type_sell"/>
     </select>
 </mapper>
