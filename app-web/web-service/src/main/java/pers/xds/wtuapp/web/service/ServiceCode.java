@@ -25,5 +25,9 @@ public enum ServiceCode {
     /**
      * 由于并发导致乐观锁更新失败，需要重试
      */
-    CONCURRENT_ERROR
+    CONCURRENT_ERROR,
+    /**
+     * 达到使用频率上限
+     */
+    RATE_LIMIT
 }

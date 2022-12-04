@@ -11,6 +11,7 @@ import pers.xds.wtuapp.web.database.bean.TradeStat;
 import pers.xds.wtuapp.web.database.mapper.OrderMapper;
 import pers.xds.wtuapp.web.database.mapper.TradeStatMapper;
 import pers.xds.wtuapp.web.database.mapper.UserTradeMapper;
+import pers.xds.wtuapp.web.redis.CounterCache;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.database.mapper.CommodityMapper;
@@ -32,6 +33,13 @@ public class CommodityServiceImpl implements CommodityService {
      * 每次分页显示的最大元素数量
      */
     private static final int MAX_PAGE_SIZE = 30;
+
+    private CounterCache counterCache;
+
+    @Autowired
+    public void setCounterCache(CounterCache counterCache) {
+        this.counterCache = counterCache;
+    }
 
     private CommodityMapper commodityMapper;
 
@@ -110,6 +118,11 @@ public class CommodityServiceImpl implements CommodityService {
         return commodityMapper.selectById(commodityId);
     }
 
+
+    private static final String LOCK_COMMODITY_PREFIX_KEY = "lockCommodity:";
+
+    private static final int MAX_LOCK_ACTION_PER_DAY = 10;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark) {
@@ -123,7 +136,13 @@ public class CommodityServiceImpl implements CommodityService {
         if (commodity.getCount() < count) {
             return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
         }
+        String key = LOCK_COMMODITY_PREFIX_KEY + userId;
+        int invokeCount = counterCache.getInvokeCount(key);
+        if (invokeCount > MAX_LOCK_ACTION_PER_DAY) {
+            return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
+        }
         if (commodityMapper.updateCommodity(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
+            counterCache.increaseInvokeCountAsync(key);
             int ownerId = commodity.getOwnerId();
             // 添加交易记录
             Order order = new Order(commodityId, userId, remark, ownerId, count);

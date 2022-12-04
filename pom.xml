@@ -8,9 +8,6 @@
     <groupId>pers.xds.wtuapp</groupId>
     <artifactId>wtu-app-server-parent</artifactId>
     <version>${reversion}</version>
-    <modules>
-        <module>app-im-chat</module>
-    </modules>
     <packaging>pom</packaging>
 
     <properties>

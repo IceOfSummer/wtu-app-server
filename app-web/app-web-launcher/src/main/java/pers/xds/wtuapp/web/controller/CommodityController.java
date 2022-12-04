@@ -79,7 +79,6 @@ public class CommodityController {
 
     /**
      * 锁定某个商品，并创建交易记录，表示买家想要购买这个商品。
-     * todo 返回订单id
      * @param id 商品id
      * @return 是否成功
      */
@@ -92,9 +91,11 @@ public class CommodityController {
         ServiceCode code = wrapper.code;
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success(wrapper.data);
-        } else if (code == ServiceCode.CONCURRENT_ERROR){
+        } else if (code == ServiceCode.RATE_LIMIT) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已到达每日的商品锁定次数上限，请明天再试");
+        }else if (code == ServiceCode.CONCURRENT_ERROR){
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
-        }else {
+        } else {
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE);
         }
     }
