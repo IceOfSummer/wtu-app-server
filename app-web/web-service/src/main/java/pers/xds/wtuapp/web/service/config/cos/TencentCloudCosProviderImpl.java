@@ -1,12 +1,9 @@
-package pers.xds.wtuapp.web.service.config.cos.tencent;
+package pers.xds.wtuapp.web.service.config.cos;
 
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.auth.COSSigner;
 import com.qcloud.cos.http.HttpMethodName;
-import pers.xds.wtuapp.web.service.config.CosConfigurationProperties;
-import pers.xds.wtuapp.web.service.config.cos.CosProvider;
-import pers.xds.wtuapp.web.service.config.cos.SignInfo;
 
 import java.util.*;
 
@@ -27,8 +24,8 @@ public class TencentCloudCosProviderImpl implements CosProvider {
 
     private static final COSSigner SIGNER = new COSSigner();
 
-    public TencentCloudCosProviderImpl(CosConfigurationProperties properties) {
-        this.permanentCred = new BasicCOSCredentials(properties.getSecretId(), properties.getSecretKey());
+    public TencentCloudCosProviderImpl(String secretId, String secretKey) {
+        this.permanentCred = new BasicCOSCredentials(secretId, secretKey);
     }
 
     /**

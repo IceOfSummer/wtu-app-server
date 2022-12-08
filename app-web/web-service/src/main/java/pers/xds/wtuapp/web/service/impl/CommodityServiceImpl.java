@@ -8,18 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.TradeStat;
-import pers.xds.wtuapp.web.database.mapper.OrderMapper;
-import pers.xds.wtuapp.web.database.mapper.TradeStatMapper;
-import pers.xds.wtuapp.web.database.mapper.UserTradeMapper;
+import pers.xds.wtuapp.web.database.bean.User;
+import pers.xds.wtuapp.web.database.mapper.*;
 import pers.xds.wtuapp.web.redis.CounterCache;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
-import pers.xds.wtuapp.web.database.mapper.CommodityMapper;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.es.repository.CommodityRepository;
+import pers.xds.wtuapp.web.service.EmailService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
+import pers.xds.wtuapp.web.service.config.email.CommodityLockTemplateData;
+import pers.xds.wtuapp.web.service.util.DateFormatUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,10 +38,6 @@ public class CommodityServiceImpl implements CommodityService {
 
     private CounterCache counterCache;
 
-    @Autowired
-    public void setCounterCache(CounterCache counterCache) {
-        this.counterCache = counterCache;
-    }
 
     private CommodityMapper commodityMapper;
 
@@ -50,6 +48,25 @@ public class CommodityServiceImpl implements CommodityService {
     private UserTradeMapper userTradeMapper;
 
     private TradeStatMapper tradeStatMapper;
+
+    private EmailService emailService;
+
+    private UserMapper userMapper;
+
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setCounterCache(CounterCache counterCache) {
+        this.counterCache = counterCache;
+    }
 
     @Autowired
     public void setTradeStatMapper(TradeStatMapper tradeStatMapper) {
@@ -126,7 +143,7 @@ public class CommodityServiceImpl implements CommodityService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark) {
-        Commodity commodity = commodityMapper.selectCountInfo(commodityId);
+        Commodity commodity = commodityMapper.selectSimpleInfo(commodityId);
         if (commodity == null) {
             return ServiceCodeWrapper.fail(ServiceCode.NOT_EXIST);
         }
@@ -142,12 +159,32 @@ public class CommodityServiceImpl implements CommodityService {
             return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
         if (commodityMapper.updateCommodity(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
-            counterCache.increaseInvokeCountAsync(key);
             int ownerId = commodity.getOwnerId();
+            User user = userMapper.selectNameAndEmail(ownerId);
+            String nickname = user.getNickname() == null ? String.valueOf(ownerId) : user.getNickname();
             // 添加交易记录
             Order order = new Order(commodityId, userId, remark, ownerId, count);
+            // 可能会和数据库有点小偏差，不过应该差不了太多
+            Date createTime = new Date();
             orderMapper.insert(order);
             userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId);
+
+            // 发送邮件提醒
+            emailService.sendCommodityLockTip(
+                    ownerId,
+                    user.getEmail(),
+                    new CommodityLockTemplateData(
+                            nickname,
+                            commodity.getName(),
+                            commodity.getPrice(),
+                            commodity.getTradeLocation(),
+                            DateFormatUtils.toLocalString(createTime),
+                            order.getRemark(),
+                            order.getCount(),
+                            commodity.getPreviewImage()
+                    )
+            );
+            counterCache.increaseInvokeCountAsync(invokeCount, key);
             return ServiceCodeWrapper.success(order.getOrderId());
         }
         return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);

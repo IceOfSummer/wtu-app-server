@@ -8,4 +8,8 @@
         SELECT * FROM user WHERE username = #{username}
     </select>
 
+    <select id="selectNameAndEmail" resultType="pers.xds.wtuapp.web.database.bean.User">
+        SELECT nickname, email FROM user WHERE user_id = #{uid}
+    </select>
+
 </mapper>

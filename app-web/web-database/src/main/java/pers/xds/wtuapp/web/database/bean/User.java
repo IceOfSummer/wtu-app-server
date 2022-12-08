@@ -50,16 +50,30 @@ public class User implements Serializable {
      */
     private String nickname;
 
+    /**
+     * 用户邮箱
+     */
+    private String email;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     public User() {
     }
 
-    public User(String username, String password, String nickname) {
+    public User(String username, String password, String email, String nickname) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
@@ -154,4 +168,6 @@ public class User implements Serializable {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+
 }

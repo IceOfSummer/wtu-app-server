@@ -2,6 +2,7 @@ package pers.xds.wtuapp.web.redis.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.web.redis.CounterCache;
 
@@ -48,13 +49,14 @@ public class CounterCacheImpl implements CounterCache {
     }
 
     @Override
-    public void increaseInvokeCount(String key) {
-        redisTemplate.opsForValue().increment(key);
+    public void increaseInvokeCount(int currentVal, String key) {
+        redisTemplate.opsForValue().set(key, String.valueOf(currentVal + 1));
     }
 
     @Override
-    public void increaseInvokeCountAsync(String key) {
-        this.increaseInvokeCount(key);
+    @Async
+    public void increaseInvokeCountAsync(int currentVal, String key) {
+        this.increaseInvokeCount(currentVal, key);
     }
 
 }

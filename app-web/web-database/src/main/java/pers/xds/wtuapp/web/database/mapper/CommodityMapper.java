@@ -32,6 +32,15 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
     Commodity selectCountInfo(@Param("id") int commodityId);
 
     /**
+     * 获取{@link Commodity#getCount()}, {@link Commodity#getStatus()}，{@link Commodity#getVersion()},
+     * {@link Commodity#getPrice()}, {@link Commodity#getName()}, {@link Commodity#getTradeLocation()},
+     * {@link Commodity#getPreviewImage()},
+     * @param commodityId 商品id
+     * @return commodity
+     */
+    Commodity selectSimpleInfo(@Param("id") int commodityId);
+
+    /**
      * 更新商品剩余数量
      * @param commodityId 商品id
      * @param count 要更新的数量

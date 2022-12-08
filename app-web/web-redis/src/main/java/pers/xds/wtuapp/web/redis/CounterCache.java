@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.web.redis;
 
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * 使用redis做计数器
@@ -20,13 +19,12 @@ public interface CounterCache {
      * 为某个key的值加一，一定要先调用getInvokeCount后再调用该方法，以防key不能及时过期
      * @param key 唯一的key
      */
-    void increaseInvokeCount(String key);
+    void increaseInvokeCount(int currentVal, String key);
 
     /**
      * 异步的为某个key加一，一定要先调用getInvokeCount后再调用该方法，以防key不能及时过期
      * @param key 唯一的key
      */
-    @Async
-    void increaseInvokeCountAsync(String key);
+    void increaseInvokeCountAsync(int currentVal, String key);
 
 }

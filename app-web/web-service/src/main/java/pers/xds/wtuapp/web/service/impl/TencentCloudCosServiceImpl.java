@@ -8,7 +8,7 @@ import pers.xds.wtuapp.web.redis.CosCache;
 import pers.xds.wtuapp.web.service.CosService;
 import pers.xds.wtuapp.web.service.config.cos.CosProvider;
 import pers.xds.wtuapp.web.service.config.cos.SignInfo;
-import pers.xds.wtuapp.web.service.config.cos.tencent.TencentCloudCosProviderImpl;
+import pers.xds.wtuapp.web.service.config.cos.TencentCloudCosProviderImpl;
 
 /**
  * 腾讯云对象存储服务实现

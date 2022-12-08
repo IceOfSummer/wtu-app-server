@@ -29,4 +29,11 @@ public interface UserMapper extends BaseMapper<User> {
     @Nullable
     User findByUsername(@Param("username") String username);
 
+    /**
+     * 获取用户昵称和email，<b>昵称可能为空</b>
+     * @param uid 用户id
+     * @return 用户信息
+     */
+    User selectNameAndEmail(@Param("uid") int uid);
+
 }
