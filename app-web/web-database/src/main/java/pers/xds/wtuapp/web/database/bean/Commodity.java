@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.minidev.json.annotate.JsonIgnore;
 import pers.xds.wtuapp.web.database.common.TimestampSerializer;
+import pers.xds.wtuapp.web.database.group.InsertGroup;
+import pers.xds.wtuapp.web.database.group.UpdateGroup;
 
 import javax.validation.constraints.*;
 import java.sql.Timestamp;
@@ -30,83 +32,85 @@ public class Commodity {
      * 商品id
      */
     @TableId(type = IdType.AUTO)
-    @Null
+    @Null(groups = InsertGroup.class)
+    @NotNull(groups = UpdateGroup.class)
     private Integer commodityId;
 
     /**
      * 卖家id
      */
-    @Null
+    @Null(groups = {InsertGroup.class, UpdateGroup.class})
     private Integer ownerId;
 
     /**
      * 商品名称
      */
-    @NotNull
-    @Size(max = 30)
+    @NotEmpty
+    @Size(max = 30, groups = {InsertGroup.class, UpdateGroup.class})
     private String name;
 
     /**
      * 商品描述
      */
-    @NotNull
     @NotEmpty
-    @Size(max = 255)
+    @Size(max = 255, groups = {InsertGroup.class, UpdateGroup.class})
     private String description;
 
     /**
      * 商品创建时间
      */
-    @Null
+    @Null(groups = {InsertGroup.class, UpdateGroup.class})
     @JsonSerialize(using = TimestampSerializer.class)
     private Timestamp createTime;
 
     /**
      * 售价
      */
-    @NotNull
-    @Min(0)
+    @NotNull(groups = {InsertGroup.class})
+    @Min(value = 0, groups = {InsertGroup.class, UpdateGroup.class})
     private Double price;
 
     /**
      * 商品状态
      * 0: 正常，1:已被购买但交易还未完成，2:已被购买并且交易完成
      */
-    @Null
+    @Null(groups = {InsertGroup.class, UpdateGroup.class})
     private Integer status;
 
     /**
      * 交易地点
      */
-    @NotNull
-    @Size(max = 50)
+    @NotNull(groups = {InsertGroup.class})
+    @Size(max = 50, groups = {InsertGroup.class, UpdateGroup.class})
     private String tradeLocation;
 
     /**
      * 预览图片(商品列表预览图片)
      */
-    @NotNull
+    @NotNull(groups = {InsertGroup.class})
+    @Null(groups = {UpdateGroup.class})
     private String previewImage;
 
     /**
      * 实物图片
      */
-    @NotNull
+    @NotNull(groups = {InsertGroup.class})
+    @Null(groups = {UpdateGroup.class})
     private String images;
 
     /**
      * 乐观锁
      */
     @Version
-    @Null
+    @Null(groups = {InsertGroup.class, UpdateGroup.class})
     @JsonIgnore
     private Integer version;
 
     /**
      * 商品数量
      */
-    @Min(1)
-    @NotNull
+    @Min(value = 1, groups = {InsertGroup.class, UpdateGroup.class})
+    @NotNull(groups = {InsertGroup.class})
     private Integer count;
 
     public Commodity() {

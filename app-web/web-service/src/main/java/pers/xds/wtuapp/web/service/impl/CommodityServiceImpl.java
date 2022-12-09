@@ -1,7 +1,7 @@
 package pers.xds.wtuapp.web.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -158,7 +158,7 @@ public class CommodityServiceImpl implements CommodityService {
         if (invokeCount > MAX_LOCK_ACTION_PER_DAY) {
             return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
-        if (commodityMapper.updateCommodity(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
+        if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
             int ownerId = commodity.getOwnerId();
             User user = userMapper.selectNameAndEmail(ownerId);
             String nickname = user.getNickname() == null ? String.valueOf(ownerId) : user.getNickname();
@@ -200,7 +200,8 @@ public class CommodityServiceImpl implements CommodityService {
         if (size > MAX_PAGE_SIZE) {
             size = MAX_PAGE_SIZE;
         }
-        Page<EsCommodity> esCommodities = commodityRepository.searchByName(commodityName, Pageable.ofSize(size).withPage(page));
+        org.springframework.data.domain.Page<EsCommodity> esCommodities =
+                commodityRepository.searchByName(commodityName, Pageable.ofSize(size).withPage(page));
         return esCommodities.toList();
     }
 
@@ -208,6 +209,17 @@ public class CommodityServiceImpl implements CommodityService {
     public int querySellingCount(int uid) {
         Integer count = commodityMapper.getSellingCount(uid);
         return count == null ? 0 : count;
+    }
+
+    @Override
+    public List<Commodity> queryUserCommodity(int uid, int page, int size) {
+        Page<Commodity> pg = new Page<>(page, size);
+        return commodityMapper.selectCommodityByUid(uid, pg).getRecords();
+    }
+
+    @Override
+    public void updateCommodity(Commodity commodity, int ownerId) {
+        commodityMapper.updateCommodity(commodity, ownerId);
     }
 
 

@@ -69,4 +69,23 @@ public interface CommodityService {
     int querySellingCount(int uid);
 
 
+    /**
+     * 获取用户上传的货物(不管当前是否激活)
+     * @param uid 用户id
+     * @param page 查看第几页
+     * @param size 每页的大小
+     * @return 上传的货物
+     */
+    List<Commodity> queryUserCommodity(int uid, int page, int size);
+
+    /**
+     * 更新commodity。必须要提供{@link Commodity#commodityId}属性
+     * <p>
+     * 仅可更新{@link Commodity#name}, {@link Commodity#price},
+     * {@link Commodity#description}, {@link Commodity#tradeLocation}字段。
+     * @param commodity 具体的货物
+     * @param ownerId 货物主人，用于验证
+     */
+    void updateCommodity(Commodity commodity, int ownerId);
+
 }

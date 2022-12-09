@@ -10,4 +10,33 @@
         FROM commodity
         WHERE commodity_id = #{id}
     </select>
+
+    <select id="selectCommodityByUid" resultType="pers.xds.wtuapp.web.database.bean.Commodity">
+        SELECT
+            commodity_id,
+            owner_id,
+            name,
+            description,
+            create_time,
+            price,
+            preview_image,
+            images,
+            trade_location,
+            count,
+            status
+        FROM commodity
+        WHERE owner_id = #{uid}
+    </select>
+
+    <update id="updateCommodity">
+        UPDATE commodity
+        <set>
+            <if test="commodity.name != null">name=#{commodity.name}</if>
+            <if test="commodity.price != null">price=#{commodity.price}</if>
+            <if test="commodity.description != null">description=#{commodity.description}</if>
+            <if test="commodity.tradeLocation != null">tradeLocation=#{commodity.tradeLocation}</if>
+        </set>
+        WHERE commodity_id = #{commodity.commodityId} AND owner_id = #{ownerId}
+    </update>
+
 </mapper>

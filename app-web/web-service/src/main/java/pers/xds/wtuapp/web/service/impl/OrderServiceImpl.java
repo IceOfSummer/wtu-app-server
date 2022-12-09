@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
         finishedTradeMapper.insert(finishedTrade);
         // 把库存补上
         Commodity commodity = commodityMapper.selectById(order.getCommodityId());
-        int i = commodityMapper.updateCommodity(order.getCommodityId(), order.getCount() + commodity.getCount(), commodity.getVersion());
+        int i = commodityMapper.updateCommodityCount(order.getCommodityId(), order.getCount() + commodity.getCount(), commodity.getVersion());
         if (i == 0) {
             return ServiceCode.CONCURRENT_ERROR;
         }

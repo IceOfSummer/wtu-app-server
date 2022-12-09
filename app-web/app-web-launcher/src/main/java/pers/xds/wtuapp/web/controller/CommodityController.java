@@ -10,6 +10,7 @@ import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.database.bean.Commodity;
+import pers.xds.wtuapp.web.database.group.UpdateGroup;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
@@ -129,6 +130,21 @@ public class CommodityController {
     public ResponseTemplate<Integer> getSellingCount() {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         return ResponseTemplate.success(commodityService.querySellingCount(userPrincipal.getId()));
+    }
+
+    @GetMapping("uploaded")
+    public ResponseTemplate<List<Commodity>> getUploadedCommodity(
+            @RequestParam(value = "p", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "s", required = false, defaultValue = "5") int size) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        return ResponseTemplate.success(commodityService.queryUserCommodity(userPrincipal.getId(), page, size));
+    }
+
+    @PostMapping("/update")
+    public ResponseTemplate<Void> updateCommodity(@Validated(UpdateGroup.class) Commodity commodity) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        commodityService.updateCommodity(commodity, userPrincipal.getId());
+        return ResponseTemplate.success();
     }
 
 }
