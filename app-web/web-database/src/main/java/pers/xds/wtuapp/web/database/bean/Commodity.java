@@ -32,8 +32,7 @@ public class Commodity {
      * 商品id
      */
     @TableId(type = IdType.AUTO)
-    @Null(groups = InsertGroup.class)
-    @NotNull(groups = UpdateGroup.class)
+    @Null(groups = {InsertGroup.class, UpdateGroup.class})
     private Integer commodityId;
 
     /**

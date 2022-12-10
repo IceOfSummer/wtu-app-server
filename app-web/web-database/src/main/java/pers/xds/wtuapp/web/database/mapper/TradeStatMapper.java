@@ -30,4 +30,11 @@ public interface TradeStatMapper extends BaseMapper<TradeStat> {
      */
     @Update("UPDATE trade_stat SET selling_count = #{cnt} WHERE user_id = #{uid}")
     void modifySellingCount(@Param("uid") int uid, @Param("cnt") int updateCnt);
+
+    /**
+     * 将正在出售的商品数量减一
+     * @param uid 用户id
+     */
+    @Update("UPDATE trade_stat SET selling_count = selling_count - 1 WHERE user_id = #{uid}")
+    void decreaseSellingCount(@Param("uid") int uid);
 }

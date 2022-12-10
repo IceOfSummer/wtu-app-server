@@ -98,13 +98,23 @@ public class CommodityServiceImpl implements CommodityService {
      */
     public static final int MAX_ACTIVE_COMMODITY = 10;
 
+    public static final String INSERT_CACHE_KEY_PREFIX = "insertCommodity:";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity) {
         Integer ownerId = commodity.getOwnerId();
         if (ownerId == null) {
-            return ServiceCodeWrapper.fail(ServiceCode.NOT_EXIST);
+            return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
         }
+        String key = INSERT_CACHE_KEY_PREFIX + ownerId;
+        // 每个周最多发布14件商品
+        final int maxWeekPost = 14;
+        int invokeCount = counterCache.getInvokeCount(key, CounterCache.Duration.WEEK);
+        if (invokeCount > maxWeekPost) {
+            return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
+        }
+
         Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
         if (cnt == null) {
             TradeStat tradeStat = new TradeStat(ownerId);
@@ -115,6 +125,7 @@ public class CommodityServiceImpl implements CommodityService {
         } else {
             tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
         }
+        counterCache.increaseInvokeCountAsync(invokeCount, key);
         // 使用自动生成的id
         commodity.setCommodityId(null);
         commodityMapper.insert(commodity);
@@ -191,11 +202,6 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public List<EsCommodity> searchCommodityByName(String commodityName, int page) {
-        return searchCommodityByName(commodityName, MAX_PAGE_SIZE, page);
-    }
-
-    @Override
     public List<EsCommodity> searchCommodityByName(String commodityName, int page, int size) {
         if (size > MAX_PAGE_SIZE) {
             size = MAX_PAGE_SIZE;
@@ -218,8 +224,21 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public void updateCommodity(Commodity commodity, int ownerId) {
-        commodityMapper.updateCommodity(commodity, ownerId);
+    public void updateCommodity(int ownerId, int commodityId, Commodity commodity) {
+        commodityMapper.updateCommodity(ownerId, commodityId, commodity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void takeDownCommodity(int uid, int commodityId) {
+        commodityMapper.updateCommodityStatus(uid, commodityId, Commodity.STATUS_INACTIVE);
+        tradeStatMapper.decreaseSellingCount(uid);
+    }
+
+    @Override
+    public List<Commodity> getRecommend(Integer maxId) {
+        final int pageSize = 8;
+        return commodityMapper.selectByTimeDesc(maxId, pageSize);
     }
 
 

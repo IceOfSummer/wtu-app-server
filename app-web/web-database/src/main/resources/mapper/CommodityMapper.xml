@@ -36,7 +36,15 @@
             <if test="commodity.description != null">description=#{commodity.description}</if>
             <if test="commodity.tradeLocation != null">tradeLocation=#{commodity.tradeLocation}</if>
         </set>
-        WHERE commodity_id = #{commodity.commodityId} AND owner_id = #{ownerId}
+        WHERE commodity_id = #{cid} AND owner_id = #{uid}
     </update>
+
+    <select id="selectByTimeDesc" resultType="pers.xds.wtuapp.web.database.bean.Commodity">
+        SELECT commodity_id, owner_id, `name`, price, preview_image
+        FROM commodity
+        <if test="mid != null"> WHERE commodity_id &lt;= #{mid} </if>
+        ORDER BY commodity_id DESC
+        LIMIT #{s}
+    </select>
 
 </mapper>

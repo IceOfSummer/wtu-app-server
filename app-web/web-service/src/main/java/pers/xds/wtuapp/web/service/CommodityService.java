@@ -13,10 +13,11 @@ public interface CommodityService {
 
     /**
      * 插入货物
-     * @param commodity 货物, <b>插入成功后会自动为其id字段赋值</b>
+     * @param commodity 货物, <b>插入成功后会自动为其id字段赋值</b>，必须要提供{@link Commodity#ownerId}
      * @return 新增货物的id<p>
-     * - {@link ServiceCode#NOT_EXIST} 表示商品不存在<p>
+     * - {@link ServiceCode#BAD_REQUEST} 表示参数有误<p>
      * - {@link ServiceCode#NOT_AVAILABLE} 表示用户已经达到商品上传上限<p>
+     * - {@link ServiceCode#RATE_LIMIT} 表示用户已经达到每周发布商品上限<p>
      */
     ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity);
 
@@ -48,14 +49,6 @@ public interface CommodityService {
      * 搜索货物, 按照默认排序
      * @param commodityName 搜索内容
      * @param page 第几页
-     * @return 相关商品内容
-     */
-    List<EsCommodity> searchCommodityByName(String commodityName, int page);
-
-    /**
-     * 搜索货物, 按照默认排序
-     * @param commodityName 搜索内容
-     * @param page 第几页
      * @param size 每页最大有几项
      * @return 相关商品内容
      */
@@ -79,13 +72,28 @@ public interface CommodityService {
     List<Commodity> queryUserCommodity(int uid, int page, int size);
 
     /**
-     * 更新commodity。必须要提供{@link Commodity#commodityId}属性
+     * 更新commodity。
      * <p>
      * 仅可更新{@link Commodity#name}, {@link Commodity#price},
      * {@link Commodity#description}, {@link Commodity#tradeLocation}字段。
-     * @param commodity 具体的货物
      * @param ownerId 货物主人，用于验证
+     * @param commodityId 商品id
+     * @param commodity 具体的货物
      */
-    void updateCommodity(Commodity commodity, int ownerId);
+    void updateCommodity(int ownerId, int commodityId, Commodity commodity);
+
+    /**
+     * 下架商品
+     * @param uid 用户id
+     * @param commodityId 商品id
+     */
+    void takeDownCommodity(int uid, int commodityId);
+
+    /**
+     * 获取推荐的商品
+     * @param maxId 最大id，为空时默认从最大开始选
+     * @return 商品推荐
+     */
+    List<Commodity> getRecommend(@Nullable Integer maxId);
 
 }

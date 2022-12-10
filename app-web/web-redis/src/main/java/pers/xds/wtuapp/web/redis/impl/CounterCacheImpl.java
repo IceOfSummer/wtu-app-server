@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.web.redis.CounterCache;
 
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,21 +25,17 @@ public class CounterCacheImpl implements CounterCache {
 
     @Override
     public int getInvokeCount(String key) {
+        return getInvokeCount(key, Duration.DAY);
+    }
+
+    @Override
+    public int getInvokeCount(String key, Duration duration) {
         Object o = redisTemplate.opsForValue().get(key);
         if (o == null) {
-            Calendar instance = Calendar.getInstance();
-            instance.set(
-                    instance.get(Calendar.YEAR),
-                    instance.get(Calendar.MONTH),
-                    instance.get(Calendar.DATE),
-                    23,
-                    59,
-                    59
-            );
             redisTemplate.opsForValue().set(
                     key,
                     "1",
-                    instance.getTimeInMillis() - System.currentTimeMillis(),
+                    duration.countDuration(),
                     TimeUnit.MICROSECONDS
             );
             return 1;

@@ -60,11 +60,11 @@ public class CommodityController {
         ServiceCode code = wrapper.code;
         if (wrapper.isSuccess()) {
             return ResponseTemplate.success(wrapper.data);
-        } else if (code == ServiceCode.NOT_AVAILABLE) {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已达到商品发布数量上限");
-        } else {
-            return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+        } else if (code == ServiceCode.RATE_LIMIT) {
+            return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您已达到每周商品发布数量上限, 该限制将在下周重置");
         }
+        // code == ServiceCode.NOT_AVAILABLE
+        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您发布的商品已经到达数量上限");
     }
 
     /**
@@ -72,7 +72,7 @@ public class CommodityController {
      * @param id 商品id
      * @return 商品详细信息，可能为空
      */
-    @GetMapping("{id}")
+    @GetMapping("/op/{id}")
     @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<Commodity> queryCommodity(@PathVariable int id) {
         return ResponseTemplate.success(commodityService.queryCommodity(id));
@@ -83,7 +83,7 @@ public class CommodityController {
      * @param id 商品id
      * @return 是否成功
      */
-    @PostMapping("/{id}/lock")
+    @PostMapping("/op/{id}/lock")
     public ResponseTemplate<Integer> lockCommodity(@PathVariable int id,
                                         @RequestParam(value = "c", required = false, defaultValue = "1") int count,
                                         @RequestParam(value = "r", required = false) String remark) {
@@ -132,6 +132,9 @@ public class CommodityController {
         return ResponseTemplate.success(commodityService.querySellingCount(userPrincipal.getId()));
     }
 
+    /**
+     * 获取用户上传的商品
+     */
     @GetMapping("uploaded")
     public ResponseTemplate<List<Commodity>> getUploadedCommodity(
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
@@ -140,11 +143,38 @@ public class CommodityController {
         return ResponseTemplate.success(commodityService.queryUserCommodity(userPrincipal.getId(), page, size));
     }
 
-    @PostMapping("/update")
-    public ResponseTemplate<Void> updateCommodity(@Validated(UpdateGroup.class) Commodity commodity) {
+    /**
+     * 更新商品
+     */
+    @PostMapping("/op/{cid}/update")
+    public ResponseTemplate<Void> updateCommodity(@Validated(UpdateGroup.class) Commodity commodity, @PathVariable int cid) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        commodityService.updateCommodity(commodity, userPrincipal.getId());
+        commodityService.updateCommodity(userPrincipal.getId(), cid, commodity);
         return ResponseTemplate.success();
+    }
+
+    /**
+     * 下架商品
+     */
+    @PostMapping("/op/{cid}/close")
+    public ResponseTemplate<Void> takeDownCommodity(@PathVariable int cid) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        commodityService.takeDownCommodity(userPrincipal.getId(), cid);
+        return ResponseTemplate.success();
+    }
+
+    /**
+     * 获取每日推荐
+     * @param maxId 当前允许接收的最大id<p>
+     *              例如将该值设为10，则返回的商品中最大id一定为10。
+     *              为空时默认从最大开始选
+     */
+    @GetMapping("suggest")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
+    public ResponseTemplate<List<Commodity>> getRecommend(
+            @RequestParam(required = false, value = "m") Integer maxId
+    ) {
+        return ResponseTemplate.success(commodityService.getRecommend(maxId));
     }
 
 }

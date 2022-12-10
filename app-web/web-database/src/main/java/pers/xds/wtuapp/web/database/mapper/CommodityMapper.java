@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 
+import java.util.List;
+
 /**
  * @author DeSen Xu
  * @date 2022-09-09 11:27
@@ -56,8 +58,30 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      * 仅可更新{@link Commodity#name}, {@link Commodity#price},
      *      * {@link Commodity#description}, {@link Commodity#tradeLocation}字段
      * @param commodity 货物
+     * @param commodityId 商品id
      * @param ownerId 货物主人id
      * @return 返回1表示操作成功
      */
-    int updateCommodity(@Param("commodity") Commodity commodity, @Param("ownerId") int ownerId);
+    int updateCommodity(@Param("uid") int ownerId, @Param("cid") int commodityId, @Param("commodity") Commodity commodity);
+
+    /**
+     * 更新商品状态
+     * @param uid 用户id
+     * @param commodityId 商品id
+     * @param status {@link Commodity#STATUS_ACTIVE}, {@link Commodity#STATUS_INACTIVE}
+     */
+    @Update("UPDATE commodity SET `status` = #{status} WHERE commodity_id = #{cid} AND owner_id = #{uid}")
+    void updateCommodityStatus(@Param("uid") int uid, @Param("cid") int commodityId, @Param("status") int status);
+
+
+    /**
+     * 根据创建时间降序查询
+     * @param maxId 最大id, 为空时默认从最大选
+     * @param size 分页，每页最多几个
+     * @return 查询到的商品, 只会获取{@link Commodity#commodityId}, {@link Commodity#ownerId}, {@link Commodity#name}
+     * {@link Commodity#price}, {@link Commodity#previewImage}
+     */
+    List<Commodity> selectByTimeDesc(@Param("mid") Integer maxId, @Param("s") int size);
+
+
 }
