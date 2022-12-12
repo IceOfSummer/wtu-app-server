@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.CommunityMessageMapper">
+
+    <sql id="baseQueryColumn">
+        cm.id,cm.pid,cm.author,cm.title,cm.content,cm.create_time as createTime,cm.`like`,cm.dislike,cm.reply_count as replyCount,cm.reply_to as replyTo
+    </sql>
+
+    <select id="selectMessageByMaxId" resultType="Map">
+        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE <if test="maxId != null">id &lt;= #{maxId} AND</if> pid = 0
+        ORDER BY id DESC
+        LIMIT #{size}
+    </select>
+
+    <select id="selectMessageByPid" resultType="Map">
+        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE pid = #{pid}
+    </select>
+
+    <select id="selectMessageReplyPreview" resultType="Map">
+        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE pid IN
+        <foreach collection="pids" item="pid" open="(" close=")" separator=",">#{pid}</foreach>
+        AND (
+            SELECT COUNT(*)
+            FROM  community_message tc
+            WHERE tc.pid = cm.pid AND tc.id > cm.id
+        ) &lt; #{size}
+    </select>
+
+</mapper>

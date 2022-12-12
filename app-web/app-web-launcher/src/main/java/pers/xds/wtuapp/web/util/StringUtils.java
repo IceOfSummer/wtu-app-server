@@ -18,8 +18,11 @@ public class StringUtils {
      * 如:<pre>
      *  - 输入: `"1,2,3,4,5"`, splitter = `,`
      *  - 输出: [1,2,3,4,5]
+     *  <p>
+     *  <b>不支持负数的输入!</b>
      * @param line 要解析的字符串
      * @param splitter 分隔符
+     * @param maxListLen 数组最大长度，当超过该长度后将直接返回
      * @return 解析后的数字数组, 解析失败返回null(如有其他字符出现)
      */
     @Nullable
@@ -37,7 +40,7 @@ public class StringUtils {
                 list.add(cur);
                 cur = 0;
             } else if (ch >= '0' && ch <= '9') {
-                cur = cur * 10 + (ch - '0');
+                cur = cur * 10 + (ch ^ '0');
             } else {
                 return null;
             }
