@@ -41,6 +41,15 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
     List<Map<String, String>> selectMessageByMaxId(@Param("maxId") Integer maxId, @Param("size") int size);
 
     /**
+     *
+     * 根据最小消息id获取消息
+     * @param minId 最小id
+     * @param size 每页最多显示几个
+     * @return 消息
+     */
+    List<Map<String, String>> selectMessageByMinId(@Param("minId") int minId, @Param("size") int size);
+
+    /**
      * 根据pid获取消息
      * @param pid pid
      * @param page 分页
@@ -62,5 +71,13 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      */
     @Update("UPDATE community_message SET reply_count = reply_count + 1 WHERE id = #{id}")
     void increaseReplyCount(@Param("id") int messageId);
+
+    /**
+     * 相对的修改点赞数量
+     * @param messageId 消息id
+     * @param likeAdd 点赞数量相等变化量
+     * @param dislikeAdd 点踩数量相对变化量
+     */
+    void modifyFeedbackAbsolutely(@Param("id") int messageId, @Param("up") int likeAdd, @Param("down") int dislikeAdd);
 
 }

@@ -57,10 +57,10 @@ public class CommunityMessage {
 
     @TableField("`like`")
     @Null(groups = {InsertGroup.class})
-    private int like;
+    private Integer like;
 
     @Null(groups = {InsertGroup.class})
-    private int dislike;
+    private Integer dislike;
 
     private Integer replyTo;
 
@@ -91,6 +91,14 @@ public class CommunityMessage {
         this.author = author;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
     }
@@ -107,28 +115,20 @@ public class CommunityMessage {
         this.createTime = createTime;
     }
 
-    public int getLike() {
+    public Integer getLike() {
         return like;
     }
 
-    public void setLike(int like) {
+    public void setLike(Integer like) {
         this.like = like;
     }
 
-    public int getDislike() {
+    public Integer getDislike() {
         return dislike;
     }
 
-    public void setDislike(int dislike) {
+    public void setDislike(Integer dislike) {
         this.dislike = dislike;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Integer getReplyTo() {

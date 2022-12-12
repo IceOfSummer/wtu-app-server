@@ -52,15 +52,23 @@ public class CommunityMessageController {
     }
 
     /**
-     * 获取最新消息
+     * 获取最新消息. 若不传，则默认获取最新消息，若两个都传，默认使用maxId
      * @param maxId 消息最大id
+     * @param minId 最小消息id
      * @return 最新消息
      */
     @GetMapping("newly_message")
     public ResponseTemplate<List<Map<String, String>>> queryNewlyCommunityMessage(
-            @RequestParam(value = "m", required = false) Integer maxId
+            @RequestParam(value = "mx", required = false) Integer maxId,
+            @RequestParam(value = "mi", required = false) Integer minId
     ) {
-        return ResponseTemplate.success(communityService.queryNewlyCommunityMessage(maxId));
+        if (maxId == null && minId == null) {
+            return ResponseTemplate.success(communityService.queryNewlyCommunityMessage(null));
+        } else if (maxId != null) {
+            return ResponseTemplate.success(communityService.queryNewlyCommunityMessage(maxId));
+        } else {
+            return ResponseTemplate.success(communityService.queryNewlyCommunityMessageByMinId(minId));
+        }
     }
 
     /**
@@ -93,6 +101,32 @@ public class CommunityMessageController {
             return ResponseTemplate.success(Collections.emptyList());
         }
         return ResponseTemplate.success(communityService.querySubReplyPreview(list));
+    }
+
+    /**
+     * 点赞/踩某条消息
+     * @param attitude 用户的态度, 0:踩, 1: 赞, null: 无评价(用来取消点赞/踩)
+     */
+    @PostMapping("/feedback")
+    public ResponseTemplate<Void> feedbackMessage(
+            @RequestParam("i") int messageId,
+            @RequestParam(value = "l", required = false) Integer attitude
+    ) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        Boolean thumbsUp;
+        if (attitude == null) {
+            thumbsUp = null;
+        } else {
+            thumbsUp = attitude == 1;
+        }
+        ServiceCode serviceCode = communityService.feedbackMessage(userPrincipal.getId(), messageId, thumbsUp);
+        if (serviceCode == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        if (serviceCode == ServiceCode.NOT_AVAILABLE) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已经点过了");
+        }
+        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
     }
 
 }

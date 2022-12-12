@@ -11,6 +11,7 @@ import pers.xds.wtuapp.web.database.bean.TradeStat;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.*;
 import pers.xds.wtuapp.web.redis.CounterCache;
+import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
@@ -110,7 +111,7 @@ public class CommodityServiceImpl implements CommodityService {
         String key = INSERT_CACHE_KEY_PREFIX + ownerId;
         // 每个周最多发布14件商品
         final int maxWeekPost = 14;
-        int invokeCount = counterCache.getInvokeCount(key, CounterCache.Duration.WEEK);
+        int invokeCount = counterCache.getInvokeCount(key, Duration.WEEK);
         if (invokeCount > maxWeekPost) {
             return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }

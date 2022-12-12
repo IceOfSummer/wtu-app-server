@@ -37,6 +37,13 @@ public interface CommunityService {
     List<Map<String, String>> queryNewlyCommunityMessage(@Nullable Integer maxId);
 
     /**
+     * 查询最新的社区消息，但是其id大于minId
+     * @param minId 最小消息id(不包括)
+     * @return 最新的社区信息
+     */
+    List<Map<String, String>> queryNewlyCommunityMessageByMinId(int minId);
+
+    /**
      * 查询某条消息的评论(不管是一级评论还是二级评论，都可以查询)
      * @param pid 根消息id
      * @param page 第几页
@@ -54,10 +61,13 @@ public interface CommunityService {
 
     /**
      * 点赞/踩 某条消息
+     * @param uid 用户id
      * @param messageId 消息id
-     * @param isArticle 是否为文章(即对文章的整个内容点赞，而非对某个评论点赞)
-     * @param thumbsUp 是否点赞，false为踩
+     * @param thumbsUp 是否点赞，false为踩, null为中立
+     * @return 服务状态码<p>
+     *     - {@link ServiceCode#RATE_LIMIT} 用户点赞过于频繁
+     *     - {@link ServiceCode#NOT_AVAILABLE} 用户已经点赞过了
      */
-    void feedbackMessage(int messageId, boolean isArticle, boolean thumbsUp);
+    ServiceCode feedbackMessage(int uid, int messageId, Boolean thumbsUp);
 
 }

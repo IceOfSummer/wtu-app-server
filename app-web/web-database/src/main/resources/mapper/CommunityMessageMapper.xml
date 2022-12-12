@@ -17,6 +17,15 @@
         LIMIT #{size}
     </select>
 
+    <select id="selectMessageByMinId" resultType="Map">
+        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE id &gt; #{minId}
+        ORDER BY id
+        LIMIT #{size}
+    </select>
+
     <select id="selectMessageByPid" resultType="Map">
         SELECT u.nickname, <include refid="baseQueryColumn"/>
         FROM community_message cm
@@ -36,5 +45,9 @@
             WHERE tc.pid = cm.pid AND tc.id > cm.id
         ) &lt; #{size}
     </select>
+
+    <update id="modifyFeedbackAbsolutely">
+        UPDATE community_message SET `like` = `like` + ${up}, dislike = dislike + ${down} WHERE id = #{id}
+    </update>
 
 </mapper>

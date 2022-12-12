@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.web.redis.CounterCache;
+import pers.xds.wtuapp.web.redis.common.Duration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,12 +21,6 @@ public class CounterCacheImpl implements CounterCache {
     @Autowired
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
-    }
-
-
-    @Override
-    public int getInvokeCount(String key) {
-        return getInvokeCount(key, Duration.DAY);
     }
 
     @Override
