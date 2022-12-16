@@ -32,8 +32,16 @@ public interface CounterCache {
      * 为某个key的值加一，一定要先调用getInvokeCount后再调用该方法，以防key不能及时过期
      * @param currentVal 当前的值
      * @param key 唯一的key
+     * @deprecated
+     * @see CounterCache#increaseInvokeCount(String)
      */
     void increaseInvokeCount(int currentVal, String key);
+
+    /**
+     * 为某个key的值加一
+     * @param key 唯一的key
+     */
+    void increaseInvokeCount(String key);
 
     /**
      * 异步的为某个key加一，一定要先调用getInvokeCount后再调用该方法，以防key不能及时过期

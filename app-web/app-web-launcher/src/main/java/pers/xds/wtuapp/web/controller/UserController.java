@@ -2,13 +2,24 @@ package pers.xds.wtuapp.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.xds.wtuapp.security.SecurityConstant;
+import pers.xds.wtuapp.web.bean.RegisterParam;
+import pers.xds.wtuapp.web.database.bean.User;
+import pers.xds.wtuapp.web.security.PwdEncoder;
+import pers.xds.wtuapp.web.service.ServiceCode;
+import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.UserService;
-import pers.xds.wtuapp.web.service.bean.UserInfo;
+import pers.xds.wtuapp.web.service.WtuAuthService;
+import pers.xds.wtuapp.web.service.bean.BaseWtuUserInfo;
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
+import pers.xds.wtuapp.web.service.bean.WtuAuthInitParam;
+import pers.xds.wtuapp.web.service.bean.WtuAuthParam;
 import pers.xds.wtuapp.web.util.StringUtils;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,6 +33,13 @@ public class UserController {
 
     private UserService userService;
 
+    private WtuAuthService wtuAuthService;
+
+    @Autowired
+    public void setWtuAuthService(WtuAuthService wtuAuthService) {
+        this.wtuAuthService = wtuAuthService;
+    }
+
     @Autowired
     public void setUserInfoService(UserService userService) {
         this.userService = userService;
@@ -34,7 +52,7 @@ public class UserController {
      */
     @GetMapping("/info/{id}")
     @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
-    public ResponseTemplate<UserInfo> queryUserInfo(@PathVariable int id) {
+    public ResponseTemplate<User> queryUserInfo(@PathVariable int id) {
         return ResponseTemplate.success(userService.queryUserInfo(id));
     }
 
@@ -44,19 +62,93 @@ public class UserController {
      * @return 多个用户的信息
      */
     @GetMapping("/info/multi_query")
-    public ResponseTemplate<List<UserInfo>> queryMultiUserInfo(@RequestParam(name = "i") String uid) {
+    public ResponseTemplate<List<User>> queryMultiUserInfo(@RequestParam(name = "i") String uid) {
         final char splitter = ',';
         final int maxSize = 30;
         List<Integer> integers = StringUtils.parseLineString(uid, splitter, maxSize);
         if (integers == null) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
-        List<UserInfo> userInfoViews = userService.queryMultiUserInfo(integers);
+        List<User> userInfoViews = userService.queryMultiUserInfo(integers);
         if (userInfoViews == null) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
         return ResponseTemplate.success(userInfoViews);
     }
 
+    final int USERNAME_MIN_LENGTH = 8;
+
+    final int USERNAME_MAX_LENGTH = 25;
+
+    /**
+     * 获取注册初始化参数
+     * @param username 要注册的用户名
+     */
+    @GetMapping("/register/init")
+    public ResponseTemplate<WtuAuthInitParam> getRegisterInitParam(@RequestParam("u") String username) {
+        if (username.length() < USERNAME_MIN_LENGTH || username.length() > USERNAME_MAX_LENGTH) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
+
+        boolean exist = userService.isUsernameExist(username);
+        if (exist) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "用户名已经存在");
+        }
+        try {
+            ServiceCodeWrapper<WtuAuthInitParam> auth = wtuAuthService.initAuth();
+            if (auth.code == ServiceCode.SUCCESS) {
+                return ResponseTemplate.success(auth.data);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseTemplate.fail(ResponseCode.SERVER_BUSY);
+    }
+
+    /**
+     * 注册
+     */
+    @PostMapping("/register/do")
+    public ResponseTemplate<Void> register(@Validated RegisterParam registerParam) {
+        if (userService.isWtuUsernameExist(registerParam.wtuUsername)) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "该学号已被注册");
+        }
+        if (userService.isUsernameExist(registerParam.registerUsername)) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "用户名已存在");
+        }
+        WtuAuthParam wtuAuthParam = new WtuAuthParam(
+                registerParam.wtuUsername,
+                registerParam.wtuPassword,
+                registerParam.wtuCaptcha,
+                registerParam.lt,
+                registerParam.sid,
+                registerParam.route
+        );
+        BaseWtuUserInfo userInfo;
+        try {
+            ServiceCodeWrapper<BaseWtuUserInfo> auth = wtuAuthService.auth(wtuAuthParam);
+            userInfo = auth.data;
+            if (auth.code != ServiceCode.SUCCESS) {
+                if (auth.code == ServiceCode.BAD_REQUEST) {
+                    return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "用户名或密码或验证码错误");
+                } else  {
+                    return ResponseTemplate.fail(ResponseCode.SERVER_BUSY);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseTemplate.fail(ResponseCode.SERVER_BUSY);
+        }
+        ServiceCode serviceCode = userService.registerUser(
+                registerParam.registerUsername,
+                PwdEncoder.BCrypt.encode(registerParam.registerPassword),
+                registerParam.wtuUsername,
+                userInfo
+        );
+        if (serviceCode == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "用户名已被注册");
+    }
 
 }

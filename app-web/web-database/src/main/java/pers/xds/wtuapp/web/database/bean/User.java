@@ -1,19 +1,16 @@
 package pers.xds.wtuapp.web.database.bean;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.Serializable;
 
 /**
  * 用户表
  * @author HuPeng
  */
 @TableName(value ="user")
-public class User implements Serializable {
+public class User {
     /**
      * 用户id
      */
@@ -55,17 +52,31 @@ public class User implements Serializable {
      */
     private String email;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 学号
+     */
+    private String wtuId;
+
+    /**
+     * 真实姓名
+     */
+    private String name;
+
+    /**
+     * 班级信息
+     */
+    private String className;
+
 
     public User() {
     }
 
-    public User(String username, String password, String email, String nickname) {
+    public User(String username, String password, String wtuId, String name, String className) {
         this.username = username;
         this.password = password;
-        this.nickname = nickname;
-        this.email = email;
+        this.wtuId = wtuId;
+        this.name = name;
+        this.className = className;
     }
 
     public String getEmail() {
@@ -169,5 +180,27 @@ public class User implements Serializable {
         this.nickname = nickname;
     }
 
+    public String getWtuId() {
+        return wtuId;
+    }
 
+    public void setWtuId(String wtuId) {
+        this.wtuId = wtuId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 }

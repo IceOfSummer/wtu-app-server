@@ -29,5 +29,13 @@ public enum ServiceCode {
     /**
      * 达到使用频率上限
      */
-    RATE_LIMIT
+    RATE_LIMIT,
+    /**
+     * 未知错误，特指在逻辑上不会发生的事发生了，一般解决方法可能为重试。
+     */
+    UNKNOWN_ERROR,
+    /**
+     * 表示出现了重复的元素
+     */
+    DUPLICATE_KEY,
 }

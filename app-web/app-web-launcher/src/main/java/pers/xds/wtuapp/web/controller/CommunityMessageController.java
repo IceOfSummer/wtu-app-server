@@ -58,6 +58,7 @@ public class CommunityMessageController {
      * @return 最新消息
      */
     @GetMapping("newly_message")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<Map<String, String>>> queryNewlyCommunityMessage(
             @RequestParam(value = "mx", required = false) Integer maxId,
             @RequestParam(value = "mi", required = false) Integer minId
@@ -78,6 +79,7 @@ public class CommunityMessageController {
      * @param size 每页大小
      */
     @GetMapping("/reply/query")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<Map<String, String>>> queryReply(
             @RequestParam("pi") int pid,
             @RequestParam(value = "p", required = false, defaultValue = "1") int page,
@@ -91,6 +93,7 @@ public class CommunityMessageController {
      * @param pids 要查询的一级评论，每个id以逗号分隔，如: `1,2,3,4,5`
      */
     @GetMapping("/reply/preview")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<Map<String, String>>> querySubReplyPreview(@RequestParam("p") String pids) {
         final int maxLen = 10;
         List<Integer> list = StringUtils.parseLineString(pids, ',', maxLen);

@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
@@ -60,7 +59,7 @@ public class SecurityConfig {
             public <O> O postProcess(O object) {
                 return object;
             }
-        }).userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder()).and().build());
+        }).userDetailsService(userDetailsService).passwordEncoder(PwdEncoder.BCrypt.passwordEncoder).and().build());
         return http.build();
     }
 

@@ -64,6 +64,10 @@
             <artifactId>tencentcloud-sdk-java-ses</artifactId>
             <version>3.1.641</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

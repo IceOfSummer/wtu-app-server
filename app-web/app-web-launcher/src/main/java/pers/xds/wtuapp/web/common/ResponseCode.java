@@ -41,7 +41,11 @@ public enum ResponseCode {
      * 数量限制
      * 例如添加某个记录到达了上限
      */
-    COUNT_LIMIT(7, "数量限制");
+    COUNT_LIMIT(7, "数量限制"),
+    /**
+     * 服务器繁忙，请稍后再试
+     */
+    SERVER_BUSY(8, "服务器繁忙，请稍后再试", HttpStatus.SERVICE_UNAVAILABLE);
 
     public final int code;
 

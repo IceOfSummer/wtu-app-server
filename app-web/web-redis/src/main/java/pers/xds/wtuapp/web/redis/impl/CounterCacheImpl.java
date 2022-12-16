@@ -29,18 +29,23 @@ public class CounterCacheImpl implements CounterCache {
         if (o == null) {
             redisTemplate.opsForValue().set(
                     key,
-                    "1",
+                    1,
                     duration.countDuration(),
-                    TimeUnit.MICROSECONDS
+                    TimeUnit.MILLISECONDS
             );
             return 1;
         }
-        return Integer.parseInt((String) o);
+        return (int) o;
     }
 
     @Override
     public void increaseInvokeCount(int currentVal, String key) {
-        redisTemplate.opsForValue().set(key, String.valueOf(currentVal + 1));
+        increaseInvokeCount(key);
+    }
+
+    @Override
+    public void increaseInvokeCount(String key) {
+        redisTemplate.opsForValue().increment(key);
     }
 
     @Override
