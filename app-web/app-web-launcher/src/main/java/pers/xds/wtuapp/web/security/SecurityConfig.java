@@ -24,12 +24,20 @@ public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
 
+    private RedisIndexedSessionRepository sessionRepository;
+
+    private LoginSuccessHandler loginSuccessHandler;
+
+    @Autowired
+    public void setLoginSuccessHandler(LoginSuccessHandler loginSuccessHandler) {
+        this.loginSuccessHandler = loginSuccessHandler;
+    }
+
     @Autowired
     public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
-    private RedisIndexedSessionRepository sessionRepository;
 
     @Autowired
     public void setFindByIndexNameSessionRepository(RedisIndexedSessionRepository sessionRepository) {
@@ -43,7 +51,7 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .failureHandler(new AuthFailHandler())
-                .successHandler(new LoginSuccessHandler());
+                .successHandler(loginSuccessHandler);
 
         http.sessionManagement()
                 .maximumSessions(1)
@@ -52,7 +60,6 @@ public class SecurityConfig {
         http.exceptionHandling()
                 .authenticationEntryPoint(new AuthenticationEntryPointImpl());
 
-        // TODO 开启csrf
         http.csrf().disable();
         http.authenticationManager(new AuthenticationManagerBuilder(new ObjectPostProcessor<>() {
             @Override

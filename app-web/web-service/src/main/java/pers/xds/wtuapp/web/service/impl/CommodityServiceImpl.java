@@ -180,22 +180,24 @@ public class CommodityServiceImpl implements CommodityService {
             Date createTime = new Date();
             orderMapper.insert(order);
             userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId);
-
-            // 发送邮件提醒
-            emailService.sendCommodityLockTip(
-                    ownerId,
-                    user.getEmail(),
-                    new CommodityLockTemplateData(
-                            nickname,
-                            commodity.getName(),
-                            commodity.getPrice(),
-                            commodity.getTradeLocation(),
-                            DateFormatUtils.toLocalString(createTime),
-                            order.getRemark(),
-                            order.getCount(),
-                            commodity.getPreviewImage()
-                    )
-            );
+            String email = user.getEmail();
+            if (email != null) {
+                // 发送邮件提醒
+                emailService.sendCommodityLockTip(
+                        ownerId,
+                        email,
+                        new CommodityLockTemplateData(
+                                nickname,
+                                commodity.getName(),
+                                commodity.getPrice(),
+                                commodity.getTradeLocation(),
+                                DateFormatUtils.toLocalString(createTime),
+                                order.getRemark(),
+                                order.getCount(),
+                                commodity.getPreviewImage()
+                        )
+                );
+            }
             counterCache.increaseInvokeCountAsync(invokeCount, key);
             return ServiceCodeWrapper.success(order.getOrderId());
         }

@@ -51,4 +51,11 @@ public interface UserService {
      */
     ServiceCode registerUser(String username, String password, String wtuId, BaseWtuUserInfo userInfo);
 
+    /**
+     * 获取用户详细信息
+     * @param uid 用户id
+     * @return 用户详细信息，包括{@link User#email}, {@link User#nickname}, {@link User#wtuId}, {@link User#name}
+     * {@link User#className}
+     */
+    User queryUserDetail(int uid);
 }

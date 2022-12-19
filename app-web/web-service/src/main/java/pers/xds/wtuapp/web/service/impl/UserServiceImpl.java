@@ -57,7 +57,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServiceCode registerUser(String username, String password, String wtuId, BaseWtuUserInfo userInfo) {
-        userMapper.insert(new User(username, password, wtuId, userInfo.getName(), userInfo.getClassName()));
+        User user = new User(username, password, wtuId, userInfo.getName(), userInfo.getClassName());
+        user.setNickname("用户" + username);
+        userMapper.insert(user);
         return ServiceCode.SUCCESS;
+    }
+
+    @Override
+    public User queryUserDetail(int uid) {
+        return userMapper.selectUserDetail(uid);
     }
 }

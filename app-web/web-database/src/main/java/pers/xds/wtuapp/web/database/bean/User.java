@@ -3,6 +3,7 @@ package pers.xds.wtuapp.web.database.bean;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @author HuPeng
  */
 @TableName(value ="user")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     /**
      * 用户id

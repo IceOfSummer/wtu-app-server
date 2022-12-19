@@ -7,30 +7,34 @@
     <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="false"/>
 
     <sql id="user_base_query_col">
-        u.user_id,u.name,u.credit,u.nickname
+        u.user_id,u.name,u.credit,u.nickname,u.class_name
     </sql>
 
-    <select id="findByUsername" resultType="pers.xds.wtuapp.web.database.bean.User">
-        SELECT * FROM user WHERE username = #{username}
+    <select id="findByUsername" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="false">
+        SELECT user_id,`password`,`role` FROM user WHERE username = #{username}
     </select>
 
     <select id="selectNameAndEmail" resultType="pers.xds.wtuapp.web.database.bean.User">
         SELECT nickname, email FROM user WHERE user_id = #{uid}
     </select>
 
-    <select id="selectAllByIds">
+    <select id="selectAllByIds" useCache="false" resultType="pers.xds.wtuapp.web.database.bean.User">
         SELECT <include refid="user_base_query_col"/> FROM user u
         WHERE user_id IN
         <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
     </select>
 
-    <select id="selectByIdForQuery">
+    <select id="selectByIdForQuery" resultType="pers.xds.wtuapp.web.database.bean.User">
         SELECT <include refid="user_base_query_col"/> FROM user u
         WHERE user_id = #{id}
     </select>
 
     <insert id="insert" useGeneratedKeys="true">
-        INSERT INTO user(username,password,wtu_id,name,class_name) VALUE(#{u.username},#{u.password},#{u.wtuId},#{u.name},#{u.className})
+        INSERT INTO user(username,password,wtu_id,name,class_name,nickname) VALUE(#{u.username},#{u.password},#{u.wtuId},#{u.name},#{u.className},#{u.nickname})
     </insert>
+
+    <select id="selectUserDetail" resultType="pers.xds.wtuapp.web.database.bean.User">
+        SELECT email,nickname,wtu_id,name,class_name FROM user WHERE user_id = #{uid}
+    </select>
 
 </mapper>
