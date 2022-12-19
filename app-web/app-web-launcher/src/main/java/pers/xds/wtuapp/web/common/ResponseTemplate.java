@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import pers.xds.wtuapp.web.service.util.Jackson;
+
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -68,7 +70,7 @@ public class ResponseTemplate<D> {
     }
 
     public String toJson() {
-        return Jackson.DEFAULT.writeAsString(this);
+        return Jackson.DEFAULT.toJsonStr(this);
     }
 
 }

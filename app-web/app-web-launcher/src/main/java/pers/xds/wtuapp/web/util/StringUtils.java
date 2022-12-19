@@ -3,6 +3,7 @@ package pers.xds.wtuapp.web.util;
 import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author HuPeng
@@ -51,5 +52,21 @@ public class StringUtils {
         return list;
     }
 
+    /**
+     * 邮箱检查
+     */
+    private static final Pattern EMAIL_CHECK = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
+
+    /**
+     * 检查字符串是否为非法邮箱
+     * @param str 字符串
+     * @return 是否为非法邮箱
+     */
+    public static boolean isInvalidEmail(String str) {
+        if (str.length() > 25) {
+            return true;
+        }
+        return !EMAIL_CHECK.matcher(str).find();
+    }
 
 }

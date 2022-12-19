@@ -18,7 +18,7 @@ public enum ResponseCode {
      */
     FORBIDDEN(1, "请先登录", HttpStatus.FORBIDDEN),
     /**
-     * 用户名或密码错误
+     * 用户名或密码错误，或其它身份信息错误
      */
     WRONG_CREDENTIALS(2, "用户名或密码错误", HttpStatus.FORBIDDEN),
     /**

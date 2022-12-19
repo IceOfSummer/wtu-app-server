@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jetbrains.annotations.Nullable;
+import pers.xds.wtuapp.web.database.group.UpdateGroup;
+
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 
 /**
  * 用户表
@@ -17,56 +21,67 @@ public class User {
      * 用户id
      */
     @TableId(type = IdType.AUTO)
+    @Null(groups = UpdateGroup.class)
     private Integer userId;
 
     /**
      * 用户名
      */
+    @Null(groups = UpdateGroup.class)
     private String username;
 
     /**
      * 用户密码
      */
+    @Null(groups = UpdateGroup.class)
     private String password;
 
     /**
      * 用户状态;0表示正常用户，其它数字根据需要设置，如1代表用户被封禁
      */
+    @Null(groups = UpdateGroup.class)
     private Integer status;
 
     /**
      * 用户权限;使用位运算表示权限
      */
+    @Null(groups = UpdateGroup.class)
     private Integer role;
 
     /**
      * 用户信誉
      */
+    @Null(groups = UpdateGroup.class)
     private Integer credit;
 
     /**
      * 昵称
      */
+    @Size(min = 1, max = 20, groups = UpdateGroup.class)
     private String nickname;
 
     /**
      * 用户邮箱
      */
+    @Null(groups = UpdateGroup.class)
     private String email;
 
     /**
      * 学号
      */
+    @Null(groups = UpdateGroup.class)
     private String wtuId;
 
     /**
      * 真实姓名
      */
+    @Null(groups = UpdateGroup.class)
     private String name;
 
     /**
      * 班级信息
      */
+    @Null(groups = UpdateGroup.class)
     private String className;
 
 

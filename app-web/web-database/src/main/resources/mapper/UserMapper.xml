@@ -37,4 +37,17 @@
         SELECT email,nickname,wtu_id,name,class_name FROM user WHERE user_id = #{uid}
     </select>
 
+    <update id="update">
+        UPDATE user
+        <set>
+            <if test="u.email">email=#{u.email},</if>
+            <if test="u.nickname">nickname=#{u.nickname},</if>
+        </set>
+        WHERE user_id = #{u.userId}
+    </update>
+
+    <select id="selectNicknameOnly" useCache="false" resultType="String">
+        SELECT nickname FROM user WHERE user_id = #{uid}
+    </select>
+
 </mapper>

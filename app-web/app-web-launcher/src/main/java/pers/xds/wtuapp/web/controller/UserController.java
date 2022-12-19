@@ -5,9 +5,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.xds.wtuapp.security.SecurityConstant;
+import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.bean.RegisterParam;
 import pers.xds.wtuapp.web.database.bean.User;
+import pers.xds.wtuapp.web.database.group.UpdateGroup;
 import pers.xds.wtuapp.web.security.PwdEncoder;
+import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.UserService;
@@ -75,6 +78,41 @@ public class UserController {
         }
         return ResponseTemplate.success(userInfoViews);
     }
+
+    @PostMapping("update")
+    public ResponseTemplate<Void> updateUserInfo(@Validated(UpdateGroup.class) User user) {
+        if (user.getNickname() == null) {
+            return ResponseTemplate.success();
+        }
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        ServiceCode info = userService.updateUserInfo(userPrincipal.getId(), user);
+        return info == ServiceCode.SUCCESS ? ResponseTemplate.success() : ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+    }
+
+    @PostMapping("/update/email/captcha")
+    public ResponseTemplate<Void> sendEmailUpdateCaptcha(@RequestParam("e") String email) {
+        if (StringUtils.isInvalidEmail(email)) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        int id = userPrincipal.getId();
+        ServiceCode code = userService.requireEmailUpdateCaptcha(id, email);
+        if (code == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
+    }
+
+    @PostMapping("/update/email/bind")
+    public ResponseTemplate<Void> updateEmail(@RequestParam("c") String captcha) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        ServiceCode code = userService.updateEmail(userPrincipal.getId(), captcha);
+        if (code == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        return ResponseTemplate.fail(ResponseCode.WRONG_CREDENTIALS);
+    }
+
 
     final int USERNAME_MIN_LENGTH = 8;
 

@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.web.service.EmailService;
 import pers.xds.wtuapp.web.service.config.email.CommodityLockTemplateData;
+import pers.xds.wtuapp.web.service.config.email.EmailBindTemplateData;
 import pers.xds.wtuapp.web.service.config.props.EmailConfigurationProperties;
+import pers.xds.wtuapp.web.service.util.Jackson;
 
 
 /**
@@ -35,7 +37,7 @@ public class TencentCouldEmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendCommodityLockTip(int uid, String email, CommodityLockTemplateData data) {
+    public void sendCommodityLockTip(String email, CommodityLockTemplateData data) {
         // 拼接cdn域名
         data.image = cdnUrl + data.image;
         // 发邮件
@@ -46,6 +48,25 @@ public class TencentCouldEmailServiceImpl implements EmailService {
         template.setTemplateData(data.toJson());
         request.setTemplate(template);
         request.setSubject("你的商品" + data.itemName + "有新的订单");
+        request.setFromEmailAddress(props.getSenderEmail());
+        request.setDestination(new String[]{ email });
+        try {
+            sesClient.SendEmail(request);
+        } catch (TencentCloudSDKException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void sendEmailCaptcha(String email, EmailBindTemplateData data) {
+        SesClient sesClient = new SesClient(credential, props.getRegion());
+        SendEmailRequest request = new SendEmailRequest();
+        Template template = new Template();
+        template.setTemplateID(props.getEmailCaptchaTemplate());
+        template.setTemplateData(Jackson.toJsonString(data));
+
+        request.setTemplate(template);
+        request.setSubject("您正在绑定邮箱");
         request.setFromEmailAddress(props.getSenderEmail());
         request.setDestination(new String[]{ email });
         try {

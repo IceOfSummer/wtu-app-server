@@ -15,6 +15,8 @@ public class EmailConfigurationProperties {
      */
     private Long commodityLockTipTemplate;
 
+    private Long emailCaptchaTemplate;
+
     /**
      * 地域
      */
@@ -64,5 +66,13 @@ public class EmailConfigurationProperties {
 
     public void setSenderEmail(String senderEmail) {
         this.senderEmail = senderEmail;
+    }
+
+    public Long getEmailCaptchaTemplate() {
+        return emailCaptchaTemplate;
+    }
+
+    public void setEmailCaptchaTemplate(Long emailCaptchaTemplate) {
+        this.emailCaptchaTemplate = emailCaptchaTemplate;
     }
 }

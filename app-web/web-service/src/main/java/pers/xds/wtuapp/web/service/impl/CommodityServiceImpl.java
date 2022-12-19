@@ -126,7 +126,7 @@ public class CommodityServiceImpl implements CommodityService {
         } else {
             tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
         }
-        counterCache.increaseInvokeCountAsync(invokeCount, key);
+        counterCache.increaseInvokeCountIgnoreException(key);
         // 使用自动生成的id
         commodity.setCommodityId(null);
         commodityMapper.insert(commodity);
@@ -184,7 +184,6 @@ public class CommodityServiceImpl implements CommodityService {
             if (email != null) {
                 // 发送邮件提醒
                 emailService.sendCommodityLockTip(
-                        ownerId,
                         email,
                         new CommodityLockTemplateData(
                                 nickname,
@@ -198,7 +197,7 @@ public class CommodityServiceImpl implements CommodityService {
                         )
                 );
             }
-            counterCache.increaseInvokeCountAsync(invokeCount, key);
+            counterCache.increaseInvokeCountIgnoreException(key);
             return ServiceCodeWrapper.success(order.getOrderId());
         }
         return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);

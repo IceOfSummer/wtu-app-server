@@ -24,7 +24,7 @@ public interface UserMapper  {
     User findByUsername(@Param("username") String username);
 
     /**
-     * 获取用户昵称和email，<b>昵称可能为空</b>
+     * 获取用户昵称和email
      * @param uid 用户id
      * @return 用户信息
      */
@@ -74,4 +74,20 @@ public interface UserMapper  {
      * {@link User#className}
      */
     User selectUserDetail(@Param("uid") int uid);
+
+
+    /**
+     * 更新用户信息
+     * @param user 要更新的用户信息，只能更新{@link User#nickname}, {@link User#email}, 其余字段无效
+     * @return 返回1表示更新成功，0表示用户不存在
+     */
+    int update(@Param("u") User user);
+
+    /**
+     * 只获取用户昵称
+     * @param uid 用户id
+     * @return 用户昵称
+     */
+    String selectNicknameOnly(@Param("uid") int uid);
+
 }

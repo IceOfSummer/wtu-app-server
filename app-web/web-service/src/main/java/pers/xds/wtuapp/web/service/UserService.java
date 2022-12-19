@@ -58,4 +58,34 @@ public interface UserService {
      * {@link User#className}
      */
     User queryUserDetail(int uid);
+
+
+    /**
+     * 更新用户信息
+     * @param uid 用户id
+     * @param user 要更新的信息(非null的属性都会被更新),<b>目前</b>只能更新{@link User#nickname} 其余字段无效
+     * @return 服务码<p>
+     *     - {@link ServiceCode#NOT_EXIST} 用户不存在
+     */
+    ServiceCode updateUserInfo(int uid, User user);
+
+
+    /**
+     * 申请邮箱绑定验证码
+     * @param uid 用户id
+     * @param email 邮箱
+     * @return 服务码<p>
+     *     - {@link ServiceCode#RATE_LIMIT} 达到了<b>每月</b>申请上限
+     */
+    ServiceCode requireEmailUpdateCaptcha(int uid, String email);
+
+    /**
+     * 更新邮箱
+     * @param uid 用户id
+     * @param captcha 邮箱验证码
+     * @return 服务码<p>
+     *     - {@link ServiceCode#BAD_REQUEST} 验证码不正确
+     */
+    ServiceCode updateEmail(int uid, String captcha);
+
 }
