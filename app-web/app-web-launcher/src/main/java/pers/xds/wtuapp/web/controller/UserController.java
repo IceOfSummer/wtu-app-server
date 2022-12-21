@@ -123,6 +123,7 @@ public class UserController {
      * @param username 要注册的用户名
      */
     @GetMapping("/register/init")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<WtuAuthInitParam> getRegisterInitParam(@RequestParam("u") String username) {
         if (username.length() < USERNAME_MIN_LENGTH || username.length() > USERNAME_MAX_LENGTH) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
@@ -147,6 +148,7 @@ public class UserController {
      * 注册
      */
     @PostMapping("/register/do")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<Void> register(@Validated RegisterParam registerParam) {
         if (userService.isWtuUsernameExist(registerParam.wtuUsername)) {
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "该学号已被注册");

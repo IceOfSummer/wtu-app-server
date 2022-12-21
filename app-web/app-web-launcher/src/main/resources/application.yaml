@@ -2,6 +2,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      time-between-connect-error-millis: 60000
   application:
     name: wtu-app-server
   profiles:
