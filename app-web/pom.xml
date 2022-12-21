@@ -6,7 +6,7 @@
 
     <groupId>pers.xds.wtuapp.web</groupId>
     <artifactId>app-web</artifactId>
-    <version>${reversion}</version>
+    <version>0.0.1</version>
     <modules>
         <module>web-database</module>
         <module>web-service</module>
@@ -36,22 +36,22 @@
             <dependency>
                 <groupId>pers.xds.wtuapp.web</groupId>
                 <artifactId>web-database</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.web</groupId>
                 <artifactId>web-redis</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.web</groupId>
                 <artifactId>web-service</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.web</groupId>
                 <artifactId>web-elasticsearch</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.security</groupId>

@@ -7,7 +7,7 @@
     <groupId>pers.xds.wtuapp.im</groupId>
     <artifactId>app-im-chat</artifactId>
     <packaging>pom</packaging>
-    <version>${reversion}</version>
+    <version>0.0.1</version>
     <modules>
         <module>im-chat-launcher</module>
         <module>im-service</module>
@@ -32,17 +32,17 @@
             <dependency>
                 <groupId>pers.xds.wtuapp.im</groupId>
                 <artifactId>im-service</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.im</groupId>
                 <artifactId>im-database</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.im</groupId>
                 <artifactId>im-redis</artifactId>
-                <version>${reversion}</version>
+                <version>0.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
