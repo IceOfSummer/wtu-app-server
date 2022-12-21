@@ -41,7 +41,7 @@ public class TestServerInitializer {
         String password = new BCryptPasswordEncoder().encode(TEST_PASSWORD);
         // insert test user
         for (int i = 0; i < 5; i++) {
-            User user = new User("10000" + i, password, "2237803016@qq.com", "TestUser-" + i);
+            User user = new User("10000" + i, password, "2237803016@qq.com", "TestUser-" + i, "");
             userMapper.insert(user);
         }
 

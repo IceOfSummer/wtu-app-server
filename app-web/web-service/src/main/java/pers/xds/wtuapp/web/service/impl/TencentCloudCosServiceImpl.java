@@ -1,14 +1,13 @@
 package pers.xds.wtuapp.web.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pers.xds.wtuapp.web.redis.CosCache;
+import pers.xds.wtuapp.web.redis.CounterCache;
+import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CosService;
 import pers.xds.wtuapp.web.service.config.cos.CosProvider;
 import pers.xds.wtuapp.web.service.config.cos.SignInfo;
-import pers.xds.wtuapp.web.service.config.cos.TencentCloudCosProviderImpl;
 
 /**
  * 腾讯云对象存储服务实现
@@ -18,9 +17,12 @@ import pers.xds.wtuapp.web.service.config.cos.TencentCloudCosProviderImpl;
 @Service
 public class TencentCloudCosServiceImpl implements CosService {
 
-    private static final Logger log = LoggerFactory.getLogger(TencentCloudCosProviderImpl.class);
+    private CounterCache counterCache;
 
-    private CosCache cosCache;
+    @Autowired
+    public void setCounterCache(CounterCache counterCache) {
+        this.counterCache = counterCache;
+    }
 
     private CosProvider cosProvider;
 
@@ -29,24 +31,41 @@ public class TencentCloudCosServiceImpl implements CosService {
         this.cosProvider = cosProvider;
     }
 
-    @Autowired
-    public void setCosCache(CosCache cosCache) {
-        this.cosCache = cosCache;
-    }
 
+    private static final String USERSPACE_KEY_PREFIX = "CosService:Userspace:";
 
     @Override
     public SignInfo[] requireUserspaceUploadSign(int uid, String[] filenames)  {
-        final int maxAllowTimes = 20;
-        int keyGenerateTimes = cosCache.getKeyGenerateTimes(uid);
+        final int maxAllowTimes = 10;
+        String key = USERSPACE_KEY_PREFIX + uid;
+        int keyGenerateTimes = counterCache.getInvokeCount(key, Duration.DAY);
         if (keyGenerateTimes > maxAllowTimes) {
             return null;
         }
         try {
-            return cosProvider.signUserspaceUpload(uid, filenames);
+            SignInfo[] signInfos = cosProvider.signUserspaceUpload(uid, filenames);
+            counterCache.increaseInvokeCountIgnoreException(key);
+            return signInfos;
         } catch (Exception e) {
-            log.error("", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final String AVATAR_PREFIX = "CosService:Avatar:";
+
+    @Nullable
+    @Override
+    public SignInfo requireAvatarUploadSign(int uid, String type) {
+        final int maxAllowTimes = 3;
+        String key = AVATAR_PREFIX + uid;
+        int invokeCount = counterCache.getInvokeCount(key, Duration.MONTH);
+        if (invokeCount >= maxAllowTimes) {
             return null;
+        }
+        try {
+            return cosProvider.signAvatarUpload(uid, type);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

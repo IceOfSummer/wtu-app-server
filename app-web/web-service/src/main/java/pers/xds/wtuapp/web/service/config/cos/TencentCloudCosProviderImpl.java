@@ -55,5 +55,12 @@ public class TencentCloudCosProviderImpl implements CosProvider {
         return signInfos;
     }
 
+    @Override
+    public SignInfo signAvatarUpload(int uid, String type) {
+        HashMap<String, String> headerMap = new HashMap<>(1);
+        headerMap.put("x-cos-meta-uid", String.valueOf(uid));
+        return signPutRequest("/avatar/todo/" + uid + type, headerMap);
+    }
+
 
 }

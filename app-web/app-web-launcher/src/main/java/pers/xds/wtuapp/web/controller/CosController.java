@@ -58,4 +58,21 @@ public class CosController {
         return ResponseTemplate.success(signInfos);
     }
 
+    /**
+     * 获取头像上传签名
+     * @param type 文件的类型描述符，如`.png`
+     */
+    @GetMapping("/secret/avatar")
+    public ResponseTemplate<SignInfo> getAvatarUploadSign(@RequestParam("t") String type) {
+        if (type.length() > 6) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        SignInfo sign = cosService.requireAvatarUploadSign(userPrincipal.getId(), type);
+        if (sign == null) {
+            return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
+        }
+        return ResponseTemplate.success(sign);
+    }
+
 }

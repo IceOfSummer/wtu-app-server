@@ -18,5 +18,13 @@ public interface CosProvider {
     SignInfo[] signUserspaceUpload(int uid, String[] filenames) throws Exception;
 
 
+    /**
+     * 对头像上传进行签名
+     * @param uid 用户id
+     * @param type 文件类型描述符, 如'.png'
+     * @return 签名
+     * @throws Exception 生成临时密匙错误
+     */
+    SignInfo signAvatarUpload(int uid, String type) throws Exception;
 
 }
