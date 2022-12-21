@@ -44,7 +44,7 @@ public class TencentCloudCosServiceImpl implements CosService {
         }
         try {
             SignInfo[] signInfos = cosProvider.signUserspaceUpload(uid, filenames);
-            counterCache.increaseInvokeCountIgnoreException(key);
+            counterCache.increaseInvokeCount(key);
             return signInfos;
         } catch (Exception e) {
             throw new RuntimeException(e);

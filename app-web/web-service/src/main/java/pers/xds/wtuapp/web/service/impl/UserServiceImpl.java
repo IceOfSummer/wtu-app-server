@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         emailCaptchaCache.saveEmailCaptcha(uid, email, captcha);
         EmailBindTemplateData data = new EmailBindTemplateData(nickname, captcha, "绑定邮箱");
         emailService.sendEmailCaptcha(email, data);
-        counterCache.increaseInvokeCountIgnoreException(key);
+        counterCache.increaseInvokeCount(key);
         return ServiceCode.SUCCESS;
     }
 

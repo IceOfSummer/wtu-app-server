@@ -63,7 +63,7 @@ public class CommunityServiceImpl implements CommunityService {
         }
         communityMessage.setAuthor(author);
         communityMessageMapper.insert(communityMessage);
-        counterCache.increaseInvokeCount(invokeCount, key);
+        counterCache.increaseInvokeCount(key);
         return ServiceCodeWrapper.success(communityMessage.getId());
     }
 
@@ -161,7 +161,7 @@ public class CommunityServiceImpl implements CommunityService {
             feedbackRecordMapper.updateAttitude(fb);
         }
         communityMessageMapper.modifyFeedbackAbsolutely(messageId, up, down);
-        counterCache.increaseInvokeCountAsync(invokeCount, key);
+        counterCache.increaseInvokeCount(key);
         return ServiceCode.SUCCESS;
     }
 
