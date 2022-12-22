@@ -4,7 +4,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,6 @@ public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(sslContext.newHandler(ch.alloc()))
-                .addLast(new IdleStateHandler(1000, 0, 0))
                 .addLast(idleHandlerFactory.idleStateHandler())
                 .addLast(IDLE_EVENT_HANDLER)
                 .addLast(new Message.MessageFrameDecoder())

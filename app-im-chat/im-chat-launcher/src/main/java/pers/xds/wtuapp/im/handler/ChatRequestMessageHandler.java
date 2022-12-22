@@ -61,6 +61,7 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         boolean sync = ch != null;
         Message message = new Message(msg.getTo(), principal.getId(), msg.getMessage());
         Pair<Integer, Integer> pair = chatService.saveMessage(message, sync);
+        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
         if (sync) {
             // 发送在线消息
             ch.writeAndFlush(new ChatResponseMessage(message, pair.getSecond()), ch.newPromise().addListener(future -> {
@@ -73,7 +74,6 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         } else {
             ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(pair.getFirst())));
         }
-        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
     }
 
 }

@@ -21,7 +21,7 @@
         SELECT u.nickname, <include refid="baseQueryColumn"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
-        WHERE id &gt; #{minId}
+        WHERE id &gt; #{minId} AND pid = 0
         ORDER BY id
         LIMIT #{size}
     </select>
