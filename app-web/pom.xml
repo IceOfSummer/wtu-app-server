@@ -7,6 +7,11 @@
     <groupId>pers.xds.wtuapp.web</groupId>
     <artifactId>app-web</artifactId>
     <version>0.0.1</version>
+    <parent>
+        <groupId>pers.xds.wtuapp</groupId>
+        <artifactId>wtu-app-server-parent</artifactId>
+        <version>0.0.1</version>
+    </parent>
     <modules>
         <module>web-database</module>
         <module>web-service</module>
@@ -26,13 +31,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>pers.xds.wtuapp</groupId>
-                <artifactId>wtu-app-server-parent</artifactId>
-                <version>0.0.1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>pers.xds.wtuapp.web</groupId>
                 <artifactId>web-database</artifactId>
@@ -66,4 +64,16 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
