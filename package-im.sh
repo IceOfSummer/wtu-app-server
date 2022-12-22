@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./package.sh app-im-chat im-chat-launcher
+./package.sh app-im-chat im-chat-launcher ..
