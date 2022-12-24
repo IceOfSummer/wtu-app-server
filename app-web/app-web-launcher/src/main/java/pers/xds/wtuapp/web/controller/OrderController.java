@@ -86,8 +86,11 @@ public class OrderController {
     public ResponseTemplate<Void> markReceived(@PathVariable int orderId,
                                                @RequestParam(value = "s") int sellerId,
                                                @RequestParam(value = "r", required = false) String remark) {
+        final int maxLen = 200;
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        remark = remark.isEmpty() ? null : remark;
+        if (remark != null && remark.length() >= maxLen) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
         ServiceCode code = orderService.markTradeDone(userPrincipal.getId(), sellerId, orderId, remark);
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success();
