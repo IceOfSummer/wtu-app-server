@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.*;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
+import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
+import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author DeSen Xu
@@ -28,7 +29,6 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * 根据pid删除社区消息
      * @param pid pid
      */
-    @Delete("DELETE FROM community_message WHERE pid = #{pid}")
     void deleteCommunityMessageByPid(@Param("pid") int pid);
 
 
@@ -38,7 +38,7 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @param size 每页最多显示几个
      * @return 消息
      */
-    List<Map<String, String>> selectMessageByMaxId(@Param("maxId") Integer maxId, @Param("size") int size);
+    List<CommunityMessagePost> selectMessageByMaxId(@Param("maxId") Integer maxId, @Param("size") int size);
 
     /**
      *
@@ -47,7 +47,7 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @param size 每页最多显示几个
      * @return 消息
      */
-    List<Map<String, String>> selectMessageByMinId(@Param("minId") int minId, @Param("size") int size);
+    List<CommunityMessagePost> selectMessageByMinId(@Param("minId") int minId, @Param("size") int size);
 
     /**
      * 根据pid获取消息
@@ -55,7 +55,7 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @param page 分页
      * @return 评论消息
      */
-    IPage<Map<String, String>> selectMessageByPid(@Param("pid") int pid, IPage<Map<String, String>> page);
+    IPage<CommunityMessagePost> selectMessageByPid(@Param("pid") int pid, IPage<CommunityMessageReply> page);
 
     /**
      * 根据一组pid获取相关评论预览
@@ -63,7 +63,7 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @param eachSize 每个pid下最多选择几条
      * @return 相关评论
      */
-    List<Map<String, String>> selectMessageReplyPreview(@Param("pids")List<Integer> pids, @Param("size") int eachSize);
+    List<CommunityMessagePost> selectMessageReplyPreview(@Param("pids")List<Integer> pids, @Param("size") int eachSize);
 
     /**
      * 添加某条消息的评论数
@@ -79,5 +79,20 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @param dislikeAdd 点踩数量相对变化量
      */
     void modifyFeedbackAbsolutely(@Param("id") int messageId, @Param("up") int likeAdd, @Param("down") int dislikeAdd);
+
+    /**
+     * 根据消息id获取社区消息的部分信息。只能获取{@link CommunityMessage#title}, {@link CommunityMessage#author}, {@link CommunityMessage#pid}
+     * @param id 消息id
+     * @return 标题
+     */
+    CommunityMessage selectSimplyById(@Param("id") int id);
+
+    /**
+     * 根据消息id查询消息
+     * @param messageId 消息id
+     * @return 消息信息
+     */
+    CommunityMessagePost selectMessageById(@Param("id") int messageId);
+
 
 }

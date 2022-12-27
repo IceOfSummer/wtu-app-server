@@ -4,12 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.CommunityMessageMapper">
 
+    <cache type="org.mybatis.caches.redis.RedisCache" />
+
     <sql id="baseQueryColumn">
-        cm.id,cm.pid,cm.author,cm.title,cm.content,cm.create_time as createTime,cm.`like`,cm.dislike,cm.reply_count as replyCount,cm.reply_to as replyTo
+        cm.id,cm.pid,cm.author,cm.title,cm.content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
     </sql>
 
-    <select id="selectMessageByMaxId" resultType="Map">
-        SELECT u.nickname, <include refid="baseQueryColumn"/>
+    <sql id="selectContentSimply">
+        cm.id,cm.pid,cm.author,cm.title,left(cm.content,30) as content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
+    </sql>
+
+    <delete id="deleteCommunityMessageByPid">
+        DELETE FROM community_message WHERE pid = #{pid}
+    </delete>
+
+    <select id="selectMessageByMaxId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
+        SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE <if test="maxId != null">id &lt;= #{maxId} AND</if> pid = 0
@@ -17,8 +27,8 @@
         LIMIT #{size}
     </select>
 
-    <select id="selectMessageByMinId" resultType="Map">
-        SELECT u.nickname, <include refid="baseQueryColumn"/>
+    <select id="selectMessageByMinId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
+        SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE id &gt; #{minId} AND pid = 0
@@ -26,15 +36,15 @@
         LIMIT #{size}
     </select>
 
-    <select id="selectMessageByPid" resultType="Map">
+    <select id="selectMessageByPid" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
         SELECT u.nickname, <include refid="baseQueryColumn"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE pid = #{pid}
     </select>
 
-    <select id="selectMessageReplyPreview" resultType="Map">
-        SELECT u.nickname, <include refid="baseQueryColumn"/>
+    <select id="selectMessageReplyPreview" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost" useCache="false">
+        SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE pid IN
@@ -49,5 +59,16 @@
     <update id="modifyFeedbackAbsolutely">
         UPDATE community_message SET `like` = `like` + ${up}, dislike = dislike + ${down} WHERE id = #{id}
     </update>
+
+    <select id="selectSimplyById" resultType="pers.xds.wtuapp.web.database.bean.CommunityMessage">
+        SELECT title,author,pid FROM community_message WHERE id = #{id}
+    </select>
+
+    <select id="selectMessageById" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
+        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE id = #{id}
+    </select>
 
 </mapper>

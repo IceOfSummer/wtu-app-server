@@ -5,17 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
+import pers.xds.wtuapp.web.database.bean.CommunityTip;
 import pers.xds.wtuapp.web.database.bean.FeedbackRecord;
 import pers.xds.wtuapp.web.database.mapper.CommunityMessageMapper;
+import pers.xds.wtuapp.web.database.mapper.CommunityTipMapper;
 import pers.xds.wtuapp.web.database.mapper.FeedbackRecordMapper;
+import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
+import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
+import pers.xds.wtuapp.web.database.view.CommunityTipQueryType;
 import pers.xds.wtuapp.web.redis.CounterCache;
 import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommunityService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
+import pers.xds.wtuapp.web.service.bean.PostReply;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author DeSen Xu
@@ -29,6 +36,14 @@ public class CommunityServiceImpl implements CommunityService {
     private CounterCache counterCache;
 
     private FeedbackRecordMapper feedbackRecordMapper;
+
+    private CommunityTipMapper communityTipMapper;
+
+    @Autowired
+    public void setCommunityTipMapper(CommunityTipMapper communityTipMapper) {
+        this.communityTipMapper = communityTipMapper;
+    }
+
 
     @Autowired
     public void setFeedbackRecordMapper(FeedbackRecordMapper feedbackRecordMapper) {
@@ -49,7 +64,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCodeWrapper<Integer> postMessage(int author, CommunityMessage communityMessage) {
+    public ServiceCodeWrapper<Integer> postMessage(int author, CommunityMessage communityMessage, boolean enableNotification) {
         String key = POST_MESSAGE_KEY_PREFIX + author;
         int invokeCount = counterCache.getInvokeCount(key);
         final int maxAllowCount = 100;
@@ -60,6 +75,26 @@ public class CommunityServiceImpl implements CommunityService {
         if (pid != 0) {
             // reply_count 加一
             communityMessageMapper.increaseReplyCount(pid);
+            // 提醒父消息用户
+            CommunityMessage parentMessage = communityMessageMapper.selectSimplyById(pid);
+            if (enableNotification) {
+                final int maxLen = 11;
+                String content = communityMessage.getContent();
+                String contentPreview;
+                if (content.length() > maxLen) {
+                    contentPreview = content.substring(0, maxLen) + "...";
+                } else {
+                    contentPreview = content;
+                }
+                communityTipMapper.insertOrUpdate(new CommunityTip(
+                        pid,
+                        parentMessage.getTitle(),
+                        parentMessage.getAuthor(),
+                        author,
+                        parentMessage.getPid() == 0 ? CommunityTip.TYPE_POST_REPLY : CommunityTip.TYPE_COMMENT_REPLY,
+                        contentPreview
+                ));
+            }
         }
         communityMessage.setAuthor(author);
         communityMessageMapper.insert(communityMessage);
@@ -77,24 +112,24 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<Map<String, String>> queryNewlyCommunityMessage(Integer maxId) {
+    public List<CommunityMessagePost> queryNewlyCommunityMessage(Integer maxId) {
         final int size = 4;
         return communityMessageMapper.selectMessageByMaxId(maxId, size);
     }
 
     @Override
-    public List<Map<String, String>> queryNewlyCommunityMessageByMinId(int minId) {
+    public List<CommunityMessagePost> queryNewlyCommunityMessageByMinId(int minId) {
         final int size = 4;
         return communityMessageMapper.selectMessageByMinId(minId, size);
     }
 
     @Override
-    public List<Map<String, String>> queryMessageReply(int pid, int page, int size) {
+    public List<CommunityMessagePost> queryMessageReply(int pid, int page, int size) {
         return communityMessageMapper.selectMessageByPid(pid, new Page<>(page, size)).getRecords();
     }
 
     @Override
-    public List<Map<String, String>> querySubReplyPreview(List<Integer> pids) {
+    public List<CommunityMessagePost> querySubReplyPreview(List<Integer> pids) {
         final int size = 3;
         final int maxAllowQuery = 8;
         if (pids.size() > maxAllowQuery) {
@@ -163,6 +198,47 @@ public class CommunityServiceImpl implements CommunityService {
         communityMessageMapper.modifyFeedbackAbsolutely(messageId, up, down);
         counterCache.increaseInvokeCount(key);
         return ServiceCode.SUCCESS;
+    }
+
+    @Override
+    public List<CommunityTipQueryType> queryMessageTip(int uid) {
+        List<CommunityTipQueryType> tips = communityTipMapper.selectTips(uid);
+        if (!tips.isEmpty()) {
+            communityTipMapper.clearTip(uid);
+        }
+        return tips;
+    }
+
+
+    @Override
+    public CommunityMessagePost queryMessageById(int messageId) {
+        return communityMessageMapper.selectMessageById(messageId);
+    }
+
+    @Override
+    public PostReply queryPostReply(int messageId, int page, int size) {
+        Page<CommunityMessageReply> pg = new Page<>(page, size);
+        List<CommunityMessagePost> records = communityMessageMapper.selectMessageByPid(messageId, pg).getRecords();
+        if (records.isEmpty()) {
+            return null;
+        }
+        PostReply postReply = new PostReply();
+        postReply.setReply(records);
+
+        ArrayList<Integer> pids = new ArrayList<>(records.size());
+        for (CommunityMessagePost record : records) {
+            if (record.getReplyCount() > 0) {
+                pids.add(record.getId());
+            }
+        }
+        List<CommunityMessagePost> preview;
+        if (pids.isEmpty()) {
+            preview = Collections.emptyList();
+        } else {
+            preview = communityMessageMapper.selectMessageReplyPreview(pids, 4);
+        }
+        postReply.setSubReply(preview);
+        return postReply;
     }
 
 
