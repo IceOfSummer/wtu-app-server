@@ -62,5 +62,10 @@ public class TencentCloudCosProviderImpl implements CosProvider {
         return signPutRequest("/avatar/todo/" + uid + type, headerMap);
     }
 
+    @Override
+    public SignInfo signPublicSpaceUpload(String filename) {
+        return signPutRequest("/public/" + filename, Collections.emptyMap());
+    }
+
 
 }

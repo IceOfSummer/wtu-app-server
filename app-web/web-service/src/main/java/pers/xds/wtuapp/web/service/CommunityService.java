@@ -59,14 +59,6 @@ public interface CommunityService {
     List<CommunityMessagePost> queryMessageReply(int pid, int page, int size);
 
     /**
-     * 查询一级评论下的部分二级评论信息。
-     *
-     * @param pids 要查询的一级评论id
-     * @return 相关二级评论
-     */
-    List<CommunityMessagePost> querySubReplyPreview(List<Integer> pids);
-
-    /**
      * 点赞/踩 某条消息
      * @param uid 用户id
      * @param messageId 消息id
@@ -99,7 +91,6 @@ public interface CommunityService {
      * @param size 每页大小
      * @return 评论及二级回复
      */
-    @Nullable
     PostReply queryPostReply(int messageId, int page, int size);
 
 }

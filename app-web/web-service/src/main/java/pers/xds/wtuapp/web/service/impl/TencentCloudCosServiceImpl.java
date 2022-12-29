@@ -68,4 +68,22 @@ public class TencentCloudCosServiceImpl implements CosService {
             throw new RuntimeException(e);
         }
     }
+
+    private static final String PUBLIC_SPACE_PREFIX = "CosService:PublicSpace:";
+
+    @Nullable
+    @Override
+    public SignInfo requirePublicSpaceSign(int uid, String filename) {
+        final int maxAllowTime = 10;
+        String key = PUBLIC_SPACE_PREFIX + uid;
+        int invokeCount = counterCache.getInvokeCount(key, Duration.DAY);
+        if (invokeCount >= maxAllowTime) {
+            return null;
+        }
+        try {
+            return cosProvider.signPublicSpaceUpload(filename);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

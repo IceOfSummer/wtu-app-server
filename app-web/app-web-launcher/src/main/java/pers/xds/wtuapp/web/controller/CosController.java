@@ -64,7 +64,7 @@ public class CosController {
      */
     @GetMapping("/secret/avatar")
     public ResponseTemplate<SignInfo> getAvatarUploadSign(@RequestParam("t") String type) {
-        if (type.length() > 6) {
+        if (type.length() > 6 || type.charAt(0) != '.') {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
@@ -73,6 +73,23 @@ public class CosController {
             return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
         }
         return ResponseTemplate.success(sign);
+    }
+
+    /**
+     * 获取公共空间上传签名
+     * @param type  文件的类型描述符，如`.png`
+     */
+    @GetMapping("/secret/public")
+    public ResponseTemplate<SignInfo> getPublicSpaceSign(@RequestParam("t") String type) {
+        if (type.length() > 6 || type.charAt(0) != '.') {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        SignInfo signInfo = cosService.requirePublicSpaceSign(userPrincipal.getId(), UUID.randomUUID() + type);
+        if (signInfo == null) {
+            return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
+        }
+        return ResponseTemplate.success(signInfo);
     }
 
 }

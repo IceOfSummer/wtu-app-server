@@ -6,12 +6,12 @@
 
     <cache type="org.mybatis.caches.redis.RedisCache" />
 
-    <sql id="baseQueryColumn">
+    <sql id="selectFullContent">
         cm.id,cm.pid,cm.author,cm.title,cm.content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
     </sql>
 
     <sql id="selectContentSimply">
-        cm.id,cm.pid,cm.author,cm.title,left(cm.content,30) as content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
+        cm.id,cm.pid,cm.author,cm.title,content_preview as content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
     </sql>
 
     <delete id="deleteCommunityMessageByPid">
@@ -37,7 +37,7 @@
     </select>
 
     <select id="selectMessageByPid" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
-        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        SELECT u.nickname, <include refid="selectFullContent"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE pid = #{pid}
@@ -65,7 +65,7 @@
     </select>
 
     <select id="selectMessageById" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
-        SELECT u.nickname, <include refid="baseQueryColumn"/>
+        SELECT u.nickname, <include refid="selectFullContent"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
         WHERE id = #{id}

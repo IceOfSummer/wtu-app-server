@@ -67,6 +67,12 @@ public class CommunityMessage {
     @Null(groups = {InsertGroup.class})
     private Integer replyCount;
 
+    /**
+     * 内容预览
+     */
+    @Size(max = 35, groups = InsertGroup.class)
+    private String contentPreview;
+
     public Integer getId() {
         return id;
     }
@@ -145,5 +151,13 @@ public class CommunityMessage {
 
     public void setReplyCount(Integer replyCount) {
         this.replyCount = replyCount;
+    }
+
+    public String getContentPreview() {
+        return contentPreview;
+    }
+
+    public void setContentPreview(String contentPreview) {
+        this.contentPreview = contentPreview;
     }
 }

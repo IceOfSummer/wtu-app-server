@@ -27,4 +27,12 @@ public interface CosProvider {
      */
     SignInfo signAvatarUpload(int uid, String type) throws Exception;
 
+    /**
+     * 上传文件到公共空间，该文件不会进行任何处理，可以直接访问
+     * @param filename 文件名称
+     * @return 签名
+     * @throws Exception 生成临时密匙错误
+     */
+    SignInfo signPublicSpaceUpload(String filename) throws Exception;
+
 }

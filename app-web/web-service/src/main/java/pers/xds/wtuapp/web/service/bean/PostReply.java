@@ -2,6 +2,7 @@ package pers.xds.wtuapp.web.service.bean;
 
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +22,13 @@ public class PostReply {
      */
     private List<CommunityMessagePost> subReply;
 
+    public static final PostReply EMPTY_POST_REPLY;
+
+    static {
+        EMPTY_POST_REPLY = new PostReply();
+        EMPTY_POST_REPLY.reply = Collections.emptyList();
+        EMPTY_POST_REPLY.subReply = Collections.emptyList();
+    }
 
     public List<CommunityMessagePost> getReply() {
         return reply;

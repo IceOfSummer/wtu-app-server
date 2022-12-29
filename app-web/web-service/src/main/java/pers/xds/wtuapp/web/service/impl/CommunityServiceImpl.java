@@ -128,16 +128,6 @@ public class CommunityServiceImpl implements CommunityService {
         return communityMessageMapper.selectMessageByPid(pid, new Page<>(page, size)).getRecords();
     }
 
-    @Override
-    public List<CommunityMessagePost> querySubReplyPreview(List<Integer> pids) {
-        final int size = 3;
-        final int maxAllowQuery = 8;
-        if (pids.size() > maxAllowQuery) {
-            throw new IllegalArgumentException();
-        }
-        return communityMessageMapper.selectMessageReplyPreview(pids, size);
-    }
-
     private static final String FEED_BACK_KEY_PREFIX = "CommunityService:feedbackMessage:";
 
     @Override
@@ -220,7 +210,7 @@ public class CommunityServiceImpl implements CommunityService {
         Page<CommunityMessageReply> pg = new Page<>(page, size);
         List<CommunityMessagePost> records = communityMessageMapper.selectMessageByPid(messageId, pg).getRecords();
         if (records.isEmpty()) {
-            return null;
+            return PostReply.EMPTY_POST_REPLY;
         }
         PostReply postReply = new PostReply();
         postReply.setReply(records);

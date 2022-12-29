@@ -27,4 +27,13 @@ public interface CosService {
      */
     @Nullable
     SignInfo requireAvatarUploadSign(int uid, String type);
+
+    /**
+     * 申请公共空间的文件上传签名，该签名将直接上传cos，上传完毕后<b>不进行任何压缩</b>，可以直接通过cdn访问
+     * @param uid 用户id
+     * @param filename 文件名称，需要携带后缀，如`test.png`
+     * @return 文件上传签名
+     */
+    @Nullable
+    SignInfo requirePublicSpaceSign(int uid, String filename);
 }
