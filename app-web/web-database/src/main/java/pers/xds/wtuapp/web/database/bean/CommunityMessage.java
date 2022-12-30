@@ -48,7 +48,6 @@ public class CommunityMessage {
      * 消息内容
      */
     @NotEmpty(groups = {InsertGroup.class})
-    @Size(max = 500, groups = {InsertGroup.class})
     private String content;
 
     @Null(groups = {InsertGroup.class})
