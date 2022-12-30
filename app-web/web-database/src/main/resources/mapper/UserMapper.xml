@@ -7,7 +7,7 @@
     <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="false"/>
 
     <sql id="user_base_query_col">
-        u.user_id,u.name,u.credit,u.nickname,u.class_name
+        u.user_id,u.credit,u.nickname,u.class_name
     </sql>
 
     <select id="findByUsername" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="false">
