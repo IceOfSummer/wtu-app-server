@@ -8,3 +8,6 @@ server:
   servlet:
     session:
       timeout: 3600000
+app:
+  security:
+    secret: "test_secret"

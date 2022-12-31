@@ -1,13 +1,10 @@
 package pers.xds.wtuapp.im.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
-import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.im.service.ChatAuthService;
+import pers.xds.wtuapp.security.SecurityJwtProvider;
+import pers.xds.wtuapp.security.UserPrincipal;
 
 /**
  * @author DeSen Xu
@@ -16,25 +13,20 @@ import pers.xds.wtuapp.im.service.ChatAuthService;
 @Service
 public class ChatAuthServiceImpl implements ChatAuthService {
 
-    private SessionRepository sessionRepository;
 
-    private static final String SPRING_SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
-
+    private SecurityJwtProvider securityJwtProvider;
 
     @Autowired
-    public void setSessionRepository(RedisIndexedSessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
+    public void setSecurityJwtProvider(SecurityJwtProvider securityJwtProvider) {
+        this.securityJwtProvider = securityJwtProvider;
     }
 
-
     @Override
-    public UsernamePasswordAuthenticationToken findUser(String session) {
-        Session id = sessionRepository.findById(session);
-        if (id == null) {
+    public UserPrincipal findUser(String jwt) {
+        if (jwt == null || jwt.isEmpty()) {
             return null;
         }
-        SecurityContext context = id.getAttribute(SPRING_SECURITY_CONTEXT);
-        return (UsernamePasswordAuthenticationToken) context.getAuthentication();
+        return securityJwtProvider.parseJwt(jwt);
     }
 
 }

@@ -1,13 +1,12 @@
 package pers.xds.wtuapp.web.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.UserMapper;
+import pers.xds.wtuapp.web.security.common.UserLoginPrincipal;
 
 /**
  * @author DeSen Xu
@@ -24,12 +23,13 @@ public class UserDetailServerImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserLoginPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("no such user found");
         }
-        return new UserPrincipal(username, user.getPassword(), user.getRole(), user.getUserId());
+        user.setUsername(username);
+        return new UserLoginPrincipal(user);
     }
 
 }

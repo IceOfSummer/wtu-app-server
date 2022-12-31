@@ -11,7 +11,7 @@
     </sql>
 
     <select id="findByUsername" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="false">
-        SELECT user_id,`password`,`role` FROM user WHERE username = #{username}
+        SELECT user_id,`password`,`role`,wtu_id,email,nickname,class_name,name FROM user WHERE username = #{username}
     </select>
 
     <select id="selectNameAndEmail" resultType="pers.xds.wtuapp.web.database.bean.User">

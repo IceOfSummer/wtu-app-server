@@ -5,7 +5,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
@@ -49,13 +48,11 @@ public class AuthHandler extends SimpleChannelInboundHandler<AuthRequestMessage>
             // 已经登录了
             return;
         }
-        UsernamePasswordAuthenticationToken user = chatAuthService.findUser(msg.getSession());
-        if (user == null) {
+        UserPrincipal principal = chatAuthService.findUser(msg.getSession());
+        if (principal == null) {
             log.debug("用户登录失败: " + msg);
         } else {
-            UserPrincipal principal = (UserPrincipal) user.getPrincipal();
-            ChannelAttrManager.saveToken(ctx, user);
-            ChannelAttrManager.saveChannelUserId(ctx, principal.getId());
+            ChannelAttrManager.savePrincipal(ctx, principal);
 
             socketChannelRecorder.saveChannel(principal.getId(), ctx.channel());
             log.debug("用户id: {}, 登录成功: {}", principal.getId(), msg);

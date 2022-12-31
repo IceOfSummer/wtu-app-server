@@ -1,0 +1,36 @@
+package pers.xds.wtuapp.web.security.common;
+
+/**
+ * @author DeSen Xu
+ * @date 2022-12-31 21:32
+ */
+public class AuthSuccessResponse {
+
+    /**
+     * jwt
+     */
+    public String token;
+
+    public int userId;
+
+    public String email;
+
+    public String nickname;
+
+    public String wtuId;
+
+    public String name;
+
+    public String className;
+
+    public AuthSuccessResponse(String token, int userId, String email, String nickname, String wtuId, String name, String className) {
+        this.userId = userId;
+        this.token = token;
+        this.email = email;
+        this.nickname = nickname;
+        this.wtuId = wtuId;
+        this.name = name;
+        this.className = className;
+    }
+
+}

@@ -38,4 +38,18 @@ public enum Roles {
         return list;
     }
 
+    public static GrantedAuthority fromString(String role) {
+        if (role.equals(SecurityConstant.ROLE_NORMAL_USER)) {
+            return NORMAL_USER.grantedAuthority;
+        }
+        return null;
+    }
+
+    public static List<GrantedAuthority> fromStringList(List<String> roles) {
+        ArrayList<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles.size());
+        for (String role : roles) {
+            grantedAuthorities.add(fromString(role));
+        }
+        return grantedAuthorities;
+    }
 }

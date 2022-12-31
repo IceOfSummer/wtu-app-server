@@ -8,6 +8,8 @@ spring:
     name: wtu-app-server
   profiles:
     active: dev
+  jackson:
+    default-property-inclusion: non_null
 
 mybatis-plus:
   configuration:

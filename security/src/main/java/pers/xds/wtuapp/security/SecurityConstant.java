@@ -23,4 +23,9 @@ public interface SecurityConstant {
      * 允许所有用户访问
      */
     String EL_PERMIT_ALL = "permitAll";
+
+    /**
+     * 身份验证的请求头名称
+     */
+    String HEADER_AUTHORIZATION = "Authorization";
 }

@@ -16,7 +16,8 @@ import java.util.List;
 public interface UserMapper  {
 
     /**
-     * 根据用户名查找用户. 只会获取{@link User#password}, {@link User#role}, {@link User#userId}
+     * 根据用户名查找用户. 只会获取{@link User#password}, {@link User#role}, {@link User#userId},
+     * {@link User#email}, {@link User#nickname}, {@link User#wtuId}, {@link User#name}
      * @param username 用户名
      * @return 指定用户
      */

@@ -4,8 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import pers.xds.wtuapp.im.ChannelAttrManager;
+import pers.xds.wtuapp.security.UserPrincipal;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +33,7 @@ public class ConnectActiveHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.executor().schedule(() -> {
-            UsernamePasswordAuthenticationToken token = ChannelAttrManager.getToken(ctx);
+            UserPrincipal token = ChannelAttrManager.getPrincipal(ctx);
             if (token == null) {
                 ctx.channel().close();
                 log.debug("{}长时间未登录，已经关闭连接", ctx);

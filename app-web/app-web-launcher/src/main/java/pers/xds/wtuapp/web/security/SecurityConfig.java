@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.session.data.redis.RedisIndexedSessionRepository;
-import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import pers.xds.wtuapp.web.security.handler.AuthFailHandler;
 import pers.xds.wtuapp.web.security.handler.LoginSuccessHandler;
 import pers.xds.wtuapp.web.security.point.AuthenticationEntryPointImpl;
@@ -24,9 +22,14 @@ public class SecurityConfig {
 
     private UserDetailsService userDetailsService;
 
-    private RedisIndexedSessionRepository sessionRepository;
-
     private LoginSuccessHandler loginSuccessHandler;
+
+    private SecurityContextRepositoryImpl securityContextRepositoryImpl;
+
+    @Autowired
+    public void setSecurityContextRepositoryImpl(SecurityContextRepositoryImpl securityContextRepositoryImpl) {
+        this.securityContextRepositoryImpl = securityContextRepositoryImpl;
+    }
 
     @Autowired
     public void setLoginSuccessHandler(LoginSuccessHandler loginSuccessHandler) {
@@ -39,11 +42,6 @@ public class SecurityConfig {
     }
 
 
-    @Autowired
-    public void setFindByIndexNameSessionRepository(RedisIndexedSessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
-    }
-
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.formLogin()
@@ -53,14 +51,13 @@ public class SecurityConfig {
                 .failureHandler(new AuthFailHandler())
                 .successHandler(loginSuccessHandler);
 
-        http.sessionManagement()
-                .maximumSessions(1)
-                .sessionRegistry(new SpringSessionBackedSessionRegistry(sessionRepository));
-
         http.exceptionHandling()
                 .authenticationEntryPoint(new AuthenticationEntryPointImpl());
 
         http.csrf().disable();
+
+        http.securityContext().securityContextRepository(securityContextRepositoryImpl);
+
         http.authenticationManager(new AuthenticationManagerBuilder(new ObjectPostProcessor<>() {
             @Override
             public <O> O postProcess(O object) {
