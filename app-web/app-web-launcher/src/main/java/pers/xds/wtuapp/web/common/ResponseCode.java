@@ -45,7 +45,15 @@ public enum ResponseCode {
     /**
      * 服务器繁忙，请稍后再试
      */
-    SERVER_BUSY(8, "服务器繁忙，请稍后再试", HttpStatus.SERVICE_UNAVAILABLE);
+    SERVER_BUSY(8, "服务器繁忙，请稍后再试", HttpStatus.SERVICE_UNAVAILABLE),
+    /**
+     * AccessDenied
+     */
+    ACCESS_DENIED(9, "您当前的权限不足", HttpStatus.FORBIDDEN),
+    /**
+     * 服务器出错
+     */
+    INTERNAL_SERVER_ERROR(10, "服务器出现问题，请等待修复!", HttpStatus.INTERNAL_SERVER_ERROR);
 
     public final int code;
 

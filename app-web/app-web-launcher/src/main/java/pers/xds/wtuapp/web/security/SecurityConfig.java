@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import pers.xds.wtuapp.web.security.filter.JwtRenewFilter;
+import pers.xds.wtuapp.web.security.handler.AccessDeniedHandlerImpl;
 import pers.xds.wtuapp.web.security.handler.AuthFailHandler;
 import pers.xds.wtuapp.web.security.handler.LoginSuccessHandler;
 import pers.xds.wtuapp.web.security.point.AuthenticationEntryPointImpl;
@@ -61,9 +62,13 @@ public class SecurityConfig {
                 .successHandler(loginSuccessHandler);
 
         http.exceptionHandling()
-                .authenticationEntryPoint(new AuthenticationEntryPointImpl());
+                .authenticationEntryPoint(new AuthenticationEntryPointImpl())
+                .accessDeniedHandler(new AccessDeniedHandlerImpl());
 
         http.csrf().disable();
+
+        // TODO jwt登出操作
+        http.logout().disable();
 
         http.sessionManagement().disable();
 
