@@ -6,8 +6,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
+import pers.xds.wtuapp.web.database.bean.UserAuth;
 import pers.xds.wtuapp.web.security.common.AuthSuccessResponse;
 import pers.xds.wtuapp.web.security.common.UserLoginPrincipal;
+import pers.xds.wtuapp.web.service.UserAuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +27,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private SecurityJwtProvider securityJwtProvider;
 
+    private UserAuthService userAuthService;
+
+    @Autowired
+    public void setUserAuthService(UserAuthService userAuthService) {
+        this.userAuthService = userAuthService;
+    }
+
     @Autowired
     public void setSecurityJwtProvider(SecurityJwtProvider securityJwtProvider) {
         this.securityJwtProvider = securityJwtProvider;
@@ -34,8 +43,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         response.setContentType("text/json;charset=utf-8");
         UserLoginPrincipal principal = (UserLoginPrincipal) authentication.getPrincipal();
+
+        UserAuth userAuth = userAuthService.queryNewestJwtId(principal.getUid());
+
+        userAuthService.increaseJwtId(userAuth.getUid(), userAuth.getVersion());
         AuthSuccessResponse authSuccessResponse = new AuthSuccessResponse(
-                securityJwtProvider.generateJwt(principal.getUid(), principal.getUsername(), principal.getAuthorities()),
+                securityJwtProvider.generateJwt(principal.getUid(), userAuth.getJwtId(), principal.getAuthorities()),
                 principal.getUid(),
                 principal.getEmail(),
                 principal.getNickname(),

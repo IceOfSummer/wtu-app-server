@@ -1,9 +1,12 @@
 package pers.xds.wtuapp.web.security.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * @author DeSen Xu
  * @date 2022-12-31 21:32
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthSuccessResponse {
 
     /**

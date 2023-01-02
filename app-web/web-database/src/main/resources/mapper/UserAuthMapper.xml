@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.UserAuthMapper">
+
+    <select id="selectBytId" resultType="pers.xds.wtuapp.web.database.bean.UserAuth">
+        SELECT jwt_id, version FROM user_auth WHERE uid = #{uid}
+    </select>
+
+    <update id="increaseNewestId">
+        UPDATE user_auth SET jwt_id = jwt_id + 1, version = version + 1
+        WHERE uid = #{uid} AND version = #{v}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO user_auth(uid) VALUE (#{uid})
+    </insert>
+
+</mapper>

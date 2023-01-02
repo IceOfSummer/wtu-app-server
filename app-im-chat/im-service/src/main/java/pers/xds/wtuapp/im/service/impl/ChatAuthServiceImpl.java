@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.im.service.ChatAuthService;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
 import pers.xds.wtuapp.security.UserPrincipal;
+import pers.xds.wtuapp.security.bean.JwtParseResult;
 
 /**
  * @author DeSen Xu
@@ -26,7 +27,11 @@ public class ChatAuthServiceImpl implements ChatAuthService {
         if (jwt == null || jwt.isEmpty()) {
             return null;
         }
-        return securityJwtProvider.parseJwt(jwt);
+        JwtParseResult jwtParseResult = securityJwtProvider.parseJwt(jwt);
+        if (jwtParseResult == null || jwtParseResult.isExpired()) {
+            return null;
+        }
+        return jwtParseResult.getPrincipal();
     }
 
 }

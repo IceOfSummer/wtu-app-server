@@ -1,8 +1,7 @@
 package pers.xds.wtuapp.web.security.util;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import pers.xds.wtuapp.security.UserPrincipal;
 
 /**
@@ -22,11 +21,10 @@ public class SecurityContextUtil {
     }
 
     /**
-     * 获取当前请求的sessionId
-     * @return sessionId, 理论上永不为空，除非在非请求线程中调用
+     * 获取验证信息
      */
-    public static String getSessionId() {
-        ServletRequestAttributes servletRequestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
-        return servletRequestAttributes == null ? null : servletRequestAttributes.getSessionId();
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
+
 }

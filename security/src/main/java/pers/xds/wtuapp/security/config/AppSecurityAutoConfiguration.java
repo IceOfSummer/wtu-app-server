@@ -13,16 +13,19 @@ import pers.xds.wtuapp.security.impl.SecurityJwtProviderImpl;
 @EnableConfigurationProperties(SecurityConfigurationProperties.class)
 public class AppSecurityAutoConfiguration {
 
-    private SecurityConfigurationProperties securityConfigurationProperties;
+    private SecurityConfigurationProperties securityProp;
 
     @Autowired
-    public void setSecurityConfigurationProperties(SecurityConfigurationProperties securityConfigurationProperties) {
-        this.securityConfigurationProperties = securityConfigurationProperties;
+    public void setSecurityProp(SecurityConfigurationProperties securityProp) {
+        this.securityProp = securityProp;
     }
 
     @Bean
     public SecurityJwtProvider securityJwtProvider() {
-        return new SecurityJwtProviderImpl(securityConfigurationProperties.getSecret());
+        return new SecurityJwtProviderImpl(
+                securityProp.getSecret(),
+                securityProp.getExpireMinute()
+        );
     }
 
 

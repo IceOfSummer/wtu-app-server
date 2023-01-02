@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import pers.xds.wtuapp.web.security.filter.JwtRenewFilter;
 import pers.xds.wtuapp.web.security.handler.AuthFailHandler;
 import pers.xds.wtuapp.web.security.handler.LoginSuccessHandler;
 import pers.xds.wtuapp.web.security.point.AuthenticationEntryPointImpl;
@@ -25,6 +27,13 @@ public class SecurityConfig {
     private LoginSuccessHandler loginSuccessHandler;
 
     private SecurityContextRepositoryImpl securityContextRepositoryImpl;
+
+    private JwtRenewFilter jwtRenewFilter;
+
+    @Autowired
+    public void setJwtRenewFilter(JwtRenewFilter jwtRenewFilter) {
+        this.jwtRenewFilter = jwtRenewFilter;
+    }
 
     @Autowired
     public void setSecurityContextRepositoryImpl(SecurityContextRepositoryImpl securityContextRepositoryImpl) {
@@ -56,7 +65,11 @@ public class SecurityConfig {
 
         http.csrf().disable();
 
+        http.sessionManagement().disable();
+
         http.securityContext().securityContextRepository(securityContextRepositoryImpl);
+
+        http.addFilterAfter(jwtRenewFilter, SecurityContextPersistenceFilter.class);
 
         http.authenticationManager(new AuthenticationManagerBuilder(new ObjectPostProcessor<>() {
             @Override

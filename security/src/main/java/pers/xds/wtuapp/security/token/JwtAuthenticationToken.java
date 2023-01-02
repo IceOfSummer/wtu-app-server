@@ -1,7 +1,8 @@
-package pers.xds.wtuapp.security;
+package pers.xds.wtuapp.security.token;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import pers.xds.wtuapp.security.UserPrincipal;
 
 import java.util.Collection;
 

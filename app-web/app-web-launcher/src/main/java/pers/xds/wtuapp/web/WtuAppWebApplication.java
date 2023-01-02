@@ -21,4 +21,5 @@ public class WtuAppWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(WtuAppWebApplication.class, args);
     }
+
 }

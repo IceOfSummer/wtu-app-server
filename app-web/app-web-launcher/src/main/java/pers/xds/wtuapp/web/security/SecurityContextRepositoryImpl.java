@@ -6,10 +6,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
-import pers.xds.wtuapp.security.JwtAuthenticationToken;
+import pers.xds.wtuapp.security.token.ExpiredAuthenticationToken;
+import pers.xds.wtuapp.security.token.JwtAuthenticationToken;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
 import pers.xds.wtuapp.security.UserPrincipal;
+import pers.xds.wtuapp.security.bean.JwtParseResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,10 +39,16 @@ public class SecurityContextRepositoryImpl implements SecurityContextRepository 
         if (jwt == null || jwt.isEmpty()) {
             return context;
         }
-        UserPrincipal userPrincipal = securityJwtProvider.parseJwt(jwt);
-        if (userPrincipal == null) {
+        JwtParseResult jwtParseResult = securityJwtProvider.parseJwt(jwt);
+        if (jwtParseResult == null) {
             return context;
         }
+        if (jwtParseResult.isExpired()) {
+            // 交给下一个拦截器决定是否续签
+            context.setAuthentication(new ExpiredAuthenticationToken(jwtParseResult));
+            return context;
+        }
+        UserPrincipal userPrincipal = jwtParseResult.getPrincipal();
         JwtAuthenticationToken token = new JwtAuthenticationToken(userPrincipal, userPrincipal.getAuthorities());
         token.setAuthenticated(true);
         context.setAuthentication(token);

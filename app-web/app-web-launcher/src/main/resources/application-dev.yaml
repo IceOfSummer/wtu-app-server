@@ -10,4 +10,5 @@ server:
       timeout: 3600000
 app:
   security:
-    secret: "test_secret"
+    secret: "abcdefghijklmnopqrstuvwxyzABCDEFG"
+    expire-minute: 1
