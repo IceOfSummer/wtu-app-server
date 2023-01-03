@@ -19,7 +19,7 @@ public interface UserAuthService {
     /**
      * 获取最新的jwtId
      * @param uid 用户id
-     * @return 包含最新的jwtId的用户认证信息
+     * @return 包含最新的jwtId的用户认证信息(uid可能为null，请不要直接使用)
      */
     UserAuth queryNewestJwtId(int uid);
 

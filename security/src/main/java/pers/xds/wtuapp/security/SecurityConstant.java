@@ -29,8 +29,4 @@ public interface SecurityConstant {
      */
     String HEADER_AUTHORIZATION = "Authorization";
 
-    /**
-     * 用于jwt续签的响应体，该响应头存储新的token
-     */
-    String HEADER_RENEW_TOKEN = "Token";
 }

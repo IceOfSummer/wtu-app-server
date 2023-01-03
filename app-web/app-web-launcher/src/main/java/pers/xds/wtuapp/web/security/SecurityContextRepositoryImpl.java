@@ -44,7 +44,6 @@ public class SecurityContextRepositoryImpl implements SecurityContextRepository 
             return context;
         }
         if (jwtParseResult.isExpired()) {
-            // 交给下一个拦截器决定是否续签
             context.setAuthentication(new ExpiredAuthenticationToken(jwtParseResult));
             return context;
         }

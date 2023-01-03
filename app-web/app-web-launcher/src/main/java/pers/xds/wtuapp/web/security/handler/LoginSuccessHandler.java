@@ -46,9 +46,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         UserAuth userAuth = userAuthService.queryNewestJwtId(principal.getUid());
 
-        userAuthService.increaseJwtId(userAuth.getUid(), userAuth.getVersion());
+        userAuthService.increaseJwtId(principal.getUid(), userAuth.getVersion());
         AuthSuccessResponse authSuccessResponse = new AuthSuccessResponse(
-                securityJwtProvider.generateJwt(principal.getUid(), userAuth.getJwtId(), principal.getAuthorities()),
+                securityJwtProvider.generateJwt(principal.getUid(), userAuth.getJwtId() + 1, principal.getAuthorities()),
                 principal.getUid(),
                 principal.getEmail(),
                 principal.getNickname(),
