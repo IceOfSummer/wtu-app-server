@@ -119,6 +119,13 @@ public class CommunityMessageController {
         return ResponseTemplate.success(postReply);
     }
 
+    @PostMapping("/article/{id}/delete")
+    public ResponseTemplate<Void> deletePost(@PathVariable int id) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        communityService.deleteMessage(userPrincipal.getId(), id);
+        return ResponseTemplate.success();
+    }
+
 
     /**
      * 点赞/踩某条消息

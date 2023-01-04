@@ -11,4 +11,4 @@ server:
 app:
   security:
     secret: "abcdefghijklmnopqrstuvwxyzABCDEFG"
-    expire-minute: 1
+    expire-minute: 30
