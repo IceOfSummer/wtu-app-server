@@ -3,7 +3,6 @@ package pers.xds.wtuapp.im.message.parser;
 import pers.xds.wtuapp.im.message.MessageParser;
 import pers.xds.wtuapp.im.message.request.AuthRequestMessage;
 
-import java.util.Base64;
 
 /**
  * @author DeSen Xu
@@ -13,7 +12,7 @@ public class AuthRequestMessageParser implements MessageParser<AuthRequestMessag
 
     @Override
     public AuthRequestMessage parseFrom(byte[] bytes) throws Exception {
-        return new AuthRequestMessage(new String(Base64.getDecoder().decode(bytes)));
+        return new AuthRequestMessage(new String(bytes));
     }
 
     @Override

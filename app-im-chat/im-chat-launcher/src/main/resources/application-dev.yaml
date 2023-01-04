@@ -16,3 +16,6 @@ im:
   ssl:
     certificate-path: "classpath:ssl/cert.crt"
     key-path: "classpath:ssl/pkcs8_private.key"
+app:
+  security:
+    secret: "abcdefghijklmnopqrstuvwxyzABCDEFG"
