@@ -52,6 +52,20 @@ public class Order  {
      */
     private Integer count;
 
+    public static final int STATUS_TRADING = 0;
+
+    public static final int STATUS_DONE = 1;
+
+    public static final int STATUS_FAIL = 2;
+
+    /**
+     * 订单状态
+     * @see Order#STATUS_DONE
+     * @see Order#STATUS_FAIL
+     * @see Order#STATUS_TRADING
+     */
+    private Integer status;
+
     public Order() {
     }
 
@@ -64,6 +78,14 @@ public class Order  {
         this.remark = remark;
         this.ownerId = ownerId;
         this.count = count;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     /**

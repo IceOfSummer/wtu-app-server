@@ -4,4 +4,109 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderMapper">
 
+    <sql id="status_trading">
+        '${@pers.xds.wtuapp.web.database.bean.Order@STATUS_TRADING}'
+    </sql>
+
+    <sql id="type_sell">
+        '${@pers.xds.wtuapp.web.database.bean.UserTrade@TYPE_SELL}'
+    </sql>
+
+    <!--  ut为user_trade表，  -->
+    <sql id="orderPreviewBaseSelect">
+        SELECT ut.order_id,ut.trade_name,ut.trade_uid,o.order_id,c.name,o.create_time,c.preview_image,ut.type,c.price,o.count,o.status
+        FROM user_trade ut
+        LEFT JOIN `order` o USING(order_id)
+        LEFT JOIN `commodity` c USING(commodity_id)
+    </sql>
+
+    <resultMap id="orderPreview" type="pers.xds.wtuapp.web.database.view.OrderPreview">
+        <result javaType="Integer" column="trade_uid" property="tradeUid"/>
+        <result javaType="String" column="trade_name" property="tradeName"/>
+        <result javaType="Integer" column="order_id" property="orderId"/>
+        <result javaType="String" column="name" property="name"/>
+        <result javaType="java.sql.Timestamp" column="create_time" property="createTime"/>
+        <result javaType="String" column="preview_image" property="previewImage"/>
+        <result javaType="Integer" column="type" property="type"/>
+        <result javaType="Double" column="price" property="price"/>
+        <result javaType="Integer" column="count" property="count"/>
+        <result javaType="Integer" column="status" property="status"/>
+    </resultMap>
+
+    <sql id="orderDetailBaseSelect">
+        SELECT o.commodity_id,c.name,o.count,c.price,c.trade_location,o.status,ut.type,o.remark,ut.trade_name,
+               ut.trade_uid,o.create_time,ft.create_time as finishedTime,ft.remark as finishedRemark
+        FROM user_trade ut
+        LEFT JOIN `order` o USING(order_id)
+        LEFT JOIN commodity c USING(commodity_id)
+        LEFT JOIN finished_trade ft USING(order_id)
+    </sql>
+
+    <resultMap id="orderDetail" type="pers.xds.wtuapp.web.database.view.OrderDetail">
+        <result javaType="Integer" column="commodity_id" property="commodityId"/>
+        <result javaType="String" column="name" property="commodityName"/>
+        <result javaType="Integer" column="count" property="count"/>
+        <result javaType="Double" column="price" property="price"/>
+        <result javaType="String" column="trade_location" property="tradeLocation"/>
+        <result javaType="Integer" column="status" property="status"/>
+        <result javaType="Integer" column="type" property="type"/>
+        <result javaType="String" column="remark" property="remark"/>
+        <result javaType="String" column="trade_name" property="tradeName"/>
+        <result javaType="Integer" column="trade_uid" property="tradeUid"/>
+        <result javaType="java.sql.Timestamp" column="create_time" property="createTime"/>
+        <result javaType="java.sql.Timestamp" column="finishedTime" property="finishedTime"/>
+        <result javaType="String" column="finishedRemark" property="finishedRemark"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO `order`(commodity_id,customer_id,owner_id,remark,count)
+        VALUE(#{o.commodityId},#{o.customerId},#{o.ownerId},#{o.remark},#{o.count})
+    </insert>
+
+
+    <select id="selectOrders" resultMap="orderPreview">
+        <include refid="orderPreviewBaseSelect"/>
+        WHERE ut.user_id = #{uid}
+        <if test="status != null">
+            AND o.status = #{status}
+        </if>
+    </select>
+
+    <select id="selectActiveOrderByType" resultMap="orderPreview">
+        <include refid="orderPreviewBaseSelect"/>
+        WHERE ut.user_id = #{uid}
+        AND type = #{type}
+        AND o.status = <include refid="status_trading"/>
+    </select>
+
+    <select id="selectAllOrder" resultMap="orderPreview">
+        <include refid="orderPreviewBaseSelect"/>
+        WHERE ut.user_id = #{uid}
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="selectAllSoldOrder" resultMap="orderPreview">
+        <include refid="orderPreviewBaseSelect"/>
+        WHERE ut.user_id = #{uid}
+        AND ut.type = <include refid="type_sell"/>
+    </select>
+
+    <update id="buyerUpdateTradeStatus">
+        UPDATE `order` SET status = #{s}
+        WHERE order_id = #{oid} AND customer_id = #{uid} AND status = <include refid="status_trading"/>
+    </update>
+
+    <update id="sellerUpdateTradeStatus">
+        UPDATE `order` SET status = #{s}
+        WHERE order_id = #{oid} AND owner_id = #{uid} AND status = <include refid="status_trading"/>
+    </update>
+
+    <select id="selectByIdSimply" resultType="pers.xds.wtuapp.web.database.bean.Order">
+        SELECT customer_id,owner_id,count,commodity_id FROM `order` WHERE order_id = #{oid}
+    </select>
+
+    <select id="selectOrderDetailById" resultMap="orderDetail">
+        <include refid="orderDetailBaseSelect"/>
+        WHERE ut.user_id = #{uid} AND ut.order_id = #{oid}
+    </select>
 </mapper>

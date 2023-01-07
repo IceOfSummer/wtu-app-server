@@ -2,6 +2,7 @@ package pers.xds.wtuapp.web.service;
 
 import org.jetbrains.annotations.Nullable;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
+import pers.xds.wtuapp.web.database.view.OrderPreview;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface OrderService {
      * @param size 每页最多显示多少行
      * @return 正在交易的商品记录
      */
-    List<OrderDetail> getUserOrderDetails(int userid, int page, int size);
+    List<OrderPreview> getUserOrderDetails(int userid, int page, int size);
 
     /**
      * 获取用户商品出售记录
@@ -27,21 +28,21 @@ public interface OrderService {
      * @param size 每页的大小
      * @return 出售记录
      */
-    List<OrderDetail> getUserSoldOrder(int uid, int page, int size);
+    List<OrderPreview> getUserSoldOrder(int uid, int page, int size);
 
     /**
      * 获取用户当前正激活的订单
      * @param uid 用户id
      * @return 正激活的订单
      */
-    List<OrderDetail> getUserActiveOrderDetails(int uid);
+    List<OrderPreview> getUserActiveOrderDetails(int uid);
 
     /**
      * 获取用户待收货商品
      * @param uid 用户id
      * @return 待收货商品
      */
-    List<OrderDetail> getUserPendingReceiveOrder(int uid);
+    List<OrderPreview> getUserPendingReceiveOrder(int uid);
 
 
     /**
@@ -49,19 +50,18 @@ public interface OrderService {
      * @param uid 用户id
      * @return 待发货商品
      */
-    List<OrderDetail> getUserPendingDeliveryOrder(int uid);
+    List<OrderPreview> getUserPendingDeliveryOrder(int uid);
 
 
     /**
-     * 标记交易完成
-     * @param buyerId 买家id
-     * @param sellerId 卖家id
+     * 买家标记交易完成
+     * @param uid 买家或卖家的uid
      * @param orderId 订单id
      * @param remark 用户备注，可能为空
      * @return 服务码<p>
      * - {@link ServiceCode#NOT_EXIST}表示订单不存在
      */
-    ServiceCode markTradeDone(int buyerId, int sellerId, int orderId, @Nullable String remark);
+    ServiceCode markTradeDone(int uid, int orderId, @Nullable String remark);
 
     /**
      * 买家或卖家标记交易失败
@@ -73,4 +73,14 @@ public interface OrderService {
      * - {@link ServiceCode#CONCURRENT_ERROR}乐观锁冲突，稍后再试<p>
      */
     ServiceCode markTradeFail(int userId, int orderId, @Nullable String remark);
+
+
+    /**
+     * 查询订单详细信息
+     * @param userId 用户id
+     * @param orderId 订单id
+     * @return 订单详细信息，可能为空
+     */
+    OrderDetail queryOrderDetail(int userId, int orderId);
+
 }

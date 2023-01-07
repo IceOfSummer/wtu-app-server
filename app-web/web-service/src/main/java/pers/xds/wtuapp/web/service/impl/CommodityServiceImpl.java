@@ -170,27 +170,29 @@ public class CommodityServiceImpl implements CommodityService {
         if (invokeCount > MAX_LOCK_ACTION_PER_DAY) {
             return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
+        // 乐观锁
         if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
+
             int ownerId = commodity.getOwnerId();
             User user = userMapper.selectNameAndEmail(ownerId);
-            String nickname = user.getNickname() == null ? String.valueOf(ownerId) : user.getNickname();
+            String buyerName = userMapper.selectNicknameOnly(userId);
+            String sellerName = user.getNickname();
             // 添加交易记录
             Order order = new Order(commodityId, userId, remark, ownerId, count);
-            // 可能会和数据库有点小偏差，不过应该差不了太多
-            Date createTime = new Date();
             orderMapper.insert(order);
-            userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId);
+            userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId, buyerName, sellerName);
             String email = user.getEmail();
             if (email != null) {
                 // 发送邮件提醒
                 emailService.sendCommodityLockTip(
                         email,
                         new CommodityLockTemplateData(
-                                nickname,
+                                sellerName,
                                 commodity.getName(),
                                 commodity.getPrice(),
                                 commodity.getTradeLocation(),
-                                DateFormatUtils.toLocalString(createTime),
+                                // 可能会和数据库有点小偏差，不过应该差不了太多
+                                DateFormatUtils.toLocalString(new Date()),
                                 order.getRemark(),
                                 order.getCount(),
                                 commodity.getPreviewImage()

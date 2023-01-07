@@ -7,9 +7,10 @@ import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
+import pers.xds.wtuapp.web.database.view.OrderDetail;
+import pers.xds.wtuapp.web.database.view.OrderPreview;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.OrderService;
-import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.service.ServiceCode;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class OrderController {
      * @return 当前正在交易的订单
      */
     @GetMapping("all")
-    public ResponseTemplate<List<OrderDetail>> getUserTradingRecord(
+    public ResponseTemplate<List<OrderPreview>> getUserTradingRecord(
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
             @RequestParam(value = "s", required = false, defaultValue = "5") int size
     ) {
@@ -51,7 +52,7 @@ public class OrderController {
      */
     @GetMapping("/sold")
     @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
-    public ResponseTemplate<List<OrderDetail>> queryUserSoldRecordSimply(@RequestParam(value = "i") int id,
+    public ResponseTemplate<List<OrderPreview>> queryUserSoldRecordSimply(@RequestParam(value = "i") int id,
                                                                           @RequestParam(value = "p", required = false, defaultValue = "0") int page,
                                                                           @RequestParam(value = "s", required = false, defaultValue = "5") int size) {
         return ResponseTemplate.success(orderService.getUserSoldOrder(id, page, size));
@@ -63,7 +64,7 @@ public class OrderController {
      * @return 待收货商品
      */
     @GetMapping("/pending/receive")
-    public ResponseTemplate<List<OrderDetail>> queryPendingReceiveOrder() {
+    public ResponseTemplate<List<OrderPreview>> queryPendingReceiveOrder() {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         return ResponseTemplate.success(orderService.getUserPendingReceiveOrder(userPrincipal.getId()));
     }
@@ -74,7 +75,7 @@ public class OrderController {
      * @return 待发货商品
      */
     @GetMapping("/pending/delivery")
-    public ResponseTemplate<List<OrderDetail>> queryPendingDeliveryOrder() {
+    public ResponseTemplate<List<OrderPreview>> queryPendingDeliveryOrder() {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         return ResponseTemplate.success(orderService.getUserPendingDeliveryOrder(userPrincipal.getId()));
     }
@@ -84,14 +85,13 @@ public class OrderController {
      */
     @PostMapping("/{orderId}/done")
     public ResponseTemplate<Void> markReceived(@PathVariable int orderId,
-                                               @RequestParam(value = "s") int sellerId,
                                                @RequestParam(value = "r", required = false) String remark) {
         final int maxLen = 200;
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         if (remark != null && remark.length() >= maxLen) {
             return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
         }
-        ServiceCode code = orderService.markTradeDone(userPrincipal.getId(), sellerId, orderId, remark);
+        ServiceCode code = orderService.markTradeDone(userPrincipal.getId(), orderId, remark);
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success();
         }
@@ -114,6 +114,15 @@ public class OrderController {
         }
         // code == ServiceCode#NOT_EXIST
         return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+    }
+
+    /**
+     * 查询商品详细信息
+     */
+    @GetMapping("/{orderId}/detail")
+    public ResponseTemplate<OrderDetail> queryOrderDetail(@PathVariable int orderId) {
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        return ResponseTemplate.success(orderService.queryOrderDetail(userPrincipal.getId(), orderId));
     }
 
 }

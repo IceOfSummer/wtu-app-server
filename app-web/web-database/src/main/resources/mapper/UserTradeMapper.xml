@@ -11,15 +11,8 @@
 
 
     <insert id="addUserTrade">
-        INSERT INTO user_trade(user_id, order_id, type)
-        VALUE (#{buyer},#{order_id},0),(#{seller},#{order_id},1)
+        INSERT INTO user_trade(user_id, order_id, type, trade_uid, trade_name)
+        VALUE (#{buyer},#{order_id},0,#{seller},#{sname}),(#{seller},#{order_id},1,#{buyer},#{bname})
     </insert>
 
-    <update id="modifyTradeStatus">
-        UPDATE user_trade
-        SET status = #{status}
-        WHERE user_id = #{userId}
-          AND order_id = #{orderId}
-          AND type = #{type};
-    </update>
 </mapper>

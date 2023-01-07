@@ -22,14 +22,6 @@ public class UserTrade implements Serializable {
      */
     private Integer orderId;
 
-    public static final int STATUS_TRADING = 0;
-
-    public static final int STATUS_DONE = 1;
-
-    public static final int STATUS_FAIL = 2;
-
-    private Integer status;
-
     public static final int TYPE_BUY = 0;
 
     public static final int TYPE_SELL = 1;
@@ -38,6 +30,16 @@ public class UserTrade implements Serializable {
      * 交易类型;0为买，1为卖
      */
     private Integer type;
+
+    /**
+     * 交易对方的uid
+     */
+    private Integer tradeUid;
+
+    /**
+     * 交易对方的称呼
+     */
+    private String tradeName;
 
     /**
      * 用户id
@@ -81,11 +83,4 @@ public class UserTrade implements Serializable {
         this.type = type;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }

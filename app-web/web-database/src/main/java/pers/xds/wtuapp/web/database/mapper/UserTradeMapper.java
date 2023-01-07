@@ -22,7 +22,13 @@ public interface UserTradeMapper extends BaseMapper<UserTrade> {
      * @param buyer 买家
      * @param seller 卖家
      */
-    void addUserTrade(@Param("order_id") int orderId, @Param("buyer") int buyer, @Param("seller") int seller);
+    void addUserTrade(
+            @Param("order_id") int orderId,
+            @Param("buyer") int buyer,
+            @Param("seller") int seller,
+            @Param("bname") String buyerName,
+            @Param("sname") String sellerName
+    );
 
     /**
      * 获取用户当前激活的商品购买订单数
@@ -32,20 +38,6 @@ public interface UserTradeMapper extends BaseMapper<UserTrade> {
     @Select("SELECT COUNT(*) FROM user_trade WHERE user_id = #{uid} AND type = 0 AND `status` = 0")
     int selectUserBuyingCount(@Param("uid") int uid);
 
-    /**
-     * 标记交易成功
-     * @param userId 用户id
-     * @param orderId 订单id
-     * @param type {@link UserTrade#getType()}
-     * @param status {@link UserTrade#getStatus()}
-     * @return 返回1表示成功，0表示失败
-     */
-    int modifyTradeStatus(
-            @Param("userId") int userId,
-            @Param("orderId") int orderId,
-            @Param("type") int type,
-            @Param("status") int status
-    );
 
 }
 

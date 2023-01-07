@@ -10,8 +10,9 @@ import pers.xds.wtuapp.web.database.bean.FinishedTrade;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.UserTrade;
 import pers.xds.wtuapp.web.database.mapper.*;
-import pers.xds.wtuapp.web.service.OrderService;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
+import pers.xds.wtuapp.web.database.view.OrderPreview;
+import pers.xds.wtuapp.web.service.OrderService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 
 import java.util.List;
@@ -22,10 +23,6 @@ import java.util.List;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
-
-    private OrderDetailMapper orderDetailMapper;
-
-    private UserTradeMapper userTradeMapper;
 
     private FinishedTradeMapper finishedTradeMapper;
 
@@ -48,51 +45,41 @@ public class OrderServiceImpl implements OrderService {
         this.finishedTradeMapper = finishedTradeMapper;
     }
 
-    @Autowired
-    public void setUserTradeMapper(UserTradeMapper userTradeMapper) {
-        this.userTradeMapper = userTradeMapper;
-    }
 
-    @Autowired
-    public void setOrderDetailMapper(OrderDetailMapper orderDetailMapper) {
-        this.orderDetailMapper = orderDetailMapper;
+    @Override
+    public List<OrderPreview> getUserOrderDetails(int userid, int page, int size) {
+        Page<OrderPreview> pg = new Page<>(page, size);
+        return orderMapper.selectAllOrder(userid, pg).getRecords();
     }
 
     @Override
-    public List<OrderDetail> getUserOrderDetails(int userid, int page, int size) {
-        Page<OrderDetail> pg = new Page<>(page, size);
-        return orderDetailMapper.selectAllOrder(userid, pg).getRecords();
+    public List<OrderPreview> getUserSoldOrder(int uid, int page, int size) {
+        Page<OrderPreview> pg = new Page<>(page, size);
+        return orderMapper.selectAllSoldOrder(uid, pg).getRecords();
     }
 
     @Override
-    public List<OrderDetail> getUserSoldOrder(int uid, int page, int size) {
-        Page<OrderDetail> pg = new Page<>(page, size);
-        return orderDetailMapper.selectAllSoldOrder(uid, pg).getRecords();
+    public List<OrderPreview> getUserActiveOrderDetails(int uid) {
+        return orderMapper.selectOrders(uid, Order.STATUS_TRADING, new Page<>(0, 50L)).getRecords();
     }
 
     @Override
-    public List<OrderDetail> getUserActiveOrderDetails(int uid) {
-        return orderDetailMapper.selectOrders(uid, UserTrade.STATUS_TRADING, new Page<>(0, 50L)).getRecords();
+    public List<OrderPreview> getUserPendingReceiveOrder(int uid) {
+        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_BUY);
     }
 
     @Override
-    public List<OrderDetail> getUserPendingReceiveOrder(int uid) {
-        return orderDetailMapper.selectActiveOrderByType(uid, UserTrade.TYPE_BUY);
-    }
-
-    @Override
-    public List<OrderDetail> getUserPendingDeliveryOrder(int uid) {
-        return orderDetailMapper.selectActiveOrderByType(uid, UserTrade.TYPE_SELL);
+    public List<OrderPreview> getUserPendingDeliveryOrder(int uid) {
+        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_SELL);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode markTradeDone(int buyerId, int sellerId, int orderId, @Nullable String remark) {
-        int i = userTradeMapper.modifyTradeStatus(buyerId, orderId, UserTrade.TYPE_BUY, UserTrade.STATUS_DONE);
+    public ServiceCode markTradeDone(int uid, int orderId, @Nullable String remark) {
+        int i = orderMapper.buyerUpdateTradeStatus(orderId, uid, Order.STATUS_DONE);
         if (i == 0) {
             return ServiceCode.NOT_EXIST;
         }
-        userTradeMapper.modifyTradeStatus(sellerId, orderId, UserTrade.TYPE_SELL, UserTrade.STATUS_DONE);
         FinishedTrade finishedTrade = new FinishedTrade();
         finishedTrade.orderId = orderId;
         finishedTrade.fail = false;
@@ -104,16 +91,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCode markTradeFail(int userId, int orderId, @Nullable String remark) {
-        Order order = orderMapper.selectById(orderId);
+        Order order = orderMapper.selectByIdSimply(orderId);
         if (order == null) {
             return ServiceCode.NOT_EXIST;
         }
         // 确认用户是买家或卖家
-        if (!(order.getOwnerId() == userId || order.getCustomerId() == userId)) {
+        if (order.getOwnerId() == userId) {
+            orderMapper.sellerUpdateTradeStatus(orderId, userId, Order.STATUS_FAIL);
+        } else if (order.getCustomerId() == userId) {
+            orderMapper.buyerUpdateTradeStatus(orderId, userId, Order.STATUS_FAIL);
+        } else {
             return ServiceCode.NOT_EXIST;
         }
-        userTradeMapper.modifyTradeStatus(order.getOwnerId(), orderId, UserTrade.TYPE_SELL, UserTrade.STATUS_FAIL);
-        userTradeMapper.modifyTradeStatus(order.getCustomerId(), orderId, UserTrade.TYPE_BUY, UserTrade.STATUS_FAIL);
         FinishedTrade finishedTrade = new FinishedTrade();
         finishedTrade.orderId = orderId;
         finishedTrade.fail = true;
@@ -126,6 +115,11 @@ public class OrderServiceImpl implements OrderService {
             return ServiceCode.CONCURRENT_ERROR;
         }
         return ServiceCode.SUCCESS;
+    }
+
+    @Override
+    public OrderDetail queryOrderDetail(int userId, int orderId) {
+        return orderMapper.selectOrderDetailById(userId, orderId);
     }
 
 
