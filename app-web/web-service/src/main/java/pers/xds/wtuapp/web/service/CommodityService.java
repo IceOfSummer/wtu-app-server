@@ -74,7 +74,7 @@ public interface CommodityService {
     /**
      * 更新commodity。
      * <p>
-     * 仅可更新{@link Commodity#name}, {@link Commodity#price},
+     * 仅可更新{@link Commodity#name}, {@link Commodity#price}, {@link Commodity#count}
      * {@link Commodity#description}, {@link Commodity#tradeLocation}字段。
      * @param ownerId 货物主人，用于验证
      * @param commodityId 商品id
@@ -92,8 +92,9 @@ public interface CommodityService {
     /**
      * 获取推荐的商品
      * @param maxId 最大id，为空时默认从最大开始选
+     * @param size 最大可选数量, 最大为8
      * @return 商品推荐
      */
-    List<Commodity> getRecommend(@Nullable Integer maxId);
+    List<Commodity> getRecommend(@Nullable Integer maxId, int size);
 
 }

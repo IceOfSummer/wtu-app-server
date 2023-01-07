@@ -55,7 +55,7 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
 
     /**
      * 更新货物信息
-     * 仅可更新{@link Commodity#name}, {@link Commodity#price},
+     * 仅可更新{@link Commodity#name}, {@link Commodity#price}, {@link Commodity#count}
      *      * {@link Commodity#description}, {@link Commodity#tradeLocation}字段
      * @param commodity 货物
      * @param commodityId 商品id

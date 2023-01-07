@@ -172,9 +172,14 @@ public class CommodityController {
     @GetMapping("suggest")
     @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<List<Commodity>> getRecommend(
-            @RequestParam(required = false, value = "m") Integer maxId
+            @RequestParam(required = false, value = "m") Integer maxId,
+            @RequestParam(required = false, value = "s", defaultValue = "8") int size
     ) {
-        return ResponseTemplate.success(commodityService.getRecommend(maxId));
+        final int maxSize = 8;
+        if (size > maxSize) {
+            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        }
+        return ResponseTemplate.success(commodityService.getRecommend(maxId, size));
     }
 
 }

@@ -35,6 +35,7 @@
             <if test="commodity.price != null">price=#{commodity.price}</if>
             <if test="commodity.description != null">description=#{commodity.description}</if>
             <if test="commodity.tradeLocation != null">tradeLocation=#{commodity.tradeLocation}</if>
+            <if test="commodity.count != null">count=#{commodity.count}</if>
         </set>
         WHERE commodity_id = #{cid} AND owner_id = #{uid}
     </update>

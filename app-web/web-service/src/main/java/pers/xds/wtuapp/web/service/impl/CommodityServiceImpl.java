@@ -22,6 +22,7 @@ import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.config.email.CommodityLockTemplateData;
 import pers.xds.wtuapp.web.service.util.DateFormatUtils;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -240,9 +241,12 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public List<Commodity> getRecommend(Integer maxId) {
+    public List<Commodity> getRecommend(Integer maxId, int size) {
         final int pageSize = 8;
-        return commodityMapper.selectByTimeDesc(maxId, pageSize);
+        if (size > pageSize) {
+            return Collections.emptyList();
+        }
+        return commodityMapper.selectByTimeDesc(maxId, size);
     }
 
 
