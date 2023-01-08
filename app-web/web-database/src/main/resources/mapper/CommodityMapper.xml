@@ -11,6 +11,10 @@
         WHERE commodity_id = #{id}
     </select>
 
+    <update id="incrementCommodityCount">
+        UPDATE commodity SET count = count + #{inc} WHERE commodity_id = #{cid}
+    </update>
+
     <select id="selectCommodityByUid" resultType="pers.xds.wtuapp.web.database.bean.Commodity">
         SELECT
             commodity_id,

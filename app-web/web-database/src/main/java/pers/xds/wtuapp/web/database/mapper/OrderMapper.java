@@ -64,21 +64,42 @@ public interface OrderMapper {
      * @param orderId 订单id
      * @param uid 用户id
      * @param status 订单状态 {@link Order#status}
+     * @param previousStatus 之前的状态
      * @return 返回1表示成功，0表示失败(订单不存在).
      */
-    int buyerUpdateTradeStatus(@Param("oid") int orderId, @Param("uid") int uid, @Param("s") int status);
+    int buyerUpdateTradeStatus(@Param("oid") int orderId, @Param("uid") int uid, @Param("s") int status, @Param("ps") int previousStatus);
 
     /**
      * 卖家修改交易状态
      * @param orderId 订单id
+     * @param uid 用户id
+     * @param status 要修改的状态 {@link Order#status}
+     * @param previousStatus 之前的状态
      * @return 返回1表示成功，0表示失败(订单不存在).
      */
-    int sellerUpdateTradeStatus(@Param("oid") int orderId, @Param("uid") int uid, @Param("s") int status);
+    int sellerUpdateTradeStatus(@Param("oid") int orderId, @Param("uid") int uid, @Param("s") int status, @Param("ps") int previousStatus);
+
+    /**
+     * 修改交易状态
+     * @param orderId 订单id
+     * @param uid 用户id
+     * @param newStatus 要修改的状态 {@link Order#status}
+     * @param previousStatus 之前的状态
+     * @param isSeller 该用户是否为卖家
+     * @return 返回1表示成功
+     */
+    int updateTradeStatus(
+            @Param("oid") int orderId,
+            @Param("uid") int uid,
+            @Param("s") int newStatus,
+            @Param("ps") int previousStatus,
+            @Param("isSeller") boolean isSeller
+    );
 
     /**
      * 获取订单的简要信息
      * @param orderId 订单id
-     * @return 订单, 只有{@link Order#customerId}, {@link Order#ownerId}, {@link Order#count}, {@link Order#commodityId}
+     * @return 订单, 只有{@link Order#buyerId}, {@link Order#sellerId}, {@link Order#count}, {@link Order#commodityId}
      */
     Order selectByIdSimply(@Param("oid") int orderId);
 
@@ -90,6 +111,30 @@ public interface OrderMapper {
      */
     OrderDetail selectOrderDetailById(@Param("uid") int userId, @Param("oid") int orderId);
 
+    /**
+     * 更新订单完成时间
+     * @param orderId 订单id
+     * @return 返回1表示成功, 0表示失败
+     */
+    int updateFinishedTime(@Param("oid") int orderId);
+
+    /**
+     * 更新备注
+     * @param userId 用户id
+     * @param orderId 订单id
+     * @param remark 备注
+     * @return 返回1表示成功
+     */
+    int updateBuyerRemark(@Param("uid") int userId, @Param("oid") int orderId, @Param("r") String remark);
+
+    /**
+     * 更新卖家备注
+     * @param userId 用户id
+     * @param orderId 订单id
+     * @param remark 备注
+     * @return 返回1表示成功
+     */
+    int updateSellerRemark(@Param("uid") int userId, @Param("oid") int orderId, @Param("r") String remark);
 }
 
 

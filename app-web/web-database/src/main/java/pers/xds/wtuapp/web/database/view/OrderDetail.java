@@ -72,9 +72,30 @@ public class OrderDetail {
     private Timestamp finishedTime;
 
     /**
-     * 完成时的备注
+     * 买家备注
      */
-    private String finishedRemark;
+    private String buyerRemark;
+
+    /**
+     * 卖家备注
+     */
+    private String sellerRemark;
+
+    public String getBuyerRemark() {
+        return buyerRemark;
+    }
+
+    public void setBuyerRemark(String buyerRemark) {
+        this.buyerRemark = buyerRemark;
+    }
+
+    public String getSellerRemark() {
+        return sellerRemark;
+    }
+
+    public void setSellerRemark(String sellerRemark) {
+        this.sellerRemark = sellerRemark;
+    }
 
     public Timestamp getFinishedTime() {
         return finishedTime;
@@ -82,14 +103,6 @@ public class OrderDetail {
 
     public void setFinishedTime(Timestamp finishedTime) {
         this.finishedTime = finishedTime;
-    }
-
-    public String getFinishedRemark() {
-        return finishedRemark;
-    }
-
-    public void setFinishedRemark(String finishedRemark) {
-        this.finishedRemark = finishedRemark;
     }
 
     public Timestamp getCreateTime() {

@@ -35,6 +35,14 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
     Commodity selectSimpleInfo(@Param("id") int commodityId);
 
     /**
+     * 增加商品数量
+     * @param commodityId 商品id
+     * @param increment 要添加多少
+     * @return 返回1表示成功
+     */
+    int incrementCommodityCount(@Param("cid") int commodityId, @Param("inc") int increment);
+
+    /**
      * 更新商品剩余数量
      * @param commodityId 商品id
      * @param count 要更新的数量
@@ -43,7 +51,6 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      */
     @Update("UPDATE commodity SET version = version + 1, `count` = #{count} WHERE commodity_id = #{id} AND version = #{version}")
     int updateCommodityCount(@Param("id") int commodityId, @Param("count") int count, @Param("version") int version);
-
 
     /**
      * 根据uid查询用户发布的货物，不会获取{@link Commodity#getVersion()}, {@link Commodity#getImages()}

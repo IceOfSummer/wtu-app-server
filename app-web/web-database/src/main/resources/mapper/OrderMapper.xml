@@ -8,6 +8,10 @@
         '${@pers.xds.wtuapp.web.database.bean.Order@STATUS_TRADING}'
     </sql>
 
+    <sql id="status_done">
+        '${@pers.xds.wtuapp.web.database.bean.Order@STATUS_DONE}'
+    </sql>
+
     <sql id="type_sell">
         '${@pers.xds.wtuapp.web.database.bean.UserTrade@TYPE_SELL}'
     </sql>
@@ -35,11 +39,10 @@
 
     <sql id="orderDetailBaseSelect">
         SELECT o.commodity_id,c.name,o.count,c.price,c.trade_location,o.status,ut.type,o.remark,ut.trade_name,
-               ut.trade_uid,o.create_time,ft.create_time as finishedTime,ft.remark as finishedRemark
+               ut.trade_uid,o.create_time,o.finished_time,o.buyer_remark,o.seller_remark
         FROM user_trade ut
         LEFT JOIN `order` o USING(order_id)
         LEFT JOIN commodity c USING(commodity_id)
-        LEFT JOIN finished_trade ft USING(order_id)
     </sql>
 
     <resultMap id="orderDetail" type="pers.xds.wtuapp.web.database.view.OrderDetail">
@@ -54,13 +57,14 @@
         <result javaType="String" column="trade_name" property="tradeName"/>
         <result javaType="Integer" column="trade_uid" property="tradeUid"/>
         <result javaType="java.sql.Timestamp" column="create_time" property="createTime"/>
-        <result javaType="java.sql.Timestamp" column="finishedTime" property="finishedTime"/>
-        <result javaType="String" column="finishedRemark" property="finishedRemark"/>
+        <result javaType="java.sql.Timestamp" column="finished_time" property="finishedTime"/>
+        <result javaType="String" column="buyer_remark" property="buyerRemark"/>
+        <result javaType="String" column="seller_remark" property="sellerRemark"/>
     </resultMap>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="orderId">
-        INSERT INTO `order`(commodity_id,customer_id,owner_id,remark,count)
-        VALUE(#{o.commodityId},#{o.customerId},#{o.ownerId},#{o.remark},#{o.count})
+        INSERT INTO `order`(commodity_id,buyer_id,seller_id,remark,count)
+        VALUE(#{o.commodityId},#{o.buyerId},#{o.sellerId},#{o.remark},#{o.count})
     </insert>
 
 
@@ -76,7 +80,7 @@
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         AND type = #{type}
-        AND o.status = <include refid="status_trading"/>
+        AND o.finished_time IS NULL
     </select>
 
     <select id="selectAllOrder" resultMap="orderPreview">
@@ -89,24 +93,44 @@
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         AND ut.type = <include refid="type_sell"/>
+        AND o.finished_time IS NULL
     </select>
 
     <update id="buyerUpdateTradeStatus">
         UPDATE `order` SET status = #{s}
-        WHERE order_id = #{oid} AND customer_id = #{uid} AND status = <include refid="status_trading"/>
+        WHERE order_id = #{oid} AND buyer_id = #{uid} AND status = #{ps}
     </update>
 
     <update id="sellerUpdateTradeStatus">
         UPDATE `order` SET status = #{s}
-        WHERE order_id = #{oid} AND owner_id = #{uid} AND status = <include refid="status_trading"/>
+        WHERE order_id = #{oid} AND seller_id = #{uid} AND status = #{ps}
+    </update>
+
+    <update id="updateTradeStatus">
+        UPDATE `order` SET status = #{s}
+        WHERE order_id = #{oid} AND status = #{ps}
+        AND <if test="isSeller">seller_id</if><if test="!isSeller">buyer_id</if> = #{uid}
     </update>
 
     <select id="selectByIdSimply" resultType="pers.xds.wtuapp.web.database.bean.Order">
-        SELECT customer_id,owner_id,count,commodity_id FROM `order` WHERE order_id = #{oid}
+        SELECT buyer_id,seller_id,count,commodity_id FROM `order` WHERE order_id = #{oid}
     </select>
 
     <select id="selectOrderDetailById" resultMap="orderDetail">
         <include refid="orderDetailBaseSelect"/>
         WHERE ut.user_id = #{uid} AND ut.order_id = #{oid}
     </select>
+
+    <update id="updateFinishedTime">
+        UPDATE `order` set finished_time = CURRENT_TIMESTAMP() WHERE order_id = #{oid}
+    </update>
+
+    <update id="updateBuyerRemark">
+        UPDATE `order` SET buyer_remark = #{r} WHERE order_id = #{oid} AND buyer_id = #{uid}
+    </update>
+
+    <update id="updateSellerRemark">
+        UPDATE `order` SET seller_remark = #{r} WHERE order_id = #{oid} AND seller_id = #{uid}
+    </update>
+
 </mapper>

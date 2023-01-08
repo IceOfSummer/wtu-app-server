@@ -1,8 +1,8 @@
 package pers.xds.wtuapp.web.service;
 
-import org.jetbrains.annotations.Nullable;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
+import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
 
 import java.util.List;
 
@@ -54,25 +54,22 @@ public interface OrderService {
 
 
     /**
-     * 买家标记交易完成
-     * @param uid 买家或卖家的uid
-     * @param orderId 订单id
-     * @param remark 用户备注，可能为空
+     * 买家或卖家标记交易完成
+     * @param updateOrderStatusParam 参数
      * @return 服务码<p>
-     * - {@link ServiceCode#NOT_EXIST}表示订单不存在
+     * - {@link ServiceCode#NOT_EXIST}表示订单不存在<p>
+     * - {@link ServiceCode#NOT_AVAILABLE}表示订单已经被某一方申请取消
      */
-    ServiceCode markTradeDone(int uid, int orderId, @Nullable String remark);
+    ServiceCode markTradeDone(UpdateOrderStatusParam updateOrderStatusParam);
 
     /**
      * 买家或卖家标记交易失败
-     * @param userId 用户id
-     * @param orderId 订单id
-     * @param remark 备注
+     * @param updateOrderStatusParam 参数
      * @return 服务码<p>
      * - {@link ServiceCode#NOT_EXIST}表示订单不存在<p>
-     * - {@link ServiceCode#CONCURRENT_ERROR}乐观锁冲突，稍后再试<p>
+     * - {@link ServiceCode#NOT_AVAILABLE}订单已经完成<p>
      */
-    ServiceCode markTradeFail(int userId, int orderId, @Nullable String remark);
+    ServiceCode markTradeFail(UpdateOrderStatusParam updateOrderStatusParam);
 
 
     /**

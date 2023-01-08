@@ -97,7 +97,7 @@ public class CommodityController {
         }else if (code == ServiceCode.CONCURRENT_ERROR){
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
         } else {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE);
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "不可以锁定自己的商品");
         }
     }
 

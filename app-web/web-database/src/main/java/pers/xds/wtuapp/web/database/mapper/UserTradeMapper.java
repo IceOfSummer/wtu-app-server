@@ -38,7 +38,6 @@ public interface UserTradeMapper extends BaseMapper<UserTrade> {
     @Select("SELECT COUNT(*) FROM user_trade WHERE user_id = #{uid} AND type = 0 AND `status` = 0")
     int selectUserBuyingCount(@Param("uid") int uid);
 
-
 }
 
 

@@ -29,7 +29,7 @@ public class Order  {
     /**
      * 顾客id
      */
-    private Integer customerId;
+    private Integer buyerId;
 
     /**
      * 备注
@@ -39,7 +39,7 @@ public class Order  {
     /**
      * 卖家id
      */
-    private Integer ownerId;
+    private Integer sellerId;
 
     /**
      * 创建时间
@@ -52,17 +52,48 @@ public class Order  {
      */
     private Integer count;
 
+    /**
+     * 订单还在交易中
+     */
     public static final int STATUS_TRADING = 0;
 
-    public static final int STATUS_DONE = 1;
-
-    public static final int STATUS_FAIL = 2;
+    /**
+     * 买家确定收货
+     */
+    public static final int STATUS_BUYER_CONFIRMED = 1;
 
     /**
-     * 订单状态
-     * @see Order#STATUS_DONE
-     * @see Order#STATUS_FAIL
-     * @see Order#STATUS_TRADING
+     * 卖家确定发货
+     */
+    public static final int STATUS_SELLER_CONFIRMED = 2;
+
+    /**
+     * 买家取消订单
+     */
+    public static final int STATUS_BUYER_CANCEL = 3;
+
+    /**
+     * 卖家取消订单
+     */
+    public static final int STATUS_SELLER_CANCEL = 4;
+
+    /**
+     * 订单完成
+     */
+    public static final int STATUS_DONE = 100;
+
+    /**
+     * 被卖家主动取消
+     */
+    public static final int STATUS_CANCELED_BY_SELLER = 101;
+
+    /**
+     * 被买家主动取消
+     */
+    public static final int STATUS_CANCELED_BY_BUYER = 102;
+
+    /**
+     * 订单状态。当订单是完成状态时，<b>保证其值大于等于100</b>
      */
     private Integer status;
 
@@ -72,11 +103,11 @@ public class Order  {
     /**
      * 数据库用
      */
-    public Order(Integer commodityId, Integer customerId, String remark, Integer ownerId, int count) {
+    public Order(Integer commodityId, Integer buyerId, String remark, Integer sellerId, int count) {
         this.commodityId = commodityId;
-        this.customerId = customerId;
+        this.buyerId = buyerId;
         this.remark = remark;
-        this.ownerId = ownerId;
+        this.sellerId = sellerId;
         this.count = count;
     }
 
@@ -119,23 +150,23 @@ public class Order  {
     /**
      * 顾客id
      */
-    public Integer getCustomerId() {
-        return customerId;
+    public Integer getBuyerId() {
+        return buyerId;
     }
 
     /**
      * 顾客id
      */
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setBuyerId(Integer buyerId) {
+        this.buyerId = buyerId;
     }
 
-    public Integer getOwnerId() {
-        return ownerId;
+    public Integer getSellerId() {
+        return sellerId;
     }
 
-    public void setOwnerId(Integer ownerId) {
-        this.ownerId = ownerId;
+    public void setSellerId(Integer sellerId) {
+        this.sellerId = sellerId;
     }
 
     /**

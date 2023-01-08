@@ -15,4 +15,5 @@
         VALUE (#{buyer},#{order_id},0,#{seller},#{sname}),(#{seller},#{order_id},1,#{buyer},#{bname})
     </insert>
 
+
 </mapper>

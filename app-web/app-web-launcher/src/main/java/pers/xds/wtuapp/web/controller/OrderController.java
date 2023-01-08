@@ -1,5 +1,6 @@
 package pers.xds.wtuapp.web.controller;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import pers.xds.wtuapp.web.database.view.OrderPreview;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.OrderService;
 import pers.xds.wtuapp.web.service.ServiceCode;
+import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
+import pers.xds.wtuapp.web.util.StringUtils;
 
 import java.util.List;
 
@@ -85,15 +88,15 @@ public class OrderController {
      */
     @PostMapping("/{orderId}/done")
     public ResponseTemplate<Void> markReceived(@PathVariable int orderId,
+                                               @RequestParam(value = "s") String isSeller,
+                                               @RequestParam(value = "ps") int previousStatus,
                                                @RequestParam(value = "r", required = false) String remark) {
-        final int maxLen = 200;
-        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        if (remark != null && remark.length() >= maxLen) {
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
-        }
-        ServiceCode code = orderService.markTradeDone(userPrincipal.getId(), orderId, remark);
+        UpdateOrderStatusParam updateOrderStatusParam = getStatusParam(orderId, isSeller, previousStatus, remark);
+        ServiceCode code = orderService.markTradeDone(updateOrderStatusParam);
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success();
+        } else if (code == ServiceCode.NOT_AVAILABLE) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "订单已经被对方申请取消或者已经完成");
         }
         return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
     }
@@ -103,17 +106,28 @@ public class OrderController {
      */
     @PostMapping("/{orderId}/cancel")
     public ResponseTemplate<Void> cancelOrder(@PathVariable int orderId,
+                                              @RequestParam(value = "s") String isSeller,
+                                              @RequestParam(value = "ps") int previousStatus,
                                               @RequestParam(value = "r", required = false) String remark) {
-        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        remark = remark.isEmpty() ? null : remark;
-        ServiceCode code = orderService.markTradeFail(userPrincipal.getId(), orderId, remark);
+        UpdateOrderStatusParam updateOrderStatusParam = getStatusParam(orderId, isSeller, previousStatus, remark);
+        ServiceCode code = orderService.markTradeFail(updateOrderStatusParam);
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success();
-        } else if (code == ServiceCode.CONCURRENT_ERROR) {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
+        } else if (code == ServiceCode.NOT_AVAILABLE) {
+            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "订单已经完成");
         }
         // code == ServiceCode#NOT_EXIST
         return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+    }
+
+    @Nullable
+    private UpdateOrderStatusParam getStatusParam(int orderId, String isSeller, int previousStatus, String remark) {
+        final int maxLen = 80;
+        if (remark != null && remark.length() >= maxLen) {
+            return null;
+        }
+        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+        return new UpdateOrderStatusParam(userPrincipal.getId(), orderId, StringUtils.isTrue(isSeller), previousStatus, remark);
     }
 
     /**

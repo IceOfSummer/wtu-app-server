@@ -13,6 +13,17 @@ public class StringUtils {
 
     private StringUtils() {}
 
+    public static final String TRUE = "1";
+
+    /**
+     * 判断字符串"是否为真"
+     * @param value 要判断的字符串
+     * @return 是否为真
+     */
+    public static boolean isTrue(String value) {
+        return TRUE.equals(value);
+    }
+
     /**
      * 将一行的字符串解析为数字, 字符串以指定的分隔符分隔，<b>仅支持大于0的数</b><p>
      *

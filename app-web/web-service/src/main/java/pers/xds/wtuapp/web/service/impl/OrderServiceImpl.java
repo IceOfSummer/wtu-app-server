@@ -1,12 +1,9 @@
 package pers.xds.wtuapp.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pers.xds.wtuapp.web.database.bean.Commodity;
-import pers.xds.wtuapp.web.database.bean.FinishedTrade;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.UserTrade;
 import pers.xds.wtuapp.web.database.mapper.*;
@@ -14,6 +11,7 @@ import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
 import pers.xds.wtuapp.web.service.OrderService;
 import pers.xds.wtuapp.web.service.ServiceCode;
+import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
 
 import java.util.List;
 
@@ -23,8 +21,6 @@ import java.util.List;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
-
-    private FinishedTradeMapper finishedTradeMapper;
 
     private OrderMapper orderMapper;
 
@@ -39,12 +35,6 @@ public class OrderServiceImpl implements OrderService {
     public void setOrderMapper(OrderMapper orderMapper) {
         this.orderMapper = orderMapper;
     }
-
-    @Autowired
-    public void setFinishedTradeMapper(FinishedTradeMapper finishedTradeMapper) {
-        this.finishedTradeMapper = finishedTradeMapper;
-    }
-
 
     @Override
     public List<OrderPreview> getUserOrderDetails(int userid, int page, int size) {
@@ -75,46 +65,92 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode markTradeDone(int uid, int orderId, @Nullable String remark) {
-        int i = orderMapper.buyerUpdateTradeStatus(orderId, uid, Order.STATUS_DONE);
+    public ServiceCode markTradeDone(UpdateOrderStatusParam updateOrderStatusParam) {
+        int newStatus;
+        int prevStatus = updateOrderStatusParam.previousStatus;
+        if (prevStatus == Order.STATUS_TRADING) {
+            newStatus = updateOrderStatusParam.isSeller ? Order.STATUS_SELLER_CONFIRMED : Order.STATUS_BUYER_CONFIRMED;
+        } else if (prevStatus == Order.STATUS_SELLER_CONFIRMED || prevStatus == Order.STATUS_BUYER_CONFIRMED) {
+            newStatus = Order.STATUS_DONE;
+        } else {
+            // prevStatus = 取消订单 || prevStatus = Done
+            return ServiceCode.NOT_AVAILABLE;
+        }
+        int i = orderMapper.updateTradeStatus(
+                updateOrderStatusParam.orderId,
+                updateOrderStatusParam.uid,
+                newStatus,
+                updateOrderStatusParam.previousStatus,
+                updateOrderStatusParam.isSeller
+        );
+        // 插入备注
+        updateRemark(updateOrderStatusParam);
         if (i == 0) {
             return ServiceCode.NOT_EXIST;
         }
-        FinishedTrade finishedTrade = new FinishedTrade();
-        finishedTrade.orderId = orderId;
-        finishedTrade.fail = false;
-        finishedTrade.remark = remark;
-        finishedTradeMapper.insert(finishedTrade);
+        if (newStatus == Order.STATUS_DONE) {
+            orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
+        }
         return ServiceCode.SUCCESS;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode markTradeFail(int userId, int orderId, @Nullable String remark) {
-        Order order = orderMapper.selectByIdSimply(orderId);
-        if (order == null) {
-            return ServiceCode.NOT_EXIST;
-        }
-        // 确认用户是买家或卖家
-        if (order.getOwnerId() == userId) {
-            orderMapper.sellerUpdateTradeStatus(orderId, userId, Order.STATUS_FAIL);
-        } else if (order.getCustomerId() == userId) {
-            orderMapper.buyerUpdateTradeStatus(orderId, userId, Order.STATUS_FAIL);
+    public ServiceCode markTradeFail(UpdateOrderStatusParam updateOrderStatusParam) {
+        int newStatus;
+        boolean isCanceled = false;
+        int prevStatus = updateOrderStatusParam.previousStatus;
+        boolean isSeller = updateOrderStatusParam.isSeller;
+        if (prevStatus == Order.STATUS_TRADING) {
+            newStatus = updateOrderStatusParam.isSeller ? Order.STATUS_SELLER_CANCEL : Order.STATUS_BUYER_CANCEL;
+        } else if (prevStatus == Order.STATUS_BUYER_CANCEL && isSeller) {
+            newStatus = Order.STATUS_CANCELED_BY_BUYER;
+            isCanceled = true;
+        } else if (prevStatus == Order.STATUS_SELLER_CANCEL && !isSeller) {
+            newStatus = Order.STATUS_CANCELED_BY_SELLER;
+            isCanceled = true;
+        } else if (prevStatus == Order.STATUS_SELLER_CONFIRMED || prevStatus == Order.STATUS_BUYER_CONFIRMED){
+            // 被某一方确认，但是另外一方想要取消
+            newStatus = isSeller ? Order.STATUS_SELLER_CANCEL : Order.STATUS_BUYER_CANCEL;
         } else {
+            return ServiceCode.NOT_AVAILABLE;
+        }
+        int i = orderMapper.updateTradeStatus(
+                updateOrderStatusParam.orderId,
+                updateOrderStatusParam.uid,
+                newStatus,
+                updateOrderStatusParam.previousStatus,
+                updateOrderStatusParam.isSeller
+        );
+        if (i == 0) {
             return ServiceCode.NOT_EXIST;
         }
-        FinishedTrade finishedTrade = new FinishedTrade();
-        finishedTrade.orderId = orderId;
-        finishedTrade.fail = true;
-        finishedTrade.remark = remark;
-        finishedTradeMapper.insert(finishedTrade);
-        // 把库存补上
-        Commodity commodity = commodityMapper.selectById(order.getCommodityId());
-        int i = commodityMapper.updateCommodityCount(order.getCommodityId(), order.getCount() + commodity.getCount(), commodity.getVersion());
-        if (i == 0) {
-            return ServiceCode.CONCURRENT_ERROR;
+        updateRemark(updateOrderStatusParam);
+        if (isCanceled) {
+            Order order = orderMapper.selectByIdSimply(updateOrderStatusParam.orderId);
+            // 把库存补上
+            commodityMapper.incrementCommodityCount(order.getCommodityId(), order.getCount());
+            orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
         }
         return ServiceCode.SUCCESS;
+    }
+
+    private void updateRemark(UpdateOrderStatusParam param) {
+        if (param.remark != null && !param.remark.isEmpty()) {
+            if (param.isSeller) {
+                orderMapper.updateSellerRemark(
+                        param.uid,
+                        param.orderId,
+                        param.remark
+                );
+            } else {
+                orderMapper.updateBuyerRemark(
+                        param.uid,
+                        param.orderId,
+                        param.remark
+                );
+            }
+        }
     }
 
     @Override
