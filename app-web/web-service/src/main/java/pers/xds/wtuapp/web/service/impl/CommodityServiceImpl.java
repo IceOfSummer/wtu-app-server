@@ -7,7 +7,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
-import pers.xds.wtuapp.web.database.bean.TradeStat;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.*;
 import pers.xds.wtuapp.web.redis.CounterCache;
@@ -119,9 +118,7 @@ public class CommodityServiceImpl implements CommodityService {
 
         Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
         if (cnt == null) {
-            TradeStat tradeStat = new TradeStat(ownerId);
-            tradeStat.setSellingCount(1);
-            tradeStatMapper.insert(tradeStat);
+            tradeStatMapper.insertWithSellingCountOnly(ownerId, 1);
         } else if (cnt > MAX_ACTIVE_COMMODITY) {
             return ServiceCodeWrapper.fail(ServiceCode.NOT_AVAILABLE);
         } else {
@@ -172,38 +169,44 @@ public class CommodityServiceImpl implements CommodityService {
             return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
         // 乐观锁
-        if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 1) {
-
-            int ownerId = commodity.getOwnerId();
-            User user = userMapper.selectNameAndEmail(ownerId);
-            String buyerName = userMapper.selectNicknameOnly(userId);
-            String sellerName = user.getNickname();
-            // 添加交易记录
-            Order order = new Order(commodityId, userId, remark, ownerId, count);
-            orderMapper.insert(order);
-            userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId, buyerName, sellerName);
-            String email = user.getEmail();
-            if (email != null) {
-                // 发送邮件提醒
-                emailService.sendCommodityLockTip(
-                        email,
-                        new CommodityLockTemplateData(
-                                sellerName,
-                                commodity.getName(),
-                                commodity.getPrice(),
-                                commodity.getTradeLocation(),
-                                // 可能会和数据库有点小偏差，不过应该差不了太多
-                                DateFormatUtils.toLocalString(new Date()),
-                                order.getRemark(),
-                                order.getCount(),
-                                commodity.getPreviewImage()
-                        )
-                );
-            }
-            counterCache.increaseInvokeCount(key);
-            return ServiceCodeWrapper.success(order.getOrderId());
+        if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 0) {
+            return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);
         }
-        return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);
+        int ownerId = commodity.getOwnerId();
+        User user = userMapper.selectNameAndEmail(ownerId);
+        String buyerName = userMapper.selectNicknameOnly(userId);
+        String sellerName = user.getNickname();
+
+        // 添加交易记录
+        Order order = new Order(commodityId, userId, remark, ownerId, count);
+        orderMapper.insert(order);
+        userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId, buyerName, sellerName);
+        String email = user.getEmail();
+        if (email != null) {
+            // 发送邮件提醒
+            emailService.sendCommodityLockTip(
+                    email,
+                    new CommodityLockTemplateData(
+                            sellerName,
+                            commodity.getName(),
+                            commodity.getPrice(),
+                            commodity.getTradeLocation(),
+                            // 可能会和数据库有点小偏差，不过应该差不了太多
+                            DateFormatUtils.toLocalString(new Date()),
+                            order.getRemark(),
+                            order.getCount(),
+                            commodity.getPreviewImage()
+                    )
+            );
+        }
+        counterCache.increaseInvokeCount(key);
+        updateTradeStat(userId, ownerId);
+        return ServiceCodeWrapper.success(order.getOrderId());
+    }
+
+    private void updateTradeStat(int buyer, int seller) {
+        tradeStatMapper.modifyDeliveryCount(seller, 1);
+        tradeStatMapper.modifyReceiveCount(buyer, 1);
     }
 
     @Override

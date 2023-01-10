@@ -16,4 +16,25 @@
         user_id,income,expenditure,
         sum_order,success_order
     </sql>
+
+    <insert id="insert">
+        INSERT INTO trade_stat(user_id,receive_count,delivery_count) VALUE(#{uid},#{rc},#{dc})
+    </insert>
+
+    <insert id="insertWithSellingCountOnly">
+        INSERT INTO trade_stat(user_id,selling_count) VALUE(#{uid},#{sc})
+    </insert>
+
+    <select id="selectUserTradeState" resultType="pers.xds.wtuapp.web.database.bean.TradeStat">
+        SELECT receive_count, delivery_count FROM trade_stat WHERE user_id = #{uid}
+    </select>
+
+    <update id="modifyReceiveCount">
+        UPDATE trade_stat SET receive_count = receive_count + #{inc} WHERE user_id = #{uid}
+    </update>
+
+    <update id="modifyDeliveryCount">
+        UPDATE trade_stat SET delivery_count = delivery_count + #{inc} WHERE user_id = #{uid}
+    </update>
+
 </mapper>

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.UserMapper">
 
-    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="false"/>
+    <cache eviction="FIFO" flushInterval="600000" size="512" readOnly="false" type="pers.xds.wtuapp.web.database.common.RedisCache"/>
 
     <sql id="user_base_query_col">
         u.user_id,u.credit,u.nickname,u.class_name
@@ -14,17 +14,17 @@
         SELECT user_id,`password`,`role`,wtu_id,email,nickname,class_name,name FROM user WHERE username = #{username}
     </select>
 
-    <select id="selectNameAndEmail" resultType="pers.xds.wtuapp.web.database.bean.User">
+    <select id="selectNameAndEmail" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="true">
         SELECT nickname, email FROM user WHERE user_id = #{uid}
     </select>
 
-    <select id="selectAllByIds" useCache="false" resultType="pers.xds.wtuapp.web.database.bean.User">
+    <select id="selectAllByIds" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="false" >
         SELECT <include refid="user_base_query_col"/> FROM user u
         WHERE user_id IN
         <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
     </select>
 
-    <select id="selectByIdForQuery" resultType="pers.xds.wtuapp.web.database.bean.User">
+    <select id="selectByIdForQuery" resultType="pers.xds.wtuapp.web.database.bean.User" useCache="true" >
         SELECT <include refid="user_base_query_col"/> FROM user u
         WHERE user_id = #{id}
     </select>
@@ -46,7 +46,7 @@
         WHERE user_id = #{u.userId}
     </update>
 
-    <select id="selectNicknameOnly" useCache="false" resultType="String">
+    <select id="selectNicknameOnly" resultType="String"  useCache="true">
         SELECT nickname FROM user WHERE user_id = #{uid}
     </select>
 

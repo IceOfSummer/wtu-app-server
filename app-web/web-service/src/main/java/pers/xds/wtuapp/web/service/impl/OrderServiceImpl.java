@@ -1,6 +1,7 @@
 package pers.xds.wtuapp.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,13 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
 
     private CommodityMapper commodityMapper;
+
+    private TradeStatMapper tradeStatMapper;
+
+    @Autowired
+    public void setTradeStatMapper(TradeStatMapper tradeStatMapper) {
+        this.tradeStatMapper = tradeStatMapper;
+    }
 
     @Autowired
     public void setCommodityMapper(CommodityMapper commodityMapper) {
@@ -83,12 +91,13 @@ public class OrderServiceImpl implements OrderService {
                 updateOrderStatusParam.previousStatus,
                 updateOrderStatusParam.isSeller
         );
-        // 插入备注
-        updateRemark(updateOrderStatusParam);
         if (i == 0) {
             return ServiceCode.NOT_EXIST;
         }
+        // 插入备注
+        updateRemark(updateOrderStatusParam);
         if (newStatus == Order.STATUS_DONE) {
+            updateTradeStat(updateOrderStatusParam.orderId, null);
             orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
         }
         return ServiceCode.SUCCESS;
@@ -128,12 +137,31 @@ public class OrderServiceImpl implements OrderService {
         updateRemark(updateOrderStatusParam);
         if (isCanceled) {
             Order order = orderMapper.selectByIdSimply(updateOrderStatusParam.orderId);
+            updateTradeStat(updateOrderStatusParam.orderId, order);
             // 把库存补上
             commodityMapper.incrementCommodityCount(order.getCommodityId(), order.getCount());
             orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
         }
         return ServiceCode.SUCCESS;
     }
+
+    /**
+     * 更新交易统计
+     * @param orderId 订单id
+     * @param order 包含了买家和卖家id的订单对象，可以为空
+     */
+    private void updateTradeStat(int orderId, @Nullable Order order) {
+        if (order == null) {
+            order = orderMapper.selectByIdSimply(orderId);
+        }
+        int seller = order.getSellerId();
+        int buyer = order.getBuyerId();
+        tradeStatMapper.modifyDeliveryCount(seller, -1);
+        tradeStatMapper.modifyReceiveCount(buyer, -1);
+    }
+
+
+
 
     private void updateRemark(UpdateOrderStatusParam param) {
         if (param.remark != null && !param.remark.isEmpty()) {

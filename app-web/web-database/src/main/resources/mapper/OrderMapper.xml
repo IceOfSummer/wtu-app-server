@@ -4,6 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.OrderMapper">
 
+    <cache eviction="FIFO" flushInterval="600000" size="512" readOnly="false" type="pers.xds.wtuapp.web.database.common.RedisCache"/>
+
     <sql id="status_trading">
         '${@pers.xds.wtuapp.web.database.bean.Order@STATUS_TRADING}'
     </sql>
@@ -68,7 +70,7 @@
     </insert>
 
 
-    <select id="selectOrders" resultMap="orderPreview">
+    <select id="selectOrders" resultMap="orderPreview" useCache="false">
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         <if test="status != null">
@@ -76,20 +78,20 @@
         </if>
     </select>
 
-    <select id="selectActiveOrderByType" resultMap="orderPreview">
+    <select id="selectActiveOrderByType" resultMap="orderPreview" useCache="false">
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         AND type = #{type}
         AND o.finished_time IS NULL
     </select>
 
-    <select id="selectAllOrder" resultMap="orderPreview">
+    <select id="selectAllOrder" resultMap="orderPreview" useCache="false">
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         ORDER BY o.create_time DESC
     </select>
 
-    <select id="selectAllSoldOrder" resultMap="orderPreview">
+    <select id="selectAllSoldOrder" resultMap="orderPreview" useCache="false">
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         AND ut.type = <include refid="type_sell"/>

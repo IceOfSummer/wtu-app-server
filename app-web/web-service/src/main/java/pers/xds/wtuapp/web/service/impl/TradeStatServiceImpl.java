@@ -3,7 +3,6 @@ package pers.xds.wtuapp.web.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.service.TradeStatService;
 import pers.xds.wtuapp.web.database.bean.TradeStat;
 import pers.xds.wtuapp.web.database.mapper.TradeStatMapper;
@@ -23,16 +22,15 @@ public class TradeStatServiceImpl implements TradeStatService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     @NonNull
     public TradeStat getTradeStat(int userId) {
-        TradeStat tradeStat = tradeStatMapper.selectById(userId);
+        TradeStat tradeStat = tradeStatMapper.selectUserTradeState(userId);
         if (tradeStat == null) {
             // 插入
-            TradeStat stat = new TradeStat();
-            stat.setUserId(userId);
-            tradeStatMapper.insert(stat);
-            return stat;
+            tradeStatMapper.insertWithSellingCountOnly(userId, 0);
+            tradeStat = new TradeStat();
+            tradeStat.setSellingCount(0);
+            tradeStat.setDeliveryCount(0);
         }
         return tradeStat;
     }

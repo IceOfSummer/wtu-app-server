@@ -51,10 +51,6 @@
             <groupId>pers.xds.wtuapp.web</groupId>
             <artifactId>web-redis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mybatis.caches</groupId>
-            <artifactId>mybatis-redis</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
