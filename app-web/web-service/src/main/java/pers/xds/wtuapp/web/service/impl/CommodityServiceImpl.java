@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.*;
-import pers.xds.wtuapp.web.redis.CounterCache;
-import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
@@ -37,9 +35,6 @@ public class CommodityServiceImpl implements CommodityService {
      */
     private static final int MAX_PAGE_SIZE = 30;
 
-    private CounterCache counterCache;
-
-
     private CommodityMapper commodityMapper;
 
     private CommodityRepository commodityRepository;
@@ -62,11 +57,6 @@ public class CommodityServiceImpl implements CommodityService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
-    }
-
-    @Autowired
-    public void setCounterCache(CounterCache counterCache) {
-        this.counterCache = counterCache;
     }
 
     @Autowired
@@ -97,9 +87,8 @@ public class CommodityServiceImpl implements CommodityService {
     /**
      * 每个人最多可以发布的商品数量
      */
-    public static final int MAX_ACTIVE_COMMODITY = 10;
+    public static final int MAX_ACTIVE_COMMODITY = 20;
 
-    public static final String INSERT_CACHE_KEY_PREFIX = "insertCommodity:";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -107,13 +96,6 @@ public class CommodityServiceImpl implements CommodityService {
         Integer ownerId = commodity.getOwnerId();
         if (ownerId == null) {
             return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
-        }
-        String key = INSERT_CACHE_KEY_PREFIX + ownerId;
-        // 每个周最多发布14件商品
-        final int maxWeekPost = 14;
-        int invokeCount = counterCache.getInvokeCount(key, Duration.WEEK);
-        if (invokeCount > maxWeekPost) {
-            return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
 
         Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
@@ -124,7 +106,6 @@ public class CommodityServiceImpl implements CommodityService {
         } else {
             tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
         }
-        counterCache.increaseInvokeCount(key);
         // 使用自动生成的id
         commodity.setCommodityId(null);
         commodityMapper.insert(commodity);
@@ -146,10 +127,6 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
 
-    private static final String LOCK_COMMODITY_PREFIX_KEY = "lockCommodity:";
-
-    private static final int MAX_LOCK_ACTION_PER_DAY = 10;
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark) {
@@ -162,11 +139,6 @@ public class CommodityServiceImpl implements CommodityService {
         }
         if (commodity.getCount() < count) {
             return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
-        }
-        String key = LOCK_COMMODITY_PREFIX_KEY + userId;
-        int invokeCount = counterCache.getInvokeCount(key);
-        if (invokeCount > MAX_LOCK_ACTION_PER_DAY) {
-            return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
         }
         // 乐观锁
         if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 0) {
@@ -199,7 +171,6 @@ public class CommodityServiceImpl implements CommodityService {
                     )
             );
         }
-        counterCache.increaseInvokeCount(key);
         updateTradeStat(userId, ownerId);
         return ServiceCodeWrapper.success(order.getOrderId());
     }

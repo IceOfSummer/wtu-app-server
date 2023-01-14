@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import pers.xds.wtuapp.web.aop.RateLimit;
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.security.SecurityConstant;
@@ -12,6 +13,7 @@ import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.database.group.UpdateGroup;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
+import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.ServiceCode;
@@ -39,6 +41,11 @@ public class CommodityController {
 
 
     /**
+     * 每周最多上传的商品数量
+     */
+    public static final int MAX_WEEK_POST_COUNT = 21;
+
+    /**
      * 创建一个商品。
      * <p>
      * 商品的预览图与上传文件下发的指定路径不同，{@link pers.xds.wtuapp.web.service.config.cos.SignInfo#path}一般为<code>image/todo/xx</code>
@@ -53,18 +60,16 @@ public class CommodityController {
      * @return 创建成功后的商品id
      */
     @PostMapping("create")
+    @RateLimit(value = MAX_WEEK_POST_COUNT, duration = Duration.WEEK, limitMessage = "您每周最多可以发布" + MAX_WEEK_POST_COUNT + "个商品")
     public ResponseTemplate<Integer> createCommodity(@Validated Commodity commodity) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         commodity.setOwnerId(userPrincipal.getId());
         ServiceCodeWrapper<Integer> wrapper = commodityService.insertCommodity(commodity);
-        ServiceCode code = wrapper.code;
         if (wrapper.isSuccess()) {
             return ResponseTemplate.success(wrapper.data);
-        } else if (code == ServiceCode.RATE_LIMIT) {
-            return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您已达到每周商品发布数量上限, 该限制将在下周重置");
         }
         // code == ServiceCode.NOT_AVAILABLE
-        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您发布的商品已经到达数量上限");
+        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您发布的商品已经到达数量上限, 请下架已有的商品");
     }
 
     /**
@@ -79,11 +84,17 @@ public class CommodityController {
     }
 
     /**
+     * 一天最多锁定的次数
+     */
+    public static final int MAX_LOCK_ACTION_PER_DAY = 15;
+
+    /**
      * 锁定某个商品，并创建交易记录，表示买家想要购买这个商品。
      * @param id 商品id
      * @return 是否成功
      */
     @PostMapping("/op/{id}/lock")
+    @RateLimit(value = MAX_LOCK_ACTION_PER_DAY, limitMessage = "您一天最多最多只能锁定" + MAX_LOCK_ACTION_PER_DAY + "次")
     public ResponseTemplate<Integer> lockCommodity(@PathVariable int id,
                                         @RequestParam(value = "c", required = false, defaultValue = "1") int count,
                                         @RequestParam(value = "r", required = false) String remark) {
@@ -92,9 +103,7 @@ public class CommodityController {
         ServiceCode code = wrapper.code;
         if (code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success(wrapper.data);
-        } else if (code == ServiceCode.RATE_LIMIT) {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已到达每日的商品锁定次数上限，请明天再试");
-        }else if (code == ServiceCode.CONCURRENT_ERROR){
+        } else if (code == ServiceCode.CONCURRENT_ERROR){
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
         } else {
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "不可以锁定自己的商品");

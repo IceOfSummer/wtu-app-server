@@ -13,8 +13,6 @@ import pers.xds.wtuapp.web.database.mapper.FeedbackRecordMapper;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
 import pers.xds.wtuapp.web.database.view.CommunityTipQueryType;
-import pers.xds.wtuapp.web.redis.CounterCache;
-import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommunityService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
@@ -33,8 +31,6 @@ public class CommunityServiceImpl implements CommunityService {
 
     private CommunityMessageMapper communityMessageMapper;
 
-    private CounterCache counterCache;
-
     private FeedbackRecordMapper feedbackRecordMapper;
 
     private CommunityTipMapper communityTipMapper;
@@ -51,26 +47,13 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Autowired
-    public void setCounterCache(CounterCache counterCache) {
-        this.counterCache = counterCache;
-    }
-
-    @Autowired
     public void setCommunityMessageMapper(CommunityMessageMapper communityMessageMapper) {
         this.communityMessageMapper = communityMessageMapper;
     }
 
-    public static final String POST_MESSAGE_KEY_PREFIX = "CommunityService#PostMessage:";
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> postMessage(int author, CommunityMessage communityMessage, boolean enableNotification) {
-        String key = POST_MESSAGE_KEY_PREFIX + author;
-        int invokeCount = counterCache.getInvokeCount(key);
-        final int maxAllowCount = 100;
-        if (invokeCount > maxAllowCount) {
-            return ServiceCodeWrapper.fail(ServiceCode.RATE_LIMIT);
-        }
         Integer pid = communityMessage.getPid();
         if (pid != 0) {
             // reply_count 加一
@@ -98,7 +81,6 @@ public class CommunityServiceImpl implements CommunityService {
         }
         communityMessage.setAuthor(author);
         communityMessageMapper.insert(communityMessage);
-        counterCache.increaseInvokeCount(key);
         return ServiceCodeWrapper.success(communityMessage.getId());
     }
 
@@ -128,17 +110,9 @@ public class CommunityServiceImpl implements CommunityService {
         return communityMessageMapper.selectMessageByPid(pid, new Page<>(page, size)).getRecords();
     }
 
-    private static final String FEED_BACK_KEY_PREFIX = "CommunityService:feedbackMessage:";
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ServiceCode feedbackMessage(int uid, int messageId, Boolean thumbsUp) {
-        final int maxAllowInvoke = 80;
-        String key = FEED_BACK_KEY_PREFIX + uid;
-        int invokeCount = counterCache.getInvokeCount(key, Duration.HOUR);
-        if (invokeCount > maxAllowInvoke) {
-            return ServiceCode.RATE_LIMIT;
-        }
         FeedbackRecord feedbackRecord = feedbackRecordMapper.selectFeedbackRecord(uid, messageId);
         int up, down;
         if (feedbackRecord != null && feedbackRecord.getLike() != null) {
@@ -186,7 +160,6 @@ public class CommunityServiceImpl implements CommunityService {
             feedbackRecordMapper.updateAttitude(fb);
         }
         communityMessageMapper.modifyFeedbackAbsolutely(messageId, up, down);
-        counterCache.increaseInvokeCount(key);
         return ServiceCode.SUCCESS;
     }
 

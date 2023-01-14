@@ -2,10 +2,8 @@ package pers.xds.wtuapp.web.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pers.xds.wtuapp.web.redis.CounterCache;
 import pers.xds.wtuapp.web.redis.EmailCaptchaCache;
 import pers.xds.wtuapp.web.redis.bean.EmailData;
-import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.EmailService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.UserService;
@@ -26,8 +24,6 @@ public class UserServiceImpl implements UserService {
 
     private UserMapper userMapper;
 
-    private CounterCache counterCache;
-
     private EmailService emailService;
 
     private EmailCaptchaCache emailCaptchaCache;
@@ -40,11 +36,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
-    }
-
-    @Autowired
-    public void setCounterCache(CounterCache counterCache) {
-        this.counterCache = counterCache;
     }
 
 
@@ -103,25 +94,16 @@ public class UserServiceImpl implements UserService {
         return update == 1 ? ServiceCode.SUCCESS : ServiceCode.NOT_EXIST;
     }
 
-    private static final String EMAIL_UPDATE_KEY_PREFIX = "UserService:EmailUpdate:";
-
     private static final int CAPTCHA_SIZE = 6;
 
     @Override
     public ServiceCode requireEmailUpdateCaptcha(int uid, String email) {
-        String key = EMAIL_UPDATE_KEY_PREFIX + uid;
-        // 每月最多允许执行3次
-        final int maxAllowInvoke = 3;
-        if (counterCache.getInvokeCount(key, Duration.MONTH) >= maxAllowInvoke) {
-            return ServiceCode.RATE_LIMIT;
-        }
         String nickname = userMapper.selectNicknameOnly(uid);
         String captcha = Random.generateCaptcha(CAPTCHA_SIZE);
 
         emailCaptchaCache.saveEmailCaptcha(uid, email, captcha);
         EmailBindTemplateData data = new EmailBindTemplateData(nickname, captcha, "绑定邮箱");
         emailService.sendEmailCaptcha(email, data);
-        counterCache.increaseInvokeCount(key);
         return ServiceCode.SUCCESS;
     }
 

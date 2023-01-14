@@ -17,7 +17,6 @@ public interface CommodityService {
      * @return 新增货物的id<p>
      * - {@link ServiceCode#BAD_REQUEST} 表示参数有误<p>
      * - {@link ServiceCode#NOT_AVAILABLE} 表示用户已经达到商品上传上限<p>
-     * - {@link ServiceCode#RATE_LIMIT} 表示用户已经达到每周发布商品上限<p>
      */
     ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity);
 
@@ -40,7 +39,6 @@ public interface CommodityService {
      * - {@link ServiceCode#BAD_REQUEST}表示商品数量不足;<p>
      * - {@link ServiceCode#NOT_EXIST}表示商品不存在;<p>
      * - {@link ServiceCode#NOT_AVAILABLE}表示商品不可用，如商品下架或者用户自己买自己的商品<p>
-     * - {@link ServiceCode#RATE_LIMIT}表示用户到了每天锁定商品的数量上限<p>
      * - {@link ServiceCode#CONCURRENT_ERROR}表示暂时锁定失败，稍后再试
      */
     ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark);

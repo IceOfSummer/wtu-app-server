@@ -20,7 +20,6 @@ public interface CommunityService {
      * @param communityMessage 消息内容, 将{@link CommunityMessage#pid}置为0，表示发布新的消息，反之则为回复某个消息
      * @param enableNotification 开启通知，一般用于回复功能
      * @return 新增消息的id<p>
-     *     - {@link ServiceCode#RATE_LIMIT}: 表示用户到达了消息发送上限
      */
     ServiceCodeWrapper<Integer> postMessage(int author, CommunityMessage communityMessage, boolean enableNotification);
 

@@ -12,15 +12,6 @@ import pers.xds.wtuapp.web.redis.common.Duration;
 public interface CounterCache {
 
     /**
-     * 获取参数为某个key时，对应key的{@link CounterCache#increaseInvokeCount}方法的调用次数。。统计次数每日0点清空
-     * @param key 唯一的key
-     * @return 调用次数, 若之前未曾调用，返回0
-     */
-    default int getInvokeCount(String key) {
-        return getInvokeCount(key, Duration.DAY);
-    }
-
-    /**
      * 获取参数为某个key时，对应key的{@link CounterCache#increaseInvokeCount}方法的调用次数。
      * @param key 唯一的key
      * @param duration 清零时间

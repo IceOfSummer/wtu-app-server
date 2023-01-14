@@ -53,7 +53,11 @@ public enum ResponseCode {
     /**
      * 服务器出错
      */
-    INTERNAL_SERVER_ERROR(10, "服务器出现问题，请等待修复!", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR(10, "服务器出现问题，请等待修复!", HttpStatus.INTERNAL_SERVER_ERROR),
+    /**
+     * 发生未知错误
+     */
+    UNKNOWN_ERROR(11, "发生未知错误，请稍后再试!");
 
     public final int code;
 

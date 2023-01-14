@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
+import pers.xds.wtuapp.web.aop.RateLimit;
 import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
@@ -17,6 +18,8 @@ import pers.xds.wtuapp.web.service.CommunityService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.bean.PostReply;
+import pers.xds.wtuapp.web.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -35,21 +38,26 @@ public class CommunityMessageController {
         this.communityService = communityService;
     }
 
+    /**
+     * 用户每天最多可以发送消息的次数
+     */
+    public static final int POST_MESSAGE_ALLOW_RATE = 100;
 
     /**
      * 发布一个消息(帖子)
      *
      * @param communityMessage 消息内容
      */
+    @RateLimit(value = POST_MESSAGE_ALLOW_RATE, limitMessage = "您每天最多发送" + POST_MESSAGE_ALLOW_RATE + "次消息")
     @PostMapping("post")
     public ResponseTemplate<Integer> postArticle(@Validated(InsertGroup.class) CommunityMessage communityMessage, @RequestParam(value = "n",required = false) String notification) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        boolean enableNotification = notification != null && notification.equals("1");
+        boolean enableNotification = StringUtils.isTrue(notification);
         ServiceCodeWrapper<Integer> wrapper = communityService.postMessage(userPrincipal.getId(), communityMessage, enableNotification);
         if (wrapper.code == ServiceCode.SUCCESS) {
             return ResponseTemplate.success(wrapper.data);
         }
-        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
+        return ResponseTemplate.fail(ResponseCode.UNKNOWN_ERROR);
     }
 
     /**
@@ -126,6 +134,10 @@ public class CommunityMessageController {
         return ResponseTemplate.success();
     }
 
+    /**
+     * 用户使用反馈功能的最大次数
+     */
+    public static final int FEEDBACK_MAX_ALLOW_RATE = 100;
 
     /**
      * 点赞/踩某条消息
@@ -133,6 +145,7 @@ public class CommunityMessageController {
      * @param attitude 用户的态度, 0:踩, 1: 赞, null: 无评价(用来取消点赞/踩)
      */
     @PostMapping("/feedback")
+    @RateLimit(value = FEEDBACK_MAX_ALLOW_RATE, limitMessage = "您每天最多点" + FEEDBACK_MAX_ALLOW_RATE + "次赞")
     public ResponseTemplate<Void> feedbackMessage(
             @RequestParam("i") int messageId,
             @RequestParam(value = "l", required = false) Integer attitude
@@ -151,7 +164,7 @@ public class CommunityMessageController {
         if (serviceCode == ServiceCode.NOT_AVAILABLE) {
             return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "您已经点过了");
         }
-        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
+        return ResponseTemplate.fail(ResponseCode.UNKNOWN_ERROR);
     }
 
     /**

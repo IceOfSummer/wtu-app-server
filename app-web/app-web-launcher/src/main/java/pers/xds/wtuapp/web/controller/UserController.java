@@ -6,9 +6,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
+import pers.xds.wtuapp.web.aop.RateLimit;
 import pers.xds.wtuapp.web.bean.RegisterParam;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.group.UpdateGroup;
+import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.security.PwdEncoder;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.ServiceCode;
@@ -103,7 +105,13 @@ public class UserController {
         return ResponseTemplate.fail(ResponseCode.RATE_LIMIT);
     }
 
+    /**
+     * 邮箱每月最大更新次数
+     */
+    private static final int MAX_EMAIL_UPDATE_RATE = 3;
+
     @PostMapping("/update/email/bind")
+    @RateLimit(value = MAX_EMAIL_UPDATE_RATE, duration = Duration.MONTH, limitMessage = "您每月最多更换" + MAX_EMAIL_UPDATE_RATE + "次邮箱")
     public ResponseTemplate<Void> updateEmail(@RequestParam("c") String captcha) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         ServiceCode code = userService.updateEmail(userPrincipal.getId(), captcha);
