@@ -44,8 +44,7 @@ public class AuthController {
     @GetMapping("renew")
     public ResponseTemplate<String> renewRequestToken() {
         Authentication authentication = SecurityContextUtil.getAuthentication();
-        if (authentication == null) {
-            // 这里想用EL表达式"authentication != null"，但是发现怎整都无效
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
             return ResponseTemplate.fail(ResponseCode.ACCESS_DENIED);
         }
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();

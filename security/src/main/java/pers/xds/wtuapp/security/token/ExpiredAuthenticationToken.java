@@ -1,9 +1,11 @@
 package pers.xds.wtuapp.security.token;
 
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import pers.xds.wtuapp.security.UserPrincipal;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pers.xds.wtuapp.security.bean.JwtParseResult;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -11,23 +13,17 @@ import java.util.Collections;
  * @author DeSen Xu
  * @date 2023-01-01 15:23
  */
-public class ExpiredAuthenticationToken extends AbstractAuthenticationToken {
+public class ExpiredAuthenticationToken extends AnonymousAuthenticationToken {
 
     private final JwtParseResult jwtParseResult;
 
+    public static final String ROLE_EXPIRED_USER = "EXPIRED_USER";
+
+    private static final Collection<GrantedAuthority> AUTHORITY = Collections.singleton(new SimpleGrantedAuthority(ROLE_EXPIRED_USER));
+
     public ExpiredAuthenticationToken(JwtParseResult jwtParseResult) {
-        super(Collections.emptyList());
+        super(String.valueOf(jwtParseResult.getPrincipal().getId()), jwtParseResult.getPrincipal(), AUTHORITY);
         this.jwtParseResult = jwtParseResult;
-    }
-
-    @Override
-    public Object getCredentials() {
-        return null;
-    }
-
-    @Override
-    public UserPrincipal getPrincipal() {
-        return jwtParseResult.getPrincipal();
     }
 
     public JwtParseResult getJwtParseResult() {
