@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import pers.xds.wtuapp.web.service.util.Jackson;
+import pers.xds.wtuapp.web.database.util.Jackson;
 
 import javax.servlet.http.HttpServletResponse;
 

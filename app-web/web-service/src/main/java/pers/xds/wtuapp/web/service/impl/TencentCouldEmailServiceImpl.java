@@ -12,7 +12,7 @@ import pers.xds.wtuapp.web.service.EmailService;
 import pers.xds.wtuapp.web.service.config.email.CommodityLockTemplateData;
 import pers.xds.wtuapp.web.service.config.email.EmailBindTemplateData;
 import pers.xds.wtuapp.web.service.config.props.EmailConfigurationProperties;
-import pers.xds.wtuapp.web.service.util.Jackson;
+import pers.xds.wtuapp.web.database.util.Jackson;
 
 
 /**

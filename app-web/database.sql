@@ -18,22 +18,6 @@ CREATE TABLE commodity(
 
 CREATE INDEX commodity_owner_index ON commodity(owner_id);
 
-DROP TABLE IF EXISTS finished_trade;
-CREATE TABLE finished_trade(
-                               order_id INT(11) NOT NULL   COMMENT '订单id' ,
-                               create_time TIMESTAMP   DEFAULT CURRENT_TIMESTAMP COMMENT '完成时间' ,
-                               PRIMARY KEY (order_id)
-)  COMMENT = '交易完成的订单';
-
-DROP TABLE IF EXISTS trade_comment;
-CREATE TABLE trade_comment(
-                              order_id INT(11) NOT NULL   COMMENT '交易id' ,
-                              finished_time TIMESTAMP   DEFAULT CURRENT_TIMESTAMP COMMENT '交易完成时间' ,
-                              buyer_comment VARCHAR(200)    COMMENT '买家评论' ,
-                              rating TINYINT(4)    COMMENT '评分;从0~5进行评级' ,
-                              PRIMARY KEY (order_id)
-)  COMMENT = '评价表';
-
 DROP TABLE IF EXISTS trade_stat;
 CREATE TABLE trade_stat(
                            user_id INT(11) NOT NULL   COMMENT '用户id' ,
@@ -116,22 +100,6 @@ CREATE TABLE feedback_record(
                                 PRIMARY KEY (uid,message_id)
 )  COMMENT = '社区消息反馈表';
 
-DROP TABLE IF EXISTS community_tip;
-CREATE TABLE community_tip(
-                              message_id INT NOT NULL   COMMENT '社区消息id' ,
-                              uid INT NOT NULL   COMMENT '消息作者的用户id' ,
-                              message_title VARCHAR(30)    COMMENT '消息标题' ,
-                              count INT NOT NULL  DEFAULT 1 COMMENT '总回复数量' ,
-                              last_reply_uid INT NOT NULL   COMMENT '最后复者的id' ,
-                              last_reply_time DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP() COMMENT '最后回复时间' ,
-                              last_reply_content VARCHAR(15)    COMMENT '最后回复内容;截取10个字，多的字用点代替' ,
-                              type TINYINT NOT NULL   COMMENT '提醒类型;0: 普通帖子回复，1：评论被回复' ,
-                              PRIMARY KEY (message_id)
-)  COMMENT = '社区消息提醒表';
-
-
-CREATE INDEX uid_index ON community_tip(uid);
-
 DROP TABLE IF EXISTS user_auth;
 CREATE TABLE user_auth(
                           uid INT NOT NULL   COMMENT '用户id' ,
@@ -140,15 +108,20 @@ CREATE TABLE user_auth(
                           PRIMARY KEY (uid)
 )  COMMENT = '用户认证表';
 
-DROP TABLE IF EXISTS message_box;
-CREATE TABLE message_box(
-                            receiver VARCHAR(255) NOT NULL   COMMENT '消息接受者' ,
-                            id INT NOT NULL AUTO_INCREMENT  COMMENT '消息id' ,
-                            title VARCHAR(20) NOT NULL   COMMENT '消息标题' ,
-                            create_time TIMESTAMP NOT NULL  DEFAULT CURRENT_TIMESTAMP() COMMENT '创建时间' ,
-                            type INT NOT NULL   COMMENT '消息类型' ,
-                            message VARCHAR(30) NOT NULL   COMMENT '消息简要内容' ,
-                            payload VARCHAR(300) NOT NULL   COMMENT '消息额外负载' ,
-                            PRIMARY KEY (receiver,id)
-)  COMMENT = '消息盒子';
+DROP TABLE IF EXISTS event_remind;
+CREATE TABLE event_remind(
+                             event_remind_id INT NOT NULL AUTO_INCREMENT  COMMENT '消息id' ,
+                             receiver_id INT NOT NULL   COMMENT '接收者id' ,
+                             source_id INT NOT NULL   COMMENT '事件源;如评论ID、文章ID' ,
+                             source_type INT NOT NULL   COMMENT '事件源类型' ,
+                             source_content VARCHAR(30)    COMMENT '事件源内容' ,
+                             state BOOL   DEFAULT FALSE COMMENT '是否已读' ,
+                             sender_id INT NOT NULL   COMMENT '操作者id' ,
+                             create_time TIMESTAMP NOT NULL  DEFAULT CURRENT_TIMESTAMP() COMMENT '创建时间' ,
+                             target_content VARCHAR(30) NOT NULL   COMMENT '目标的内容;若对文章或评论点赞则在这里提供文章或评论的标题或内容' ,
+                             PRIMARY KEY (event_remind_id)
+)  COMMENT = '事件提醒';
+
+
+CREATE INDEX receiver_index ON event_remind(receiver_id);
 

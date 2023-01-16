@@ -95,4 +95,9 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
     CommunityMessagePost selectMessageById(@Param("id") int messageId);
 
 
+    /**
+     * 选择文章简要信息
+     * @return 广场消息。仅有{@link CommunityMessage#title}, {@link CommunityMessage#content}(若长度超过30，则会被截断), {@link CommunityMessage#pid}
+     */
+    CommunityMessage selectSimplyWithContentById(@Param("id") int id);
 }

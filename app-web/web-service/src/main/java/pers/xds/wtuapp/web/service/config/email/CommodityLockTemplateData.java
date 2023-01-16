@@ -1,7 +1,7 @@
 package pers.xds.wtuapp.web.service.config.email;
 
 
-import pers.xds.wtuapp.web.service.util.Jackson;
+import pers.xds.wtuapp.web.database.util.Jackson;
 
 /**
  * @author DeSen Xu

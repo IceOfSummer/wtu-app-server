@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.MessageTipMapper">
+
+    <insert id="insert">
+        INSERT INTO message_tip(receiver,title,type,message,payload) VALUE(#{mt.receiver},#{mt.title},#{mt.type},#{mt.message},#{mt.payload})
+    </insert>
+
+    <select id="selectMessageTips" resultType="pers.xds.wtuapp.web.database.bean.MessageTip">
+        SELECT id,title,type,message,payload,create_time FROM message_tip WHERE receiver = #{uid} AND id > #{mi} LIMIT #{s}
+    </select>
+</mapper>

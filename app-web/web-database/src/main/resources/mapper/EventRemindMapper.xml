@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.xds.wtuapp.web.database.mapper.EventRemindMapper">
+
+    <insert id="insert">
+        INSERT INTO event_remind(receiver_id, source_id, source_type, source_content, sender_id,target_content)
+        VALUE(#{er.receiverId},#{er.sourceId},#{er.sourceType},#{er.sourceContent},#{er.senderId},#{er.targetContent})
+    </insert>
+
+    <select id="selectRemindsForCombine" resultType="pers.xds.wtuapp.web.database.bean.EventRemind">
+        SELECT event_remind_id,source_id,source_type,sender_id, source_content,create_time,target_content FROM event_remind
+        WHERE receiver_id = #{uid} AND state = FALSE LIMIT 300
+    </select>
+
+    <select id="selectUnreadMessageCount" resultType="Integer">
+        SELECT COUNT(*) FROM event_remind WHERE receiver_id = #{uid} AND state = FALSE LIMIT 100
+    </select>
+
+    <update id="markAllRead">
+        UPDATE event_remind SET state = TRUE WHERE receiver_id = #{uid}
+    </update>
+
+</mapper>

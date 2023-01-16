@@ -71,4 +71,8 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectSimplyWithContentById" resultType="pers.xds.wtuapp.web.database.bean.CommunityMessage">
+        SELECT title,author,pid,left(content, 30) as content FROM community_message WHERE id = #{id}
+    </select>
+
 </mapper>

@@ -1,4 +1,4 @@
-package pers.xds.wtuapp.web.service.util;
+package pers.xds.wtuapp.web.database.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

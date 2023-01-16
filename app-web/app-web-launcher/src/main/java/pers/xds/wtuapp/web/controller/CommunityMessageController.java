@@ -12,7 +12,6 @@ import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
 import pers.xds.wtuapp.web.database.group.InsertGroup;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
-import pers.xds.wtuapp.web.database.view.CommunityTipQueryType;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.CommunityService;
 import pers.xds.wtuapp.web.service.ServiceCode;
@@ -167,14 +166,5 @@ public class CommunityMessageController {
         return ResponseTemplate.fail(ResponseCode.UNKNOWN_ERROR);
     }
 
-    /**
-     * 查询消息提醒
-     */
-    @GetMapping("tip")
-    public ResponseTemplate<List<CommunityTipQueryType>> queryMessageReplyTip() {
-        UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        List<CommunityTipQueryType> tip = communityService.queryMessageTip(userPrincipal.getId());
-        return ResponseTemplate.success(tip);
-    }
 
 }

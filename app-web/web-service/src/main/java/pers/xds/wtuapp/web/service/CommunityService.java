@@ -3,7 +3,6 @@ package pers.xds.wtuapp.web.service;
 import org.jetbrains.annotations.Nullable;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
-import pers.xds.wtuapp.web.database.view.CommunityTipQueryType;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
 import java.util.List;
@@ -68,12 +67,6 @@ public interface CommunityService {
      */
     ServiceCode feedbackMessage(int uid, int messageId, Boolean thumbsUp);
 
-    /**
-     * 查询消息提醒
-     * @param uid 用户id
-     * @return 消息提醒
-     */
-    List<CommunityTipQueryType> queryMessageTip(int uid);
 
     /**
      * 根据消息id查询消息

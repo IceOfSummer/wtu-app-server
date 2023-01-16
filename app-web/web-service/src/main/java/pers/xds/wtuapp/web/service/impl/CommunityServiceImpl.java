@@ -5,17 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
-import pers.xds.wtuapp.web.database.bean.CommunityTip;
 import pers.xds.wtuapp.web.database.bean.FeedbackRecord;
 import pers.xds.wtuapp.web.database.mapper.CommunityMessageMapper;
-import pers.xds.wtuapp.web.database.mapper.CommunityTipMapper;
 import pers.xds.wtuapp.web.database.mapper.FeedbackRecordMapper;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
-import pers.xds.wtuapp.web.database.view.CommunityTipQueryType;
-import pers.xds.wtuapp.web.service.CommunityService;
-import pers.xds.wtuapp.web.service.ServiceCode;
-import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
+import pers.xds.wtuapp.web.service.*;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
 import java.util.ArrayList;
@@ -33,13 +28,13 @@ public class CommunityServiceImpl implements CommunityService {
 
     private FeedbackRecordMapper feedbackRecordMapper;
 
-    private CommunityTipMapper communityTipMapper;
+
+    private EventRemindService eventRemindService;
 
     @Autowired
-    public void setCommunityTipMapper(CommunityTipMapper communityTipMapper) {
-        this.communityTipMapper = communityTipMapper;
+    public void setEventRemindService(EventRemindService eventRemindService) {
+        this.eventRemindService = eventRemindService;
     }
-
 
     @Autowired
     public void setFeedbackRecordMapper(FeedbackRecordMapper feedbackRecordMapper) {
@@ -55,32 +50,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional(rollbackFor = Exception.class)
     public ServiceCodeWrapper<Integer> postMessage(int author, CommunityMessage communityMessage, boolean enableNotification) {
         Integer pid = communityMessage.getPid();
+        communityMessage.setAuthor(author);
+        communityMessageMapper.insert(communityMessage);
         if (pid != 0) {
             // reply_count 加一
             communityMessageMapper.increaseReplyCount(pid);
             // 提醒父消息用户
-            CommunityMessage parentMessage = communityMessageMapper.selectSimplyById(pid);
             if (enableNotification) {
-                final int maxLen = 11;
-                String content = communityMessage.getContent();
-                String contentPreview;
-                if (content.length() > maxLen) {
-                    contentPreview = content.substring(0, maxLen) + "...";
-                } else {
-                    contentPreview = content;
-                }
-                communityTipMapper.insertOrUpdate(new CommunityTip(
-                        pid,
-                        parentMessage.getTitle(),
-                        parentMessage.getAuthor(),
-                        author,
-                        parentMessage.getPid() == 0 ? CommunityTip.TYPE_POST_REPLY : CommunityTip.TYPE_COMMENT_REPLY,
-                        contentPreview
-                ));
+                eventRemindService.insertReplyEventTip(author, communityMessage.getId(), communityMessage.getPid(), communityMessage.getContent());
             }
         }
-        communityMessage.setAuthor(author);
-        communityMessageMapper.insert(communityMessage);
         return ServiceCodeWrapper.success(communityMessage.getId());
     }
 
@@ -160,18 +139,11 @@ public class CommunityServiceImpl implements CommunityService {
             feedbackRecordMapper.updateAttitude(fb);
         }
         communityMessageMapper.modifyFeedbackAbsolutely(messageId, up, down);
+        if (up == 1) {
+            eventRemindService.insertLikeEventTip(uid, messageId);
+        }
         return ServiceCode.SUCCESS;
     }
-
-    @Override
-    public List<CommunityTipQueryType> queryMessageTip(int uid) {
-        List<CommunityTipQueryType> tips = communityTipMapper.selectTips(uid);
-        if (!tips.isEmpty()) {
-            communityTipMapper.clearTip(uid);
-        }
-        return tips;
-    }
-
 
     @Override
     public CommunityMessagePost queryMessageById(int messageId) {
