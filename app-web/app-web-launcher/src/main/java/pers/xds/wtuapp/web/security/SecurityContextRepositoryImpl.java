@@ -6,7 +6,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
-import pers.xds.wtuapp.security.token.ExpiredAuthenticationToken;
 import pers.xds.wtuapp.security.token.JwtAuthenticationToken;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
@@ -40,11 +39,7 @@ public class SecurityContextRepositoryImpl implements SecurityContextRepository 
             return context;
         }
         JwtParseResult jwtParseResult = securityJwtProvider.parseJwt(jwt);
-        if (jwtParseResult == null) {
-            return context;
-        }
-        if (jwtParseResult.isExpired()) {
-            context.setAuthentication(new ExpiredAuthenticationToken(jwtParseResult));
+        if (jwtParseResult == null || jwtParseResult.isExpired()) {
             return context;
         }
         UserPrincipal userPrincipal = jwtParseResult.getPrincipal();
