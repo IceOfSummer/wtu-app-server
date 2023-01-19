@@ -30,13 +30,37 @@ public class EsCommodity {
     @Field(type = FieldType.Text, index = false)
     private String tradeLocation;
 
-    public EsCommodity(int id, String name, Long createTime, Double price, String image, String tradeLocation) {
+    @Field(type = FieldType.Integer, index = false)
+    private Integer sellerId;
+
+    @Field(type = FieldType.Text, index = false)
+    private String sellerNickname;
+
+    public EsCommodity(int id, String name, Long createTime, Double price, String image, String tradeLocation, Integer sellerId, String sellerNickname) {
         this.id = id;
         this.name = name;
         this.createTime = createTime;
         this.price = price;
         this.image = image;
         this.tradeLocation = tradeLocation;
+        this.sellerId = sellerId;
+        this.sellerNickname = sellerNickname;
+    }
+
+    public Integer getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Integer sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public String getSellerNickname() {
+        return sellerNickname;
+    }
+
+    public void setSellerNickname(String sellerNickname) {
+        this.sellerNickname = sellerNickname;
     }
 
     public long getId() {

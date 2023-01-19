@@ -121,7 +121,9 @@ public class CommodityServiceImpl implements CommodityService {
                 System.currentTimeMillis(),
                 commodity.getPrice(),
                 commodity.getPreviewImage(),
-                commodity.getTradeLocation()
+                commodity.getTradeLocation(),
+                ownerId,
+                userMapper.selectNicknameOnly(ownerId)
         ));
         return ServiceCodeWrapper.success(commodity.getCommodityId());
     }
