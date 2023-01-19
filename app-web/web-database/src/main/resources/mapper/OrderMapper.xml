@@ -95,7 +95,6 @@
         <include refid="orderPreviewBaseSelect"/>
         WHERE ut.user_id = #{uid}
         AND ut.type = <include refid="type_sell"/>
-        AND o.finished_time IS NULL
     </select>
 
     <update id="buyerUpdateTradeStatus">
