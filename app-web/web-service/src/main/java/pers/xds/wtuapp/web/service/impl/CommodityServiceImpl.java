@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.*;
-import pers.xds.wtuapp.web.database.util.MessageTipFactory;
-import pers.xds.wtuapp.web.database.view.CommodityTipPayload;
 import pers.xds.wtuapp.web.service.*;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
@@ -47,13 +45,6 @@ public class CommodityServiceImpl implements CommodityService {
     private EmailService emailService;
 
     private UserMapper userMapper;
-
-    private MessageTipService messageTipService;
-
-    @Autowired
-    public void setMessageTipService(MessageTipService messageTipService) {
-        this.messageTipService = messageTipService;
-    }
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -182,22 +173,6 @@ public class CommodityServiceImpl implements CommodityService {
                     )
             );
         }
-        String namePreview;
-        final int maxLen = 20;
-        if (commodity.getName().length() >= maxLen) {
-            namePreview = commodity.getName().substring(0, maxLen) + "...";
-        } else {
-            namePreview = commodity.getName();
-        }
-        // 发送消息提醒
-        messageTipService.sendTipMessage(
-                MessageTipFactory.newCommodityActionTip(
-                        ownerId,
-                        "您有新的待发货商品!",
-                        namePreview,
-                        new CommodityTipPayload(order.getOrderId())
-                )
-        );
         return ServiceCodeWrapper.success(order.getOrderId());
     }
 
