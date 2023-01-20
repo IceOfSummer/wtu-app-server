@@ -7,4 +7,12 @@ package pers.xds.wtuapp.im.message;
  */
 public abstract class RequestMessage extends Message {
 
+    /**
+     * 由客户端发送而来的消息，不需要服务器进行编码
+     */
+    @Override
+    public byte[] encode() {
+        return new byte[0];
+    }
+
 }

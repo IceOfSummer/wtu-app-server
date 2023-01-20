@@ -56,8 +56,8 @@ public class ImConfiguration {
     }
 
     @Bean
-    public IdleHandlerFactory idleHandlerFactory() {
-        return new IdleHandlerFactory(idleConfigurationProperties.getReaderIdleTimeSeconds());
+    public IdleHandlerProvider idleHandlerFactory() {
+        return new IdleHandlerProvider(idleConfigurationProperties.getReaderIdleTimeSeconds());
     }
 
     @Bean

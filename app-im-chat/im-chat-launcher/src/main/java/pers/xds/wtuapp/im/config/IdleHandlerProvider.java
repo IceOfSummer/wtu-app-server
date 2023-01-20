@@ -6,11 +6,11 @@ import io.netty.handler.timeout.IdleStateHandler;
  * @author DeSen Xu
  * @date 2022-11-17 16:08
  */
-public class IdleHandlerFactory {
+public class IdleHandlerProvider {
 
     private final int readerIdleTimeSeconds;
 
-    public IdleHandlerFactory(int readerIdleTimeSeconds) {
+    public IdleHandlerProvider(int readerIdleTimeSeconds) {
         this.readerIdleTimeSeconds = readerIdleTimeSeconds;
     }
 

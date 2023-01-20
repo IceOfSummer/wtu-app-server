@@ -33,6 +33,7 @@
 |  6   |   多组消息响应    |   `MultiChatResponseMessage`   |                   |
 |  7   |  获取消息状态消息   |  `QueryReceiveStatusMessage`   |                   |
 |  8   |   状态同步消息    |      `SyncRequestMessage`      | 返回当前已经接收到的最大消息id  |
+|  9   |   客户端心跳包    |      `IdleRequestMessage`      | 客户端应定时发送心跳以避免连接断开 |
 
 
 实现类在`pers.xds.wtuapp.chat.message`包下

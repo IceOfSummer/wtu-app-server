@@ -2,10 +2,7 @@ package pers.xds.wtuapp.im.message;
 
 
 import pers.xds.wtuapp.im.exception.UnknownProtocolException;
-import pers.xds.wtuapp.im.message.parser.AuthRequestMessageParser;
-import pers.xds.wtuapp.im.message.parser.ChatRequestMessagetParser;
-import pers.xds.wtuapp.im.message.parser.QueryReceiveStatusParser;
-import pers.xds.wtuapp.im.message.parser.SyncRequestMessageParser;
+import pers.xds.wtuapp.im.message.parser.*;
 
 /**
  * 用于管理各种消息的<b>解码</b>, 一般只针对请求类的消息<p/>
@@ -24,6 +21,7 @@ public class MessageDecoderManager {
         registry(new ChatRequestMessagetParser());
         registry(new SyncRequestMessageParser());
         registry(new QueryReceiveStatusParser());
+        registry(new IdleMessageParser());
     }
 
     public static void registry(MessageParser<?> parser, int id) {
