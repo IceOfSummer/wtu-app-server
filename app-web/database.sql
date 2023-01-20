@@ -29,13 +29,13 @@ CREATE TABLE trade_stat(
 
 DROP TABLE IF EXISTS user;
 CREATE TABLE user(
-                     user_id INT(11) NOT NULL AUTO_INCREMENT  COMMENT '用户id' ,
+                     user_id INT NOT NULL AUTO_INCREMENT  COMMENT '用户id' ,
                      username VARCHAR(25) NOT NULL   COMMENT '用户名' ,
                      email VARCHAR(30)    COMMENT '用户邮箱' ,
                      password VARCHAR(70) NOT NULL   COMMENT '用户密码' ,
-                     status INT(11)   DEFAULT 0 COMMENT '用户状态;0表示正常用户;其它数字根据需要设置，如1代表用户被封禁' ,
-                     role INT(11)   DEFAULT 1 COMMENT '用户权限;使用位运算表示权限，1为普通用户' ,
-                     credit INT(11)   DEFAULT 100 COMMENT '用户信誉' ,
+                     status INT   DEFAULT 0 COMMENT '用户状态;0表示正常用户;其它数字根据需要设置，如1代表用户被封禁' ,
+                     role VARCHAR(30) NOT NULL  DEFAULT 'ROLE_USER' COMMENT '用户权限;若有多种权限，用逗号分隔' ,
+                     credit INT   DEFAULT 100 COMMENT '用户信誉' ,
                      nickname VARCHAR(20) NOT NULL   COMMENT '昵称;昵称' ,
                      wtu_id VARCHAR(12) NOT NULL   COMMENT '学号' ,
                      name VARCHAR(5) NOT NULL   COMMENT '真实姓名' ,

@@ -2,8 +2,6 @@ package pers.xds.wtuapp.security;
 
 import org.springframework.security.core.userdetails.User;
 
-import java.util.List;
-
 /**
  * 用户凭据。
  * <p>
@@ -15,18 +13,18 @@ public final class UserPrincipal extends User {
 
     private final int id;
 
-    public UserPrincipal(String password, Integer role, int uid) {
-        super(String.valueOf(uid), password, Roles.parseUserRoles(role));
-        this.id = uid;
-    }
 
-    public UserPrincipal(int uid, List<String> roles) {
-        super(String.valueOf(uid), "", Roles.fromStringList(roles));
+    /**
+     * 用于从jwt中生成用户凭据
+     */
+    public UserPrincipal(int uid, int compressedRole) {
+        super(String.valueOf(uid), "", Roles.parseFromCompressedInteger(compressedRole));
         this.id = uid;
     }
 
     public int getId() {
         return id;
     }
+
 
 }

@@ -38,7 +38,13 @@ public class SecurityContextRepositoryImpl implements SecurityContextRepository 
         if (jwt == null || jwt.isEmpty()) {
             return context;
         }
-        JwtParseResult jwtParseResult = securityJwtProvider.parseJwt(jwt);
+        JwtParseResult jwtParseResult;
+        try {
+            jwtParseResult = securityJwtProvider.parseJwt(jwt);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return context;
+        }
         if (jwtParseResult == null || jwtParseResult.isExpired()) {
             return context;
         }

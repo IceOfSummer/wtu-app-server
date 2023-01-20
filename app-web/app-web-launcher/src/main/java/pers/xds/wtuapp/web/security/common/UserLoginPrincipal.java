@@ -13,7 +13,7 @@ public class UserLoginPrincipal extends org.springframework.security.core.userde
     private final User user;
 
     public UserLoginPrincipal(User user) {
-        super(user.getUsername(), user.getPassword(), Roles.parseUserRoles(user.getRole()));
+        super(user.getUsername(), user.getPassword(), Roles.formRoleString(user.getRole()));
         this.user = user;
     }
 

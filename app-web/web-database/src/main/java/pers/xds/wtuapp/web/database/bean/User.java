@@ -46,7 +46,7 @@ public class User {
      * 用户权限;使用位运算表示权限
      */
     @Null(groups = UpdateGroup.class)
-    private Integer role;
+    private String role;
 
     /**
      * 用户信誉
@@ -161,16 +161,16 @@ public class User {
     }
 
     /**
-     * 用户权限;使用位运算表示权限
+     * 用户权限;若有多个则以逗号分隔
      */
-    public Integer getRole() {
+    public String getRole() {
         return role;
     }
 
     /**
-     * 用户权限;使用位运算表示权限
+     * 用户权限;若有多个则以逗号分隔
      */
-    public void setRole(Integer role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

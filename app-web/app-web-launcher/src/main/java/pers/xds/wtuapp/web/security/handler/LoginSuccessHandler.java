@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import pers.xds.wtuapp.security.Roles;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.database.bean.UserAuth;
@@ -47,14 +48,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         UserAuth userAuth = userAuthService.queryNewestJwtId(principal.getUid());
 
         userAuthService.increaseJwtId(principal.getUid(), userAuth.getVersion());
+        int compressRoleList = Roles.compressRoleList(principal.getAuthorities());
         AuthSuccessResponse authSuccessResponse = new AuthSuccessResponse(
-                securityJwtProvider.generateJwt(principal.getUid(), userAuth.getJwtId() + 1, principal.getAuthorities()),
+                securityJwtProvider.generateJwt(principal.getUid(), userAuth.getJwtId() + 1, compressRoleList),
                 principal.getUid(),
                 principal.getEmail(),
                 principal.getNickname(),
                 principal.getWtuId(),
                 principal.getName(),
-                principal.getClassName()
+                principal.getClassName(),
+                compressRoleList
         );
         response.getWriter().write(ResponseTemplate.success(authSuccessResponse).toJson());
     }

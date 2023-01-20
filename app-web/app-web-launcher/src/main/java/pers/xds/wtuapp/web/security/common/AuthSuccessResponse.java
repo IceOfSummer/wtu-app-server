@@ -26,7 +26,9 @@ public class AuthSuccessResponse {
 
     public String className;
 
-    public AuthSuccessResponse(String token, int userId, String email, String nickname, String wtuId, String name, String className) {
+    public int roles;
+
+    public AuthSuccessResponse(String token, int userId, String email, String nickname, String wtuId, String name, String className, int roles) {
         this.userId = userId;
         this.token = token;
         this.email = email;
@@ -34,6 +36,7 @@ public class AuthSuccessResponse {
         this.wtuId = wtuId;
         this.name = name;
         this.className = className;
+        this.roles = roles;
     }
 
 }

@@ -12,6 +12,7 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 import org.springframework.security.core.GrantedAuthority;
+import pers.xds.wtuapp.security.Roles;
 import pers.xds.wtuapp.security.SecurityJwtProvider;
 import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.security.bean.JwtParseResult;
@@ -50,16 +51,17 @@ public class SecurityJwtProviderImpl implements SecurityJwtProvider {
 
     @Override
     public String generateJwt(int uid, int jwtId, Collection<GrantedAuthority> authorities) {
-        List<String> list = new ArrayList<>(authorities.size());
-        for (GrantedAuthority authority : authorities) {
-            list.add(authority.getAuthority());
-        }
+        return this.generateJwt(uid, jwtId, Roles.compressRoleList(authorities));
+    }
+
+    @Override
+    public String generateJwt(int uid, int jwtId, int compressedRoles) {
         JwtClaims claims = new JwtClaims();
         // 24小时后过期
         claims.setExpirationTimeMinutesInTheFuture(expireMinute);
         claims.setClaim(CLAIM_UID, uid);
         claims.setClaim(CLAIM_ID, jwtId);
-        claims.setStringListClaim(CLAIM_ROLE, list);
+        claims.setClaim(CLAIM_ROLE, compressedRoles);
         claims.setIssuedAt(NumericDate.now());
 
         JsonWebSignature jsonWebSignature = new JsonWebSignature();
@@ -95,7 +97,7 @@ public class SecurityJwtProviderImpl implements SecurityJwtProvider {
         try {
             UserPrincipal userPrincipal = new UserPrincipal(
                     Math.toIntExact(jwtClaims.getClaimValue(CLAIM_UID, Long.class)),
-                    jwtClaims.getStringListClaimValue(CLAIM_ROLE)
+                    Math.toIntExact(jwtClaims.getClaimValue(CLAIM_ROLE, Long.class))
             );
 
             return new JwtParseResult(

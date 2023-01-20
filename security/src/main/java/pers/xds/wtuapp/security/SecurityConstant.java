@@ -11,8 +11,15 @@ public interface SecurityConstant {
 
     /**
      * 普通用户
+     * 若要插入数据库，请使用{@link Roles#ROLE_NORMAL_USER}
      */
     String ROLE_NORMAL_USER = "USER";
+
+    /**
+     * 管理员
+     * 若要插入数据库，请使用{@link Roles#ROLE_ADMIN}
+     */
+    String ROLE_ADMIN = "ADMIN";
 
     /**
      * 已经登录的用户

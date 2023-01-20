@@ -22,6 +22,15 @@ public interface SecurityJwtProvider {
     String generateJwt(int uid, int jwtId, Collection<GrantedAuthority> authorities);
 
     /**
+     * 生成jwt
+     * @param uid 用户id
+     * @param jwtId jwt唯一的id
+     * @param compressedRoles 被压缩后的权限, see: {@link Roles#compressRoleList(Collection)}
+     * @return jwt字符串
+     */
+    String generateJwt(int uid, int jwtId, int compressedRoles);
+
+    /**
      * 生成用户凭据对应的jwt。
      * @param userPrincipal 用户凭据
      * @param jwtId jwtId
