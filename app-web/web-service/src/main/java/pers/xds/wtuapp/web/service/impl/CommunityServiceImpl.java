@@ -86,7 +86,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<CommunityMessagePost> queryMessageReply(int pid, int page, int size) {
-        return communityMessageMapper.selectMessageByPid(pid, new Page<>(page, size)).getRecords();
+        return communityMessageMapper.selectMessageByPid(pid, new Page<>(page, size, false)).getRecords();
     }
 
     @Override
@@ -152,7 +152,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public PostReply queryPostReply(int messageId, int page, int size) {
-        Page<CommunityMessageReply> pg = new Page<>(page, size);
+        Page<CommunityMessageReply> pg = new Page<>(page, size, false);
         List<CommunityMessagePost> records = communityMessageMapper.selectMessageByPid(messageId, pg).getRecords();
         if (records.isEmpty()) {
             return PostReply.EMPTY_POST_REPLY;

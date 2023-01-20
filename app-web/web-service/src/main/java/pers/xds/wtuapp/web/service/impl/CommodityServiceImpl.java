@@ -224,7 +224,7 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public List<Commodity> queryUserCommodity(int uid, int page, int size) {
-        Page<Commodity> pg = new Page<>(page, size);
+        Page<Commodity> pg = new Page<>(page, size, false);
         return commodityMapper.selectCommodityByUid(uid, pg).getRecords();
     }
 

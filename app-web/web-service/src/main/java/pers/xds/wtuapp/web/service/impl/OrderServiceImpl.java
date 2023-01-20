@@ -46,19 +46,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderPreview> getUserOrderDetails(int userid, int page, int size) {
-        Page<OrderPreview> pg = new Page<>(page, size);
+        Page<OrderPreview> pg = new Page<>(page, size, false);
         return orderMapper.selectAllOrder(userid, pg).getRecords();
     }
 
     @Override
     public List<OrderPreview> getUserSoldOrder(int uid, int page, int size) {
-        Page<OrderPreview> pg = new Page<>(page, size);
+        Page<OrderPreview> pg = new Page<>(page, size, false);
         return orderMapper.selectAllSoldOrder(uid, pg).getRecords();
     }
 
     @Override
     public List<OrderPreview> getUserActiveOrderDetails(int uid) {
-        return orderMapper.selectOrders(uid, Order.STATUS_TRADING, new Page<>(0, 50L)).getRecords();
+        return orderMapper.selectOrders(uid, Order.STATUS_TRADING, new Page<>(0, 50L, false)).getRecords();
     }
 
     @Override
