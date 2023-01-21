@@ -18,6 +18,11 @@
         DELETE FROM community_message WHERE pid = #{pid}
     </delete>
 
+    <insert id="insert" flushCache="true">
+        INSERT INTO community_message(pid, author, title, content, reply_to, content_preview)
+            VALUE(#{cm.pid},#{cm.author},#{cm.title},#{cm.content},#{cm.replyTo},#{cm.contentPreview})
+    </insert>
+
     <select id="selectMessageByMaxId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
         SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm

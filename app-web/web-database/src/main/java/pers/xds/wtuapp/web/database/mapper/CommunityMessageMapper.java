@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.web.database.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.*;
 import pers.xds.wtuapp.web.database.bean.CommunityMessage;
@@ -14,7 +13,13 @@ import java.util.List;
  * @date 2022-12-10 14:13
  */
 @Mapper
-public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
+public interface CommunityMessageMapper {
+
+    /**
+     * 插入一条社区消息
+     * @param communityMessage 社区消息
+     */
+    void insert(@Param("cm") CommunityMessage communityMessage);
 
 
     /**

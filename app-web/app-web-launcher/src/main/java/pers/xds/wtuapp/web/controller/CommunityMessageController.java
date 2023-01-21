@@ -171,6 +171,7 @@ public class CommunityMessageController {
      * 查询置顶消息
      */
     @GetMapping("top")
+    @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
     public ResponseTemplate<Collection<Object>> queryTopMessage() {
         return ResponseTemplate.success(communityService.queryPinedMessage());
     }
