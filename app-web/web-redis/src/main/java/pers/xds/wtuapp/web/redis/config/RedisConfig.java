@@ -11,7 +11,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Duration;
 
 /**
  * @author DeSen Xu
@@ -40,6 +39,7 @@ public class RedisConfig {
         template.setValueSerializer(jackson2JsonRedisSerializer);
         //value hashmap序列化
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
+        template.setHashKeySerializer(redisSerializer);
         return template;
     }
 }

@@ -10,10 +10,12 @@ import pers.xds.wtuapp.web.database.mapper.CommunityMessageMapper;
 import pers.xds.wtuapp.web.database.mapper.FeedbackRecordMapper;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
+import pers.xds.wtuapp.web.redis.TopMessageCache;
 import pers.xds.wtuapp.web.service.*;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +32,14 @@ public class CommunityServiceImpl implements CommunityService {
 
 
     private EventRemindService eventRemindService;
+
+
+    private TopMessageCache topMessageCache;
+
+    @Autowired
+    public void setTopMessageCache(TopMessageCache topMessageCache) {
+        this.topMessageCache = topMessageCache;
+    }
 
     @Autowired
     public void setEventRemindService(EventRemindService eventRemindService) {
@@ -174,6 +184,29 @@ public class CommunityServiceImpl implements CommunityService {
         }
         postReply.setSubReply(preview);
         return postReply;
+    }
+
+    @Override
+    public ServiceCode pinMessage(int messageId) {
+        CommunityMessagePost message = communityMessageMapper.selectMessagePreviewById(messageId);
+        if (message == null) {
+            return ServiceCode.NOT_EXIST;
+        }
+        topMessageCache.addTopMessage(messageId, message);
+        return ServiceCode.SUCCESS;
+    }
+
+    @Override
+    public void cancelPin(int messageId) {
+        topMessageCache.removeTop(messageId);
+    }
+
+    /**
+     * @return 返回值类型为: {@link CommunityMessage}
+     */
+    @Override
+    public Collection<Object> queryPinedMessage() {
+        return topMessageCache.queryAllTopMessage();
     }
 
 

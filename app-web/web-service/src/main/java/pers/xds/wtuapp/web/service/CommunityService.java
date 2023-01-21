@@ -5,6 +5,7 @@ import pers.xds.wtuapp.web.database.bean.CommunityMessage;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -84,5 +85,25 @@ public interface CommunityService {
      * @return 评论及二级回复
      */
     PostReply queryPostReply(int messageId, int page, int size);
+
+    /**
+     * 置顶消息
+     * @param messageId 消息id
+     * @return 服务状态码<p>
+     *     - {@link ServiceCode#NOT_EXIST}
+     */
+    ServiceCode pinMessage(int messageId);
+
+    /**
+     * 取消置顶
+     * @param messageId 消息id
+     */
+    void cancelPin(int messageId);
+
+    /**
+     * 查询被置顶的消息
+     * @return 被置顶的消息
+     */
+    Collection<Object> queryPinedMessage();
 
 }

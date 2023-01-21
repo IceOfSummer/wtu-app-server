@@ -36,4 +36,9 @@ public interface SecurityConstant {
      */
     String HEADER_AUTHORIZATION = "Authorization";
 
+    /**
+     * 只允许管理员访问
+     */
+    String EL_ADMIN_ONLY = "hasRole('" + ROLE_ADMIN + "')";
+
 }

@@ -14,11 +14,11 @@
         cm.id,cm.pid,cm.author,cm.title,content_preview as content,cm.create_time,cm.`like`,cm.dislike,cm.reply_count,cm.reply_to
     </sql>
 
-    <delete id="deleteCommunityMessageByPid">
+    <delete id="deleteCommunityMessageByPid" flushCache="true">
         DELETE FROM community_message WHERE pid = #{pid}
     </delete>
 
-    <select id="selectMessageByMaxId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost" useCache="false">
+    <select id="selectMessageByMaxId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
         SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
@@ -27,7 +27,7 @@
         LIMIT #{size}
     </select>
 
-    <select id="selectMessageByMinId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost" useCache="false">
+    <select id="selectMessageByMinId" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
         SELECT u.nickname, <include refid="selectContentSimply"/>
         FROM community_message cm
         LEFT JOIN user u ON cm.author = u.user_id
@@ -74,5 +74,13 @@
     <select id="selectSimplyWithContentById" resultType="pers.xds.wtuapp.web.database.bean.CommunityMessage">
         SELECT title,author,pid,left(content, 30) as content FROM community_message WHERE id = #{id}
     </select>
+
+    <select id="selectMessagePreviewById" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost" useCache="false">
+        SELECT u.nickname, <include refid="selectContentSimply"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE id = #{id}
+    </select>
+
 
 </mapper>

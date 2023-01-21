@@ -100,4 +100,11 @@ public interface CommunityMessageMapper extends BaseMapper<CommunityMessage> {
      * @return 广场消息。仅有{@link CommunityMessage#title}, {@link CommunityMessage#content}(若长度超过30，则会被截断), {@link CommunityMessage#pid}
      */
     CommunityMessage selectSimplyWithContentById(@Param("id") int id);
+
+    /**
+     * 根据消息id查询消息，与{@link CommunityMessageMapper#selectMessageById(int)}唯一不同的是，该方法的content字段为消息的内容预览
+     * @param messageId 消息id
+     * @return 消息信息。
+     */
+    CommunityMessagePost selectMessagePreviewById(@Param("id") int messageId);
 }

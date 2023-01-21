@@ -19,6 +19,7 @@ import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 import pers.xds.wtuapp.web.util.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -166,5 +167,37 @@ public class CommunityMessageController {
         return ResponseTemplate.fail(ResponseCode.UNKNOWN_ERROR);
     }
 
+    /**
+     * 查询置顶消息
+     */
+    @GetMapping("top")
+    public ResponseTemplate<Collection<Object>> queryTopMessage() {
+        return ResponseTemplate.success(communityService.queryPinedMessage());
+    }
+
+    /**
+     * 置顶消息
+     */
+    @PostMapping("/article/{id}/pin")
+    @PreAuthorize(SecurityConstant.EL_ADMIN_ONLY)
+    public ResponseTemplate<Void> pinMessage(@PathVariable("id") int messageId) {
+        ServiceCode serviceCode = communityService.pinMessage(messageId);
+        if (serviceCode == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        // not exist
+        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+    }
+
+    /**
+     * 取消置顶
+     * @return 永远返回成功，即使消息没有被置顶
+     */
+    @PostMapping("/article/{id}/unpin")
+    @PreAuthorize(SecurityConstant.EL_ADMIN_ONLY)
+    public ResponseTemplate<Void> unpinMessage(@PathVariable("id") int messageId) {
+        communityService.cancelPin(messageId);
+        return ResponseTemplate.success();
+    }
 
 }
