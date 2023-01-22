@@ -5,7 +5,6 @@ import pers.xds.wtuapp.web.database.bean.CommunityMessage;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -102,8 +101,9 @@ public interface CommunityService {
 
     /**
      * 查询被置顶的消息
+     *
      * @return 被置顶的消息
      */
-    Collection<Object> queryPinedMessage();
+    List<CommunityMessagePost> queryPinedMessage();
 
 }

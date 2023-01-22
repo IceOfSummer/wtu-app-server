@@ -14,10 +14,7 @@ import pers.xds.wtuapp.web.redis.TopMessageCache;
 import pers.xds.wtuapp.web.service.*;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author DeSen Xu
@@ -192,7 +189,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (message == null) {
             return ServiceCode.NOT_EXIST;
         }
-        topMessageCache.addTopMessage(messageId, message);
+        topMessageCache.addTopMessage(messageId);
         return ServiceCode.SUCCESS;
     }
 
@@ -201,12 +198,14 @@ public class CommunityServiceImpl implements CommunityService {
         topMessageCache.removeTop(messageId);
     }
 
-    /**
-     * @return 返回值类型为: {@link CommunityMessage}
-     */
+
     @Override
-    public Collection<Object> queryPinedMessage() {
-        return topMessageCache.queryAllTopMessage();
+    public List<CommunityMessagePost> queryPinedMessage() {
+        Set<Integer> ids = topMessageCache.queryAllTopMessage();
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return communityMessageMapper.selectMessageInIds(ids);
     }
 
 

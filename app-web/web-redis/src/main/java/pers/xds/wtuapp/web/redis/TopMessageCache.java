@@ -1,6 +1,6 @@
 package pers.xds.wtuapp.web.redis;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * 消息置顶缓存
@@ -11,10 +11,10 @@ public interface TopMessageCache {
 
 
     /**
-     * 查询所有被置顶的消息
-     * @return 所有被置顶的消息
+     * 查询所有被置顶的消息id
+     * @return 所有被置顶的消息id
      */
-    Collection<Object> queryAllTopMessage();
+    Set<Integer> queryAllTopMessage();
 
     /**
      * 取消某条消息的置顶
@@ -25,8 +25,7 @@ public interface TopMessageCache {
     /**
      * 添加置顶消息
      * @param id 该消息的id
-     * @param message 消息内容
      */
-    void addTopMessage(int id, Object message);
+    void addTopMessage(int id);
 
 }

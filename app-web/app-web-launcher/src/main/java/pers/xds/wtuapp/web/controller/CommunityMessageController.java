@@ -19,7 +19,6 @@ import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 import pers.xds.wtuapp.web.service.bean.PostReply;
 import pers.xds.wtuapp.web.util.StringUtils;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -172,7 +171,7 @@ public class CommunityMessageController {
      */
     @GetMapping("top")
     @PreAuthorize(SecurityConstant.EL_PERMIT_ALL)
-    public ResponseTemplate<Collection<Object>> queryTopMessage() {
+    public ResponseTemplate<List<CommunityMessagePost>> queryTopMessage() {
         return ResponseTemplate.success(communityService.queryPinedMessage());
     }
 

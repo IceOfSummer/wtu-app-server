@@ -87,5 +87,14 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectMessageInIds" resultType="pers.xds.wtuapp.web.database.view.CommunityMessagePost">
+        SELECT u.nickname, <include refid="selectContentSimply"/>
+        FROM community_message cm
+        LEFT JOIN user u ON cm.author = u.user_id
+        WHERE id IN (
+            <foreach collection="ids" separator="," item="i">#{i}</foreach>
+        )
+    </select>
+
 
 </mapper>

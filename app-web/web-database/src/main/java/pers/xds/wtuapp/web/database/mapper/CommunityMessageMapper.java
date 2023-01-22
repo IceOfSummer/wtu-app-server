@@ -6,6 +6,7 @@ import pers.xds.wtuapp.web.database.bean.CommunityMessage;
 import pers.xds.wtuapp.web.database.view.CommunityMessagePost;
 import pers.xds.wtuapp.web.database.view.CommunityMessageReply;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -112,4 +113,12 @@ public interface CommunityMessageMapper {
      * @return 消息信息。
      */
     CommunityMessagePost selectMessagePreviewById(@Param("id") int messageId);
+
+    /**
+     * 获取id在ids内的社区消息详细(content字段为内容预览, see: {@link CommunityMessage#contentPreview})
+     * @param ids id列表(不能为空列表)
+     * @return 消息信息
+     */
+    List<CommunityMessagePost> selectMessageInIds(@Param("ids") Collection<Integer> ids);
+
 }
