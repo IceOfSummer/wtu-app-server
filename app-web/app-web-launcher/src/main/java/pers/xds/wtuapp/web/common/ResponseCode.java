@@ -57,7 +57,11 @@ public enum ResponseCode {
     /**
      * 发生未知错误
      */
-    UNKNOWN_ERROR(11, "发生未知错误，请稍后再试!");
+    UNKNOWN_ERROR(11, "发生未知错误，请稍后再试!"),
+    /**
+     * 400 Bad Request
+     */
+    METHOD_NOT_ALLOWED(12, "请求方法不允许!", HttpStatus.METHOD_NOT_ALLOWED);
 
     public final int code;
 
