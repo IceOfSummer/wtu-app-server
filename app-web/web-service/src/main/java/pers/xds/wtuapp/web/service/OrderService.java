@@ -40,17 +40,21 @@ public interface OrderService {
     /**
      * 获取用户待收货商品
      * @param uid 用户id
+     * @param page 查看第几页(从1开始)
+     * @param size 每页大小
      * @return 待收货商品
      */
-    List<OrderPreview> getUserPendingReceiveOrder(int uid);
+    List<OrderPreview> getUserPendingReceiveOrder(int uid, int page, int size);
 
 
     /**
      * 获取用户代发货界面
      * @param uid 用户id
+     * @param page 查看第几页(从1开始)
+     * @param size 每页大小
      * @return 待发货商品
      */
-    List<OrderPreview> getUserPendingDeliveryOrder(int uid);
+    List<OrderPreview> getUserPendingDeliveryOrder(int uid, int page, int size);
 
 
     /**

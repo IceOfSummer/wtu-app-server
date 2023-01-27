@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * 订单管理
+ *
  * @author DeSen Xu
  * @date 2022-11-04 23:04
  */
@@ -37,6 +38,7 @@ public class OrderController {
 
     /**
      * 获取当前正在交易的订单
+     *
      * @return 当前正在交易的订单
      */
     @GetMapping("all")
@@ -51,6 +53,7 @@ public class OrderController {
 
     /**
      * 查询用户向外的出售记录
+     *
      * @return 用户出售的商品
      */
     @GetMapping("/sold")
@@ -64,23 +67,27 @@ public class OrderController {
 
     /**
      * 获取用户待收货商品
+     *
      * @return 待收货商品
      */
     @GetMapping("/pending/receive")
-    public ResponseTemplate<List<OrderPreview>> queryPendingReceiveOrder() {
+    public ResponseTemplate<List<OrderPreview>> queryPendingReceiveOrder(@RequestParam(value = "p", required = false, defaultValue = "0") int page,
+                                                                         @RequestParam(value = "s", required = false, defaultValue = "5") int size) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        return ResponseTemplate.success(orderService.getUserPendingReceiveOrder(userPrincipal.getId()));
+        return ResponseTemplate.success(orderService.getUserPendingReceiveOrder(userPrincipal.getId(), page, size));
     }
 
 
     /**
      * 获取用户待发货商品
+     *
      * @return 待发货商品
      */
     @GetMapping("/pending/delivery")
-    public ResponseTemplate<List<OrderPreview>> queryPendingDeliveryOrder() {
+    public ResponseTemplate<List<OrderPreview>> queryPendingDeliveryOrder(@RequestParam(value = "p", required = false, defaultValue = "0") int page,
+                                                                          @RequestParam(value = "s", required = false, defaultValue = "5") int size) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        return ResponseTemplate.success(orderService.getUserPendingDeliveryOrder(userPrincipal.getId()));
+        return ResponseTemplate.success(orderService.getUserPendingDeliveryOrder(userPrincipal.getId(), page, size));
     }
 
     /**

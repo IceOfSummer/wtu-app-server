@@ -7,7 +7,6 @@ import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
 
-import java.util.List;
 
 /**
 * @author HuPeng
@@ -41,7 +40,7 @@ public interface OrderMapper {
      * @param type 类型 {@link pers.xds.wtuapp.web.database.bean.UserTrade#type}
      * @return 订单信息，<b>type属性为null</b>
      */
-    List<OrderPreview> selectActiveOrderByType(@Param("uid") int uid, @Param("type") int type);
+    IPage<OrderPreview> selectActiveOrderByType(@Param("uid") int uid, @Param("type") int type, IPage<OrderPreview> page);
 
     /**
      * 获取所有订单简要信息

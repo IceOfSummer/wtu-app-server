@@ -62,13 +62,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderPreview> getUserPendingReceiveOrder(int uid) {
-        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_BUY);
+    public List<OrderPreview> getUserPendingReceiveOrder(int uid, int page, int size) {
+        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_BUY, new Page<>(page, size, false)).getRecords();
     }
 
     @Override
-    public List<OrderPreview> getUserPendingDeliveryOrder(int uid) {
-        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_SELL);
+    public List<OrderPreview> getUserPendingDeliveryOrder(int uid, int page, int size) {
+        return orderMapper.selectActiveOrderByType(uid, UserTrade.TYPE_SELL, new Page<>(page, size, false)).getRecords();
     }
 
     @Override
