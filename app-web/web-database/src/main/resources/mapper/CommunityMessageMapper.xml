@@ -18,7 +18,7 @@
         DELETE FROM community_message WHERE pid = #{pid}
     </delete>
 
-    <insert id="insert" flushCache="true">
+    <insert id="insert" flushCache="true" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO community_message(pid, author, title, content, reply_to, content_preview)
             VALUE(#{cm.pid},#{cm.author},#{cm.title},#{cm.content},#{cm.replyTo},#{cm.contentPreview})
     </insert>
