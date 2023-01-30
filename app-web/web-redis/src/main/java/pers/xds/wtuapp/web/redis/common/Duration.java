@@ -8,6 +8,10 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.function.Supplier;
 
 /**
+ * 用于计算结束时间。
+ * <p>
+ * 请注意，请不要被枚举常量的名称所误解，例如在使用{@link Duration#HOUR}时，并不是从当前时间开始，在一小时结束！
+ * 例如当前时间为<code>14:12</code>那么结束时间为<code>14:59</code>，而不是<code>15:12</code>
  * @author DeSen Xu
  * @date 2022-12-12 22:26
  */

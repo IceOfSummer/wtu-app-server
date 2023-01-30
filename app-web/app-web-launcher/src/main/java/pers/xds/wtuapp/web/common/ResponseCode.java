@@ -49,7 +49,7 @@ public enum ResponseCode {
     /**
      * AccessDenied
      */
-    ACCESS_DENIED(9, "您当前的权限不足", HttpStatus.FORBIDDEN),
+    ACCESS_DENIED(9, "拒绝访问", HttpStatus.FORBIDDEN),
     /**
      * 服务器出错
      */
@@ -61,7 +61,11 @@ public enum ResponseCode {
     /**
      * 400 Bad Request
      */
-    METHOD_NOT_ALLOWED(12, "请求方法不允许!", HttpStatus.METHOD_NOT_ALLOWED);
+    METHOD_NOT_ALLOWED(12, "请求方法不允许!", HttpStatus.METHOD_NOT_ALLOWED),
+    /**
+     * 账户被临时冻结
+     */
+    ACCOUNT_FREEZE_TEMPORARILY(13, "您的账户已被临时冻结，请稍后再试");
 
     public final int code;
 

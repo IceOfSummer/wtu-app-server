@@ -23,4 +23,17 @@ public interface UserAuthService {
      */
     UserAuth queryNewestJwtId(int uid);
 
+    /**
+     * 将用户在这段时间登录出错的次数加一
+     * @param username 用户名
+     */
+    void increaseLoginFailCount(String username);
+
+    /**
+     * 查询用户在一段时间内登录出错的次数
+     * @param username 用户名
+     * @return 出错次数
+     */
+    int queryLoginFailCount(String username);
+
 }

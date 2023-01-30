@@ -17,17 +17,24 @@ public class CounterCacheImpl implements CounterCache {
 
     private RedisTemplate<String, Object> redisTemplate;
 
+    private static final String KEY_PREFIX = "CounterCache";
+
     @Autowired
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
+    private String getRedisKey(String key) {
+        return KEY_PREFIX + key;
+    }
+
     @Override
     public int getInvokeCount(String key, Duration duration) {
-        Object o = redisTemplate.opsForValue().get(key);
+        String redisKey = getRedisKey(key);
+        Object o = redisTemplate.opsForValue().get(redisKey);
         if (o == null) {
             redisTemplate.opsForValue().set(
-                    key,
+                    redisKey,
                     0,
                     duration.countDuration(),
                     TimeUnit.MILLISECONDS
@@ -38,8 +45,24 @@ public class CounterCacheImpl implements CounterCache {
     }
 
     @Override
+    public int getInvokeCount(String key, long timeout, TimeUnit timeUnit) {
+        String redisKey = getRedisKey(key);
+        Object o = redisTemplate.opsForValue().get(redisKey);
+        if (o == null) {
+            redisTemplate.opsForValue().set(
+                    redisKey,
+                    0,
+                    timeout,
+                    timeUnit
+            );
+            return 0;
+        }
+        return (int) o;
+    }
+
+    @Override
     public void increaseInvokeCount(String key) {
-        redisTemplate.opsForValue().increment(key);
+        redisTemplate.opsForValue().increment(getRedisKey(key));
     }
 
 }

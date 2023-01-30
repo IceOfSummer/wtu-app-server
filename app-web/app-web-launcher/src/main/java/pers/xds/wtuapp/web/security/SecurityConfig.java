@@ -8,10 +8,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import pers.xds.wtuapp.security.SecurityConstant;
+import pers.xds.wtuapp.web.security.filter.AccountProtectFilter;
 import pers.xds.wtuapp.web.security.handler.AccessDeniedHandlerImpl;
 import pers.xds.wtuapp.web.security.handler.AuthFailHandler;
 import pers.xds.wtuapp.web.security.handler.LoginSuccessHandler;
 import pers.xds.wtuapp.web.security.point.AuthenticationEntryPointImpl;
+import pers.xds.wtuapp.web.service.UserAuthService;
 
 
 /**
@@ -26,6 +30,20 @@ public class SecurityConfig {
     private LoginSuccessHandler loginSuccessHandler;
 
     private SecurityContextRepositoryImpl securityContextRepositoryImpl;
+
+    private AccountProtectFilter accountProtectFilter;
+
+    private UserAuthService userAuthService;
+
+    @Autowired
+    public void setUserAuthService(UserAuthService userAuthService) {
+        this.userAuthService = userAuthService;
+    }
+
+    @Autowired
+    public void setAccountProtectFilter(AccountProtectFilter accountProtectFilter) {
+        this.accountProtectFilter = accountProtectFilter;
+    }
 
     @Autowired
     public void setSecurityContextRepositoryImpl(SecurityContextRepositoryImpl securityContextRepositoryImpl) {
@@ -46,10 +64,10 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .failureHandler(new AuthFailHandler())
+                .loginProcessingUrl(SecurityConstant.LOGIN_PATH)
+                .usernameParameter(SecurityConstant.LOGIN_USERNAME_PARAMETER_NAME)
+                .passwordParameter(SecurityConstant.LOGIN_PASSWORD_PARAMETER_NAME)
+                .failureHandler(new AuthFailHandler(userAuthService))
                 .successHandler(loginSuccessHandler);
 
         http.exceptionHandling()
@@ -60,6 +78,8 @@ public class SecurityConfig {
 
         // TODO jwt登出操作
         http.logout().disable();
+
+        http.addFilterBefore(accountProtectFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement().disable();
 

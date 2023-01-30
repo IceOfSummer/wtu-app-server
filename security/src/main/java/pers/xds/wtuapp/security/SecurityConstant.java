@@ -37,6 +37,21 @@ public interface SecurityConstant {
     String HEADER_AUTHORIZATION = "Authorization";
 
     /**
+     * 使用表单登录时，用户名的名称
+     */
+    String LOGIN_USERNAME_PARAMETER_NAME = "username";
+
+    /**
+     * 使用表单登录时，密码的名称
+     */
+    String LOGIN_PASSWORD_PARAMETER_NAME = "password";
+
+    /**
+     * 登录地址
+     */
+    String LOGIN_PATH = "/login";
+
+    /**
      * 只允许管理员访问
      */
     String EL_ADMIN_ONLY = "hasRole('" + ROLE_ADMIN + "')";
