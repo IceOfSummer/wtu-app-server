@@ -158,8 +158,12 @@ public class CommodityController {
     @PostMapping("/op/{cid}/update")
     public ResponseTemplate<Void> updateCommodity(@Validated(UpdateGroup.class) Commodity commodity, @PathVariable int cid) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        commodityService.updateCommodity(userPrincipal.getId(), cid, commodity);
-        return ResponseTemplate.success();
+        ServiceCode serviceCode = commodityService.updateCommodity(userPrincipal.getId(), cid, commodity);
+        if (serviceCode == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        // not exist
+        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
     }
 
     /**
@@ -168,8 +172,11 @@ public class CommodityController {
     @PostMapping("/op/{cid}/close")
     public ResponseTemplate<Void> takeDownCommodity(@PathVariable int cid) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        commodityService.takeDownCommodity(userPrincipal.getId(), cid);
-        return ResponseTemplate.success();
+        if (commodityService.takeDownCommodity(userPrincipal.getId(), cid) == ServiceCode.SUCCESS) {
+            return ResponseTemplate.success();
+        }
+        // not exist
+        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
     }
 
     /**

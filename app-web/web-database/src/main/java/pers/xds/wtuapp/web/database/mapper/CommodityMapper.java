@@ -61,9 +61,9 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
     IPage<Commodity> selectCommodityByUid(@Param("uid") int uid, IPage<Commodity> page);
 
     /**
-     * 更新货物信息
+     * 更新货物信息. 这里更新数量时没有加锁，似乎可以忽略并发造成的影响。
      * 仅可更新{@link Commodity#name}, {@link Commodity#price}, {@link Commodity#count}
-     *      * {@link Commodity#description}, {@link Commodity#tradeLocation}字段
+     *      {@link Commodity#description}, {@link Commodity#tradeLocation}字段
      * @param commodity 货物
      * @param commodityId 商品id
      * @param ownerId 货物主人id
@@ -78,7 +78,7 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      * @param status {@link Commodity#STATUS_ACTIVE}, {@link Commodity#STATUS_INACTIVE}
      */
     @Update("UPDATE commodity SET `status` = #{status} WHERE commodity_id = #{cid} AND owner_id = #{uid}")
-    void updateCommodityStatus(@Param("uid") int uid, @Param("cid") int commodityId, @Param("status") int status);
+    int updateCommodityStatus(@Param("uid") int uid, @Param("cid") int commodityId, @Param("status") int status);
 
 
     /**

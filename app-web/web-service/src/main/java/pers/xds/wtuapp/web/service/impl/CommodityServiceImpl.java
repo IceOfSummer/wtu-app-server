@@ -21,6 +21,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 商品服务。
+ * <p>
+ * 注意事项:
+ * - 若要更新商品数量，则一定要同步更新es里的商品数量
  * @author DeSen Xu
  * @date 2022-09-09 18:01
  */
@@ -106,16 +110,19 @@ public class CommodityServiceImpl implements CommodityService {
         // 使用自动生成的id
         commodity.setCommodityId(null);
         commodityMapper.insert(commodity);
-        commodityRepository.save(new EsCommodity(
-                commodity.getCommodityId(),
-                commodity.getName(),
-                System.currentTimeMillis(),
-                commodity.getPrice(),
-                commodity.getPreviewImage(),
-                commodity.getTradeLocation(),
-                ownerId,
-                userMapper.selectNicknameOnly(ownerId)
-        ));
+        EsCommodity esCommodity = new EsCommodity()
+                .setId(commodity.getCommodityId())
+                .setName(commodity.getName())
+                .setCreateTime(System.currentTimeMillis())
+                .setCount(commodity.getCount())
+                .setPrice(commodity.getPrice())
+                .setImage(commodity.getPreviewImage())
+                .setTradeLocation(commodity.getTradeLocation())
+                .setSellerId(ownerId)
+                .setSellerNickname(userMapper.selectNicknameOnly(ownerId))
+                .setCount(commodity.getCount());
+        commodityRepository.save(esCommodity);
+
         return ServiceCodeWrapper.success(commodity.getCommodityId());
     }
 
@@ -140,7 +147,8 @@ public class CommodityServiceImpl implements CommodityService {
             return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
         }
         // 乐观锁
-        if (commodityMapper.updateCommodityCount(commodityId, commodity.getCount() - count, commodity.getVersion()) == 0) {
+        int remainCount = commodity.getCount() - count;
+        if (commodityMapper.updateCommodityCount(commodityId, remainCount, commodity.getVersion()) == 0) {
             return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);
         }
         int ownerId = commodity.getOwnerId();
@@ -154,6 +162,7 @@ public class CommodityServiceImpl implements CommodityService {
         userTradeMapper.addUserTrade(order.getOrderId(), userId, ownerId, buyerName, sellerName);
         // 更新交易统计
         updateTradeStat(userId, ownerId);
+        updateEsCommodityCount(commodityId, remainCount);
 
         String email = user.getEmail();
         if (email != null) {
@@ -187,7 +196,7 @@ public class CommodityServiceImpl implements CommodityService {
             size = MAX_PAGE_SIZE;
         }
         org.springframework.data.domain.Page<EsCommodity> esCommodities =
-                commodityRepository.searchByName(commodityName, Pageable.ofSize(size).withPage(page));
+                commodityRepository.searchByNameAndCountGreaterThan(commodityName, 0, Pageable.ofSize(size).withPage(page));
         return esCommodities.toList();
     }
 
@@ -204,15 +213,25 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public void updateCommodity(int ownerId, int commodityId, Commodity commodity) {
-        commodityMapper.updateCommodity(ownerId, commodityId, commodity);
+    public ServiceCode updateCommodity(int ownerId, int commodityId, Commodity commodity) {
+        if (commodityMapper.updateCommodity(ownerId, commodityId, commodity) == 0) {
+            return ServiceCode.NOT_EXIST;
+        }
+        if (commodity.getCount() != null) {
+            updateEsCommodityCount(commodityId, commodity.getCount());
+        }
+        return ServiceCode.SUCCESS;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void takeDownCommodity(int uid, int commodityId) {
-        commodityMapper.updateCommodityStatus(uid, commodityId, Commodity.STATUS_INACTIVE);
+    public ServiceCode takeDownCommodity(int uid, int commodityId) {
+        if (commodityMapper.updateCommodityStatus(uid, commodityId, Commodity.STATUS_INACTIVE) == 0) {
+            return ServiceCode.NOT_EXIST;
+        }
         tradeStatMapper.decreaseSellingCount(uid);
+        commodityRepository.deleteById(commodityId);
+        return ServiceCode.SUCCESS;
     }
 
     @Override
@@ -224,5 +243,16 @@ public class CommodityServiceImpl implements CommodityService {
         return commodityMapper.selectByTimeDesc(maxId, size);
     }
 
+    /**
+     * 更新es里的商品数量.
+     * @param commodityId 商品id
+     * @param updateCount 要更新为的数量
+     */
+    private void updateEsCommodityCount(int commodityId, int updateCount) {
+        EsCommodity esCommodity = new EsCommodity()
+                .setId(commodityId)
+                .setCount(updateCount);
+        commodityRepository.save(esCommodity);
+    }
 
 }

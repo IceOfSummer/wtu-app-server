@@ -16,11 +16,10 @@ public interface CommodityRepository extends ElasticsearchRepository<EsCommodity
     /**
      * 根据商品名称搜索
      * @param name 商品名称
+     * @param count 仅搜索商品剩余数量大于该值的商品
      * @param pageable 分页
      * @return 匹配的商品
      */
-    Page<EsCommodity> searchByName(String name, Pageable pageable);
-
-
+    Page<EsCommodity> searchByNameAndCountGreaterThan(String name, int count, Pageable pageable);
 
 }

@@ -36,79 +36,88 @@ public class EsCommodity {
     @Field(type = FieldType.Text, index = false)
     private String sellerNickname;
 
-    public EsCommodity(int id, String name, Long createTime, Double price, String image, String tradeLocation, Integer sellerId, String sellerNickname) {
-        this.id = id;
-        this.name = name;
-        this.createTime = createTime;
-        this.price = price;
-        this.image = image;
-        this.tradeLocation = tradeLocation;
-        this.sellerId = sellerId;
-        this.sellerNickname = sellerNickname;
-    }
+    @Field(type = FieldType.Integer)
+    private Integer count;
 
-    public Integer getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(Integer sellerId) {
-        this.sellerId = sellerId;
-    }
-
-    public String getSellerNickname() {
-        return sellerNickname;
-    }
-
-    public void setSellerNickname(String sellerNickname) {
-        this.sellerNickname = sellerNickname;
-    }
-
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public EsCommodity setId(int id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public EsCommodity setName(String name) {
         this.name = name;
+        return this;
     }
 
     public Long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Long createTime) {
+    public EsCommodity setCreateTime(Long createTime) {
         this.createTime = createTime;
+        return this;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public EsCommodity setPrice(Double price) {
         this.price = price;
+        return this;
     }
 
     public String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public EsCommodity setImage(String image) {
         this.image = image;
+        return this;
     }
 
     public String getTradeLocation() {
         return tradeLocation;
     }
 
-    public void setTradeLocation(String tradeLocation) {
+    public EsCommodity setTradeLocation(String tradeLocation) {
         this.tradeLocation = tradeLocation;
+        return this;
+    }
+
+    public Integer getSellerId() {
+        return sellerId;
+    }
+
+    public EsCommodity setSellerId(Integer sellerId) {
+        this.sellerId = sellerId;
+        return this;
+    }
+
+    public String getSellerNickname() {
+        return sellerNickname;
+    }
+
+    public EsCommodity setSellerNickname(String sellerNickname) {
+        this.sellerNickname = sellerNickname;
+        return this;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public EsCommodity setCount(Integer count) {
+        this.count = count;
+        return this;
     }
 
     @Override

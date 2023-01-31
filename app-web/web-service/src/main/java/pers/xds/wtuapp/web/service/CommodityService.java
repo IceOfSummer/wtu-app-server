@@ -77,15 +77,19 @@ public interface CommodityService {
      * @param ownerId 货物主人，用于验证
      * @param commodityId 商品id
      * @param commodity 具体的货物
+     * @return 服务码<p>
+     *     - {@link ServiceCode#NOT_EXIST}: 表示当前用户并未持有该商品
      */
-    void updateCommodity(int ownerId, int commodityId, Commodity commodity);
+    ServiceCode updateCommodity(int ownerId, int commodityId, Commodity commodity);
 
     /**
      * 下架商品
      * @param uid 用户id
      * @param commodityId 商品id
+     * @return 服务码<p>
+     *     - {@link ServiceCode#NOT_EXIST}: 表示当前用户并未持有该商品
      */
-    void takeDownCommodity(int uid, int commodityId);
+    ServiceCode takeDownCommodity(int uid, int commodityId);
 
     /**
      * 获取推荐的商品
