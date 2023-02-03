@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.xds.wtuapp.web.database.bean.Order;
 import pers.xds.wtuapp.web.database.bean.User;
 import pers.xds.wtuapp.web.database.mapper.*;
+import pers.xds.wtuapp.web.es.dao.EsCommodityDao;
 import pers.xds.wtuapp.web.service.*;
 import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
@@ -49,6 +50,13 @@ public class CommodityServiceImpl implements CommodityService {
     private EmailService emailService;
 
     private UserMapper userMapper;
+
+    private EsCommodityDao esCommodityDao;
+
+    @Autowired
+    public void setEsCommodityDao(EsCommodityDao esCommodityDao) {
+        this.esCommodityDao = esCommodityDao;
+    }
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -249,10 +257,7 @@ public class CommodityServiceImpl implements CommodityService {
      * @param updateCount 要更新为的数量
      */
     private void updateEsCommodityCount(int commodityId, int updateCount) {
-        EsCommodity esCommodity = new EsCommodity()
-                .setId(commodityId)
-                .setCount(updateCount);
-        commodityRepository.save(esCommodity);
+        esCommodityDao.updateCommodityCount(commodityId, updateCount);
     }
 
 }

@@ -1,5 +1,6 @@
 package pers.xds.wtuapp.web.es.bean;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -10,6 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  * @date 2022-09-10 17:21
  */
 @Document(indexName = "commodity")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EsCommodity {
 
     @Id

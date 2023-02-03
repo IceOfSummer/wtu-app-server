@@ -10,6 +10,7 @@ import pers.xds.wtuapp.web.database.bean.UserTrade;
 import pers.xds.wtuapp.web.database.mapper.*;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
+import pers.xds.wtuapp.web.es.dao.EsCommodityDao;
 import pers.xds.wtuapp.web.service.OrderService;
 import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
@@ -28,6 +29,13 @@ public class OrderServiceImpl implements OrderService {
     private CommodityMapper commodityMapper;
 
     private TradeStatMapper tradeStatMapper;
+
+    private EsCommodityDao esCommodityDao;
+
+    @Autowired
+    public void setCommodityDao(EsCommodityDao esCommodityDao) {
+        this.esCommodityDao = esCommodityDao;
+    }
 
     @Autowired
     public void setTradeStatMapper(TradeStatMapper tradeStatMapper) {
@@ -141,6 +149,7 @@ public class OrderServiceImpl implements OrderService {
             // 把库存补上
             commodityMapper.incrementCommodityCount(order.getCommodityId(), order.getCount());
             orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
+            esCommodityDao.increaseCommodityCount(order.getCommodityId(), order.getCount());
         }
         return ServiceCode.SUCCESS;
     }
