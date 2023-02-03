@@ -3,6 +3,8 @@ package pers.xds.wtuapp.web.service;
 /**
  * @author DeSen Xu
  * @date 2022-11-27 16:45
+ * @deprecated
+ * @see pers.xds.wtuapp.web.service.exception.ServiceException ServiceException
  */
 public class ServiceCodeWrapper<T> {
 

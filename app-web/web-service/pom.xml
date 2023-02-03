@@ -69,6 +69,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pers.xds.wtuapp</groupId>
+            <artifactId>error-code</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

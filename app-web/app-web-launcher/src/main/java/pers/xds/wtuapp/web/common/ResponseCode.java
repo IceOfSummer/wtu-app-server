@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
  * 响应状态码
  * @author DeSen Xu
  * @date 2022-08-31 17:52
+ * @deprecated
+ * @see pers.xds.wtuapp.errorcode.ResponseCode
+ * @see pers.xds.wtuapp.errorcode.ResponseTemplate
  */
 public enum ResponseCode {
 

@@ -15,6 +15,7 @@
         <module name="web-database" />
         <module name="wtu-app-server" />
         <module name="web-redis" />
+        <module name="error-code" />
         <module name="web-service" />
       </profile>
     </annotationProcessing>

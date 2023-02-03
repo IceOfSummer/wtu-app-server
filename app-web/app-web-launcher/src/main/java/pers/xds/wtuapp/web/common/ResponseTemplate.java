@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
  * 响应体模板<p/>
  * @author DeSen Xu
  * @date 2022-08-31 17:47
+ * @deprecated
+ * @see pers.xds.wtuapp.errorcode.ResponseCode
+ * @see pers.xds.wtuapp.errorcode.ResponseTemplate
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseTemplate<D> {

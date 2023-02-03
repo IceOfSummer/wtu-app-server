@@ -3,6 +3,8 @@ package pers.xds.wtuapp.web.service;
 /**
  * @author DeSen Xu
  * @date 2022-11-26 19:44
+ * @deprecated
+ * @see pers.xds.wtuapp.web.service.exception.ServiceException ServiceException
  */
 public enum ServiceCode {
 
