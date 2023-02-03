@@ -31,8 +31,8 @@ if [ $? -ne 0 ]; then
   exit $?
 fi
 
-echo "mvn install -f ./$project_name/$launcher_module_name clean package spring-boot:repackage -DskipTests"
-mvn install -f ./$project_name/$launcher_module_name clean package spring-boot:repackage -DskipTests
+echo "mvn install -f ./$project_name/$launcher_module_name package spring-boot:repackage -DskipTests"
+mvn install -f ./$project_name/$launcher_module_name package spring-boot:repackage -DskipTests
 if [ $? -ne 0 ]; then
   echo -e "\e[34m 如果你是第一次打包，请先将security模块手动install，否则打包会失败 \e[0m"
   exit $?
