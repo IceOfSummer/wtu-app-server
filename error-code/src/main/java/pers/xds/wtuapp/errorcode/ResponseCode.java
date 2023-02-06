@@ -19,6 +19,10 @@ public enum ResponseCode {
      */
     REGISTER_ERROR(ResponseCodeConstant.REGISTER_ERROR, "注册错误"),
     /**
+     * 请求参数有误
+     */
+    REQUEST_PARAMETERS_ERROR(ResponseCodeConstant.REQUEST_PARAMETERS_ERROR, "请求参数有误"),
+    /**
      * 用户资源异常
      */
     USER_RESOURCES_ERROR(ResponseCodeConstant.USER_RESOURCES_ERROR, "用户资源异常");

@@ -23,10 +23,15 @@ public interface ResponseCodeConstant {
      */
     String REGISTER_ERROR = "A0100";
 
+    /**
+     * 用户请求参数错误
+     */
+    String REQUEST_PARAMETERS_ERROR = "A0400";
 
     /**
      * 用户资源异常.(二级宏观)
      */
     String USER_RESOURCES_ERROR = "A0600";
+
 
 }

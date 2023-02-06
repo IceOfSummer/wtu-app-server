@@ -11,7 +11,12 @@ import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.CosService;
 import pers.xds.wtuapp.web.service.config.cos.SignInfo;
+import pers.xds.wtuapp.web.service.exception.BadArgumentException;
+import pers.xds.wtuapp.web.service.util.ImageType;
+import pers.xds.wtuapp.web.util.StringUtils;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -41,22 +46,25 @@ public class CosController {
     /**
      * 生成用户空间对象存储桶访问密匙
      * @param count 要上传的文件数量
-     * @param type 文件的类型描述符，如`.png`
+     * @param types 文件的类型描述符，如`.png`, 若有多个文件，则以逗号分隔.
+     * @see ImageType ImageType: 使用该类的id表示每种文件类型
      * @return 对象存储桶访问密匙
      */
     @GetMapping("/secret/userspace")
     @RateLimit(value = USER_SPACE_UPLOAD_LIMIT, limitMessage = "您每天最多上传" + USER_SPACE_UPLOAD_LIMIT + "次")
     public ResponseTemplate<SignInfo[]> getUserSpaceUploadSecret(int count,
-                                                              @RequestParam(required = false, defaultValue = "") String type) {
-        final int maxTypeLength = 5;
+                                                              @RequestParam(required = false, defaultValue = "") String types) {
         final int maxAllUploadCount = 5;
-        if (type.length() > maxTypeLength || count >= maxAllUploadCount) {
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+        List<Integer> typeIds = StringUtils.parseLineString(types, maxAllUploadCount);
+        if (typeIds.size() != count) {
+            throw new BadArgumentException();
         }
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
+
         String[] filenames = new String[count];
+        Iterator<Integer> it = typeIds.iterator();
         for (int i = 0; i < count; i++) {
-            filenames[i] = UUID.randomUUID() + type;
+            filenames[i] = UUID.randomUUID() + "." + ImageType.getTypeNameFromId(it.next());
         }
         SignInfo[] signInfos = cosService.requireUserspaceUploadSign(userPrincipal.getId(), filenames);
         if (signInfos == null) {

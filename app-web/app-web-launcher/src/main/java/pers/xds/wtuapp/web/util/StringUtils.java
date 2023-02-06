@@ -64,6 +64,28 @@ public class StringUtils {
     }
 
     /**
+     * 将一行的字符串解析为数字, 字符串以指定的分隔符分隔，<b>支持负数</b><p>
+     * 如:<pre>
+     *  - 输入: `"1,2,3,4,5"` 支持任意分隔符，甚至可以出现多个分隔符
+     *  - 输出: [1,2,3,4,5]
+     *  <p>
+     * @param line 要解析的字符串
+     * @param maxListLen 数组最大长度，当超过该长度后将直接返回
+     * @return 解析后的数字数组
+     */
+    public static List<Integer> parseLineString(String line, int maxListLen) {
+        LinkedList<Integer> result = new LinkedList<>();
+        StringIterator stringIterator = new StringIterator(line);
+        int size = 0;
+        Integer integer;
+        while ((integer = stringIterator.nextInteger()) != null && size < maxListLen) {
+            result.add(integer);
+            size++;
+        }
+        return result;
+    }
+
+    /**
      * 邮箱检查
      */
     private static final Pattern EMAIL_CHECK = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
