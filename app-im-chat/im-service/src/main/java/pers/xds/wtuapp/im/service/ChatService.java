@@ -1,6 +1,5 @@
 package pers.xds.wtuapp.im.service;
 
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import pers.xds.wtuapp.im.database.bean.Message;
 
@@ -19,9 +18,9 @@ public interface ChatService {
      * @param message 消息内容，请使用该构造器{@link Message#Message(Integer, Integer, String)}，该对象的uid参数应该为接收者id，
      *                而to参数应该为发送者的id，即{@link Message#getType()}应该为{@link Message#RECEIVE}
      * @param sync 是否需要同步. 若用户在线，则应该设置为true以加快消息漏发时的恢复。<b>只会同步接收者的消息</b>
-     * @return 消息id, 第一个为发送者的消息id，第二个为接受者的消息id
+     * @return 消息id, 不管对于接收者还是发送者，消息id都是一样的
      */
-    Pair<Integer, Integer> saveMessage(Message message, boolean sync);
+    int saveMessage(Message message, boolean sync);
 
     /**
      * 同步消息, <b>该方法仅适合start和end的差值较小时使用</b>，一般用于同步在线消息
@@ -39,15 +38,15 @@ public interface ChatService {
      * 同步消息，用于同步离线消息，<b>适合start和end差值较大的时候</b>。一定会返回所有的消息，除非不存在
      * @param uid 用户id
      * @param start 从哪个消息id开始(包括)
-     * @param end 从哪个消息id结束(不包括)
      * @return 消息内容
      */
-    List<Message> syncOfflineMessage(int uid, int start, int end);
+    List<Message> syncOfflineMessage(int uid, int start);
 
     /**
      * 获取当前用户最大已保存的消息id
      * @param uid 用户id
      * @return 最大id
+     * @deprecated
      */
     int queryMaxMessageId(int uid);
 

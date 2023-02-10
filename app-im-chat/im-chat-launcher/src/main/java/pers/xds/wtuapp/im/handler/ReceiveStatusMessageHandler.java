@@ -13,6 +13,7 @@ import pers.xds.wtuapp.security.UserPrincipal;
 /**
  * @author DeSen Xu
  * @date 2022-11-12 18:31
+ * @deprecated 该消息已经没有作用了
  */
 @Component
 public class ReceiveStatusMessageHandler extends SimpleChannelInboundHandler<QueryReceiveStatusMessage> {

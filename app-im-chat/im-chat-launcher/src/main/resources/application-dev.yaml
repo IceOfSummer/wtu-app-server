@@ -16,6 +16,9 @@ im:
   ssl:
     certificate-path: "classpath:ssl/cert.crt"
     key-path: "classpath:ssl/pkcs8_private.key"
+  idle:
+    reader-idle-time-seconds: 10000000
 app:
   security:
     secret: "abcdefghijklmnopqrstuvwxyzABCDEFG"
+    expire-minute: 144000

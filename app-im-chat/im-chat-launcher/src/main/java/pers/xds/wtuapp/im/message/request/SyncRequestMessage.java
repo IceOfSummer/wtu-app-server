@@ -32,8 +32,12 @@ public class SyncRequestMessage extends RequestMessage {
         return message.getStart();
     }
 
+    /**
+     * 获取end值
+     * @return end值，若不存在，返回-1
+     */
     public int getEnd() {
-        return message.getEnd();
+        return message.hasEnd() ? message.getEnd() : -1;
     }
 
     public boolean isOffline() {

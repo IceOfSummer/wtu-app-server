@@ -11,6 +11,7 @@ import pers.xds.wtuapp.im.message.request.SyncRequestMessage;
 import pers.xds.wtuapp.im.service.ChatService;
 import pers.xds.wtuapp.security.UserPrincipal;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,9 +42,14 @@ public class SyncRequestMessageHandler extends SimpleChannelInboundHandler<SyncR
         }
         List<Message> messages;
         if (msg.isOffline()) {
-            messages = chatService.syncOfflineMessage(principal.getId(), msg.getStart(), msg.getEnd());
+            messages = chatService.syncOfflineMessage(principal.getId(), msg.getStart());
         } else {
-            messages = chatService.syncOnlineMessage(principal.getId(), msg.getStart(), msg.getEnd());
+            int end = msg.getEnd();
+            if (end == -1) {
+                messages = Collections.emptyList();
+            } else {
+                messages = chatService.syncOnlineMessage(principal.getId(), msg.getStart(), end);
+            }
         }
         ctx.writeAndFlush(new MultiChatResponseMessage(msg.getRequestId(), messages));
     }

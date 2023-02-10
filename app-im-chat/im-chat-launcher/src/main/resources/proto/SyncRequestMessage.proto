@@ -9,6 +9,6 @@ message SyncRequestMessage {
   // 是否用于拉取离线消息
   bool offline = 1;
   int32 start = 2;
-  int32 end = 3;
+  optional int32 end = 3;
 }
 

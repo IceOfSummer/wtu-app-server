@@ -35,7 +35,12 @@ public final class SyncRequestMessageProto {
     int getStart();
 
     /**
-     * <code>int32 end = 3;</code>
+     * <code>optional int32 end = 3;</code>
+     * @return Whether the end field is set.
+     */
+    boolean hasEnd();
+    /**
+     * <code>optional int32 end = 3;</code>
      * @return The end.
      */
     int getEnd();
@@ -79,6 +84,7 @@ public final class SyncRequestMessageProto {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -100,7 +106,7 @@ public final class SyncRequestMessageProto {
               break;
             }
             case 24: {
-
+              bitField0_ |= 0x00000001;
               end_ = input.readInt32();
               break;
             }
@@ -138,6 +144,7 @@ public final class SyncRequestMessageProto {
               pers.xds.wtuapp.im.proto.SyncRequestMessageProto.SyncRequestMessage.class, pers.xds.wtuapp.im.proto.SyncRequestMessageProto.SyncRequestMessage.Builder.class);
     }
 
+    private int bitField0_;
     public static final int OFFLINE_FIELD_NUMBER = 1;
     private boolean offline_;
     /**
@@ -167,7 +174,15 @@ public final class SyncRequestMessageProto {
     public static final int END_FIELD_NUMBER = 3;
     private int end_;
     /**
-     * <code>int32 end = 3;</code>
+     * <code>optional int32 end = 3;</code>
+     * @return Whether the end field is set.
+     */
+    @java.lang.Override
+    public boolean hasEnd() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional int32 end = 3;</code>
      * @return The end.
      */
     @java.lang.Override
@@ -195,7 +210,7 @@ public final class SyncRequestMessageProto {
       if (start_ != 0) {
         output.writeInt32(2, start_);
       }
-      if (end_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt32(3, end_);
       }
       unknownFields.writeTo(output);
@@ -215,7 +230,7 @@ public final class SyncRequestMessageProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, start_);
       }
-      if (end_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, end_);
       }
@@ -238,8 +253,11 @@ public final class SyncRequestMessageProto {
           != other.getOffline()) return false;
       if (getStart()
           != other.getStart()) return false;
-      if (getEnd()
-          != other.getEnd()) return false;
+      if (hasEnd() != other.hasEnd()) return false;
+      if (hasEnd()) {
+        if (getEnd()
+            != other.getEnd()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -256,8 +274,10 @@ public final class SyncRequestMessageProto {
           getOffline());
       hash = (37 * hash) + START_FIELD_NUMBER;
       hash = (53 * hash) + getStart();
-      hash = (37 * hash) + END_FIELD_NUMBER;
-      hash = (53 * hash) + getEnd();
+      if (hasEnd()) {
+        hash = (37 * hash) + END_FIELD_NUMBER;
+        hash = (53 * hash) + getEnd();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -400,7 +420,7 @@ public final class SyncRequestMessageProto {
         start_ = 0;
 
         end_ = 0;
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -427,9 +447,15 @@ public final class SyncRequestMessageProto {
       @java.lang.Override
       public pers.xds.wtuapp.im.proto.SyncRequestMessageProto.SyncRequestMessage buildPartial() {
         pers.xds.wtuapp.im.proto.SyncRequestMessageProto.SyncRequestMessage result = new pers.xds.wtuapp.im.proto.SyncRequestMessageProto.SyncRequestMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.offline_ = offline_;
         result.start_ = start_;
-        result.end_ = end_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.end_ = end_;
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -484,7 +510,7 @@ public final class SyncRequestMessageProto {
         if (other.getStart() != 0) {
           setStart(other.getStart());
         }
-        if (other.getEnd() != 0) {
+        if (other.hasEnd()) {
           setEnd(other.getEnd());
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -515,6 +541,7 @@ public final class SyncRequestMessageProto {
         }
         return this;
       }
+      private int bitField0_;
 
       private boolean offline_ ;
       /**
@@ -592,7 +619,15 @@ public final class SyncRequestMessageProto {
 
       private int end_ ;
       /**
-       * <code>int32 end = 3;</code>
+       * <code>optional int32 end = 3;</code>
+       * @return Whether the end field is set.
+       */
+      @java.lang.Override
+      public boolean hasEnd() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional int32 end = 3;</code>
        * @return The end.
        */
       @java.lang.Override
@@ -600,22 +635,22 @@ public final class SyncRequestMessageProto {
         return end_;
       }
       /**
-       * <code>int32 end = 3;</code>
+       * <code>optional int32 end = 3;</code>
        * @param value The end to set.
        * @return This builder for chaining.
        */
       public Builder setEnd(int value) {
-        
+        bitField0_ |= 0x00000001;
         end_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 end = 3;</code>
+       * <code>optional int32 end = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearEnd() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         end_ = 0;
         onChanged();
         return this;
@@ -687,10 +722,11 @@ public final class SyncRequestMessageProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\030SyncRequestMessage.proto\"A\n\022SyncReques" +
+      "\n\030SyncRequestMessage.proto\"N\n\022SyncReques" +
       "tMessage\022\017\n\007offline\030\001 \001(\010\022\r\n\005start\030\002 \001(\005" +
-      "\022\013\n\003end\030\003 \001(\005B5\n\030pers.xds.wtuapp.im.prot" +
-      "oB\027SyncRequestMessageProtoH\001b\006proto3"
+      "\022\020\n\003end\030\003 \001(\005H\000\210\001\001B\006\n\004_endB5\n\030pers.xds.w" +
+      "tuapp.im.protoB\027SyncRequestMessageProtoH" +
+      "\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -701,7 +737,7 @@ public final class SyncRequestMessageProto {
     internal_static_SyncRequestMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_SyncRequestMessage_descriptor,
-        new java.lang.String[] { "Offline", "Start", "End", });
+        new java.lang.String[] { "Offline", "Start", "End", "End", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

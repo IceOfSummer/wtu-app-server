@@ -11,4 +11,12 @@
               (#{msg.to}, #{msg.uid}, #{sendId}, #{msg.content}, 1, #{msg.createTime})
     </insert>
 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="msgId" keyColumn="msg_id">
+        INSERT INTO message(uid,`to`,content,type,create_time) VALUE (#{msg.uid},#{msg.to},#{msg.content},#{msg.type},#{msg.createTime})
+    </insert>
+
+    <insert id="insertWithMsgId">
+        INSERT INTO message(uid,`to`,msg_id,content,type,create_time) VALUE (#{uid},#{to},#{msgId},#{msg.content},#{msg.type},#{msg.createTime})
+    </insert>
+
 </mapper>

@@ -97,12 +97,14 @@ public class ServerSocketTest {
             System.exit(0);
         });
 
+        // 先让别的线程打印完，不然看不到菜单
+        Thread.sleep(1000);
         System.out.print("请输入Session: ");
         String session = sc.nextLine();
         channel.writeAndFlush(new AuthRequestMessage(session));
         while (true) {
             // 先让别的线程打印完，不然看不到菜单
-            Thread.sleep(600);
+            Thread.sleep(1000);
             System.out.print("=============Menu=============\n" +
                     "1: 和某人私聊\n" +
                     "2: 获取消息接收状态\n" +
@@ -151,7 +153,6 @@ public class ServerSocketTest {
         channel.writeAndFlush(
                 new SyncRequestMessage(SyncRequestMessageProto.SyncRequestMessage.newBuilder()
                 .setStart(start)
-                .setEnd(end)
                 .setOffline(offline)
                 .build())
         );

@@ -6,7 +6,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import pers.xds.wtuapp.im.ChannelAttrManager;
 import pers.xds.wtuapp.im.SocketChannelRecorder;
@@ -59,20 +58,20 @@ public class ChatRequestMessageHandler extends SimpleChannelInboundHandler<ChatR
         final short requestId = msg.getRequestId();
         // 保存消息
         boolean sync = ch != null;
-        Message message = new Message(msg.getTo(), principal.getId(), msg.getMessage());
-        Pair<Integer, Integer> pair = chatService.saveMessage(message, sync);
-        log.debug("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
+        Message message = new Message(principal.getId(), msg.getTo(), msg.getMessage());
+        int msgId = chatService.saveMessage(message, sync);
+        log.info("用户id: {}给用户id: {} 发送了一条消息: {}", principal.getId(), msg.getTo(), msg.getMessage());
         if (sync) {
             // 发送在线消息
-            ch.writeAndFlush(new ChatResponseMessage(message, pair.getSecond()), ch.newPromise().addListener(future -> {
+            ch.writeAndFlush(new ChatResponseMessage(message, msgId), ch.newPromise().addListener(future -> {
                 if (future.isSuccess()) {
-                    ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(pair.getFirst())));
+                    ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(msgId)));
                 } else {
                     ctx.writeAndFlush(new ServerResponseMessage(false, requestId));
                 }
             }));
         } else {
-            ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(pair.getFirst())));
+            ctx.writeAndFlush(new ServerResponseMessage(requestId, String.valueOf(msgId)));
         }
     }
 

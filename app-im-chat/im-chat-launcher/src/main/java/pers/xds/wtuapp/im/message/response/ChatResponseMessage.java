@@ -22,7 +22,7 @@ public class ChatResponseMessage extends ResponseMessage {
         this.message = ChatResponseMessageProto.ChatResponseMessage
                 .newBuilder()
                 .setMsgId(msgId)
-                .setFrom(message.getTo())
+                .setFrom(message.getUid())
                 .setContent(message.getContent())
                 .setCreateTime(message.getCreateTime())
                 .build();
