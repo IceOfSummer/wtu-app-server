@@ -15,6 +15,10 @@ import pers.xds.wtuapp.web.database.bean.Commodity;
 import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.es.repository.CommodityRepository;
 import pers.xds.wtuapp.web.service.config.email.CommodityLockTemplateData;
+import pers.xds.wtuapp.web.service.exception.BadArgumentException;
+import pers.xds.wtuapp.web.service.exception.ConcurrentException;
+import pers.xds.wtuapp.web.service.exception.NoSuchElementException;
+import pers.xds.wtuapp.web.service.exception.UserResourceException;
 import pers.xds.wtuapp.web.service.util.DateFormatUtils;
 
 import java.util.Collections;
@@ -101,17 +105,17 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity) {
+    public int insertCommodity(Commodity commodity) {
         Integer ownerId = commodity.getOwnerId();
         if (ownerId == null) {
-            return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
+            throw new BadArgumentException();
         }
 
         Integer cnt = tradeStatMapper.selectSellingCount(ownerId);
         if (cnt == null) {
             tradeStatMapper.insertWithSellingCountOnly(ownerId, 1);
         } else if (cnt > MAX_ACTIVE_COMMODITY) {
-            return ServiceCodeWrapper.fail(ServiceCode.NOT_AVAILABLE);
+            throw new UserResourceException("您最多可以上传" + MAX_ACTIVE_COMMODITY + "个商品,请先下架之前的商品");
         } else {
             tradeStatMapper.modifySellingCount(ownerId, cnt + 1);
         }
@@ -131,7 +135,7 @@ public class CommodityServiceImpl implements CommodityService {
                 .setCount(commodity.getCount());
         commodityRepository.save(esCommodity);
 
-        return ServiceCodeWrapper.success(commodity.getCommodityId());
+        return commodity.getCommodityId();
     }
 
     @Nullable
@@ -143,21 +147,24 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark) {
+    public int lockCommodity(int commodityId, int userId, int count, String remark) {
         Commodity commodity = commodityMapper.selectSimpleInfo(commodityId);
         if (commodity == null) {
-            return ServiceCodeWrapper.fail(ServiceCode.NOT_EXIST);
+            throw new NoSuchElementException("商品不存在");
         }
-        if (commodity.getStatus() != Commodity.STATUS_ACTIVE || commodity.getOwnerId() == userId) {
-            return ServiceCodeWrapper.fail(ServiceCode.NOT_AVAILABLE);
+        if (commodity.getStatus() != Commodity.STATUS_ACTIVE) {
+            throw new BadArgumentException("当前商品已下架");
+        }
+        if (commodity.getOwnerId() == userId) {
+            throw new BadArgumentException("不可以锁定自己的商品");
         }
         if (commodity.getCount() < count) {
-            return ServiceCodeWrapper.fail(ServiceCode.BAD_REQUEST);
+            throw new UserResourceException("当前商品数量不足");
         }
         // 乐观锁
         int remainCount = commodity.getCount() - count;
         if (commodityMapper.updateCommodityCount(commodityId, remainCount, commodity.getVersion()) == 0) {
-            return ServiceCodeWrapper.fail(ServiceCode.CONCURRENT_ERROR);
+            throw new ConcurrentException();
         }
         int ownerId = commodity.getOwnerId();
         User user = userMapper.selectNameAndEmail(ownerId);
@@ -190,7 +197,7 @@ public class CommodityServiceImpl implements CommodityService {
                     )
             );
         }
-        return ServiceCodeWrapper.success(order.getOrderId());
+        return order.getOrderId();
     }
 
     private void updateTradeStat(int buyer, int seller) {
@@ -221,25 +228,23 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public ServiceCode updateCommodity(int ownerId, int commodityId, Commodity commodity) {
+    public void updateCommodity(int ownerId, int commodityId, Commodity commodity) {
         if (commodityMapper.updateCommodity(ownerId, commodityId, commodity) == 0) {
-            return ServiceCode.NOT_EXIST;
+            throw new BadArgumentException();
         }
         if (commodity.getCount() != null) {
             updateEsCommodityCount(commodityId, commodity.getCount());
         }
-        return ServiceCode.SUCCESS;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode takeDownCommodity(int uid, int commodityId) {
+    public void takeDownCommodity(int uid, int commodityId) {
         if (commodityMapper.updateCommodityStatus(uid, commodityId, Commodity.STATUS_INACTIVE) == 0) {
-            return ServiceCode.NOT_EXIST;
+            throw new BadArgumentException();
         }
         tradeStatMapper.decreaseSellingCount(uid);
         commodityRepository.deleteById(commodityId);
-        return ServiceCode.SUCCESS;
     }
 
     @Override

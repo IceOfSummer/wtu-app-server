@@ -25,7 +25,15 @@ public enum ResponseCode {
     /**
      * 用户资源异常
      */
-    USER_RESOURCES_ERROR(ResponseCodeConstant.USER_RESOURCES_ERROR, "用户资源异常");
+    USER_RESOURCES_ERROR(ResponseCodeConstant.USER_RESOURCES_ERROR, "用户资源异常"),
+    /**
+     * 系统资源异常
+     */
+    SYSTEM_RESOURCES_ERROR(ResponseCodeConstant.SYSTEM_RESOURCE_ERROR, "系统资源异常"),
+    /**
+     * 并发异常
+     */
+    CONCURRENT_ERROR(ResponseCodeConstant.CONCURRENT_ERROR, "服务器繁忙，请稍后再试");
 
 
     /**

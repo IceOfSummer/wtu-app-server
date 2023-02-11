@@ -33,5 +33,15 @@ public interface ResponseCodeConstant {
      */
     String USER_RESOURCES_ERROR = "A0600";
 
+    /**
+     * 系统资源异常
+     */
+    String SYSTEM_RESOURCE_ERROR = "B0300";
+
+    /**
+     * 并发异常. 通常指乐观锁更新失败
+     */
+    String CONCURRENT_ERROR = "B0316";
+
 
 }

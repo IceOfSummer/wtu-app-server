@@ -5,9 +5,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import pers.xds.wtuapp.errorcode.ResponseCode;
+import pers.xds.wtuapp.errorcode.ResponseTemplate;
 import pers.xds.wtuapp.web.aop.RateLimit;
-import pers.xds.wtuapp.web.common.ResponseCode;
-import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
 import pers.xds.wtuapp.web.database.bean.Commodity;
@@ -16,8 +16,6 @@ import pers.xds.wtuapp.web.es.bean.EsCommodity;
 import pers.xds.wtuapp.web.redis.common.Duration;
 import pers.xds.wtuapp.web.service.CommodityService;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
-import pers.xds.wtuapp.web.service.ServiceCode;
-import pers.xds.wtuapp.web.service.ServiceCodeWrapper;
 
 import java.util.List;
 
@@ -64,12 +62,7 @@ public class CommodityController {
     public ResponseTemplate<Integer> createCommodity(@Validated Commodity commodity) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
         commodity.setOwnerId(userPrincipal.getId());
-        ServiceCodeWrapper<Integer> wrapper = commodityService.insertCommodity(commodity);
-        if (wrapper.isSuccess()) {
-            return ResponseTemplate.success(wrapper.data);
-        }
-        // code == ServiceCode.NOT_AVAILABLE
-        return ResponseTemplate.fail(ResponseCode.RATE_LIMIT, "您发布的商品已经到达数量上限, 请下架已有的商品");
+        return ResponseTemplate.success(commodityService.insertCommodity(commodity));
     }
 
     /**
@@ -99,15 +92,7 @@ public class CommodityController {
                                         @RequestParam(value = "c", required = false, defaultValue = "1") int count,
                                         @RequestParam(value = "r", required = false) String remark) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        ServiceCodeWrapper<Integer> wrapper = commodityService.lockCommodity(id, userPrincipal.getId(), count, remark);
-        ServiceCode code = wrapper.code;
-        if (code == ServiceCode.SUCCESS) {
-            return ResponseTemplate.success(wrapper.data);
-        } else if (code == ServiceCode.CONCURRENT_ERROR){
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "服务器繁忙，请稍后再试");
-        } else {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "不可以锁定自己的商品");
-        }
+        return ResponseTemplate.success(commodityService.lockCommodity(id, userPrincipal.getId(), count, remark));
     }
 
     /**
@@ -127,7 +112,7 @@ public class CommodityController {
                                                                      @RequestParam(value = "z", required = false, defaultValue = "10") int size,
                                                                      @RequestParam(value = "p", required = false, defaultValue = "0") int page) {
         if (search.length() > MAX_SEARCH_SIZE) {
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST, null);
+            return ResponseTemplate.fail(ResponseCode.REQUEST_PARAMETERS_ERROR, "搜索字符串太长");
         }
         return ResponseTemplate.success(commodityService.searchCommodityByName(search, page, size));
     }
@@ -158,12 +143,8 @@ public class CommodityController {
     @PostMapping("/op/{cid}/update")
     public ResponseTemplate<Void> updateCommodity(@Validated(UpdateGroup.class) Commodity commodity, @PathVariable int cid) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        ServiceCode serviceCode = commodityService.updateCommodity(userPrincipal.getId(), cid, commodity);
-        if (serviceCode == ServiceCode.SUCCESS) {
-            return ResponseTemplate.success();
-        }
-        // not exist
-        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+        commodityService.updateCommodity(userPrincipal.getId(), cid, commodity);
+        return ResponseTemplate.success();
     }
 
     /**
@@ -172,11 +153,9 @@ public class CommodityController {
     @PostMapping("/op/{cid}/close")
     public ResponseTemplate<Void> takeDownCommodity(@PathVariable int cid) {
         UserPrincipal userPrincipal = SecurityContextUtil.getUserPrincipal();
-        if (commodityService.takeDownCommodity(userPrincipal.getId(), cid) == ServiceCode.SUCCESS) {
-            return ResponseTemplate.success();
-        }
+        commodityService.takeDownCommodity(userPrincipal.getId(), cid);
         // not exist
-        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+        return ResponseTemplate.success();
     }
 
     /**
@@ -193,7 +172,7 @@ public class CommodityController {
     ) {
         final int maxSize = 8;
         if (size > maxSize) {
-            return ResponseTemplate.fail(ResponseCode.BAD_REQUEST);
+            return ResponseTemplate.fail(ResponseCode.REQUEST_PARAMETERS_ERROR);
         }
         return ResponseTemplate.success(commodityService.getRecommend(maxId, size));
     }

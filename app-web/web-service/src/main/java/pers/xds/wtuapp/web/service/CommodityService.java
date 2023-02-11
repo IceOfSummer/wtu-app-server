@@ -15,10 +15,10 @@ public interface CommodityService {
      * 插入货物
      * @param commodity 货物, <b>插入成功后会自动为其id字段赋值</b>，必须要提供{@link Commodity#ownerId}
      * @return 新增货物的id<p>
-     * - {@link ServiceCode#BAD_REQUEST} 表示参数有误<p>
-     * - {@link ServiceCode#NOT_AVAILABLE} 表示用户已经达到商品上传上限<p>
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 参数有误
+     * @throws pers.xds.wtuapp.web.service.exception.UserResourceException 用户已经达到商品上传上限
      */
-    ServiceCodeWrapper<Integer> insertCommodity(Commodity commodity);
+    int insertCommodity(Commodity commodity);
 
     /**
      * 查询商品
@@ -35,13 +35,13 @@ public interface CommodityService {
      * @param userId 用户id
      * @param count 要锁定多少个
      * @param remark 用户备注
-     * @return
-     * - {@link ServiceCode#BAD_REQUEST}表示商品数量不足;<p>
-     * - {@link ServiceCode#NOT_EXIST}表示商品不存在;<p>
-     * - {@link ServiceCode#NOT_AVAILABLE}表示商品不可用，如商品下架或者用户自己买自己的商品<p>
-     * - {@link ServiceCode#CONCURRENT_ERROR}表示暂时锁定失败，稍后再试
+     * @return 订单id
+     * @throws pers.xds.wtuapp.web.service.exception.UserResourceException 表示商品数量不足
+     * @throws pers.xds.wtuapp.web.service.exception.NoSuchElementException 表示商品不存在
+     * @throws pers.xds.wtuapp.web.service.exception.ConcurrentException 表示暂时锁定失败，稍后再试
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 表示商品不可用，如商品下架或者用户自己买自己的商品
      */
-    ServiceCodeWrapper<Integer> lockCommodity(int commodityId, int userId, int count, String remark);
+    int lockCommodity(int commodityId, int userId, int count, String remark);
 
     /**
      * 搜索货物, 按照默认排序
@@ -77,19 +77,17 @@ public interface CommodityService {
      * @param ownerId 货物主人，用于验证
      * @param commodityId 商品id
      * @param commodity 具体的货物
-     * @return 服务码<p>
-     *     - {@link ServiceCode#NOT_EXIST}: 表示当前用户并未持有该商品
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 表示当前用户并未持有该商品
      */
-    ServiceCode updateCommodity(int ownerId, int commodityId, Commodity commodity);
+    void updateCommodity(int ownerId, int commodityId, Commodity commodity);
 
     /**
      * 下架商品
      * @param uid 用户id
      * @param commodityId 商品id
-     * @return 服务码<p>
-     *     - {@link ServiceCode#NOT_EXIST}: 表示当前用户并未持有该商品
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 表示当前用户并未持有该商品
      */
-    ServiceCode takeDownCommodity(int uid, int commodityId);
+    void takeDownCommodity(int uid, int commodityId);
 
     /**
      * 获取推荐的商品
