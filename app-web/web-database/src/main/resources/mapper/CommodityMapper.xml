@@ -4,6 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.xds.wtuapp.web.database.mapper.CommodityMapper">
 
+    <sql id="status_active">
+        '${@pers.xds.wtuapp.web.database.bean.Commodity@STATUS_ACTIVE}'
+    </sql>
 
     <select id="selectSimpleInfo" resultType="pers.xds.wtuapp.web.database.bean.Commodity">
         SELECT `count`, `status`, version, owner_id, price, `name`, trade_location, preview_image
@@ -47,7 +50,9 @@
     <select id="selectByTimeDesc" resultType="pers.xds.wtuapp.web.database.bean.Commodity">
         SELECT commodity_id, owner_id, `name`, price, preview_image
         FROM commodity
-        <if test="mid != null"> WHERE commodity_id &lt;= #{mid} </if>
+        WHERE
+        <if test="mid != null">  commodity_id &lt;= #{mid} AND </if>
+        status = <include refid="status_active"/>
         ORDER BY commodity_id DESC
         LIMIT #{s}
     </select>
