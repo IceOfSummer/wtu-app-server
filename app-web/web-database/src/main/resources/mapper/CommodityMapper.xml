@@ -53,6 +53,7 @@
         WHERE
         <if test="mid != null">  commodity_id &lt;= #{mid} AND </if>
         status = <include refid="status_active"/>
+        AND count > 0
         ORDER BY commodity_id DESC
         LIMIT #{s}
     </select>
