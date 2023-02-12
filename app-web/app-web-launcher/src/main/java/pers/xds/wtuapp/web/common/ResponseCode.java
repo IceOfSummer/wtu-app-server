@@ -1,6 +1,7 @@
 package pers.xds.wtuapp.web.common;
 
 import org.springframework.http.HttpStatus;
+import pers.xds.wtuapp.errorcode.ResponseWrapper;
 
 /**
  * 响应状态码
@@ -8,7 +9,7 @@ import org.springframework.http.HttpStatus;
  * @date 2022-08-31 17:52
  * @deprecated
  * @see pers.xds.wtuapp.errorcode.ResponseCode
- * @see pers.xds.wtuapp.errorcode.ResponseTemplate
+ * @see ResponseWrapper
  */
 public enum ResponseCode {
 

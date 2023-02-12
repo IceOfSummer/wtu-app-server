@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import pers.xds.wtuapp.errorcode.ResponseWrapper;
 import pers.xds.wtuapp.web.database.util.Jackson;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2022-08-31 17:47
  * @deprecated
  * @see pers.xds.wtuapp.errorcode.ResponseCode
- * @see pers.xds.wtuapp.errorcode.ResponseTemplate
+ * @see ResponseWrapper
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseTemplate<D> {
