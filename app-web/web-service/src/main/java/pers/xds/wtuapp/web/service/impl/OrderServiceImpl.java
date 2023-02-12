@@ -12,8 +12,9 @@ import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
 import pers.xds.wtuapp.web.es.dao.EsCommodityDao;
 import pers.xds.wtuapp.web.service.OrderService;
-import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
+import pers.xds.wtuapp.web.service.exception.BadArgumentException;
+import pers.xds.wtuapp.web.service.exception.NoSuchElementException;
 
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode markTradeDone(UpdateOrderStatusParam updateOrderStatusParam) {
+    public void markTradeDone(UpdateOrderStatusParam updateOrderStatusParam) {
         int newStatus;
         int prevStatus = updateOrderStatusParam.previousStatus;
         if (prevStatus == Order.STATUS_TRADING) {
@@ -90,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
             newStatus = Order.STATUS_DONE;
         } else {
             // prevStatus = 取消订单 || prevStatus = Done
-            return ServiceCode.NOT_AVAILABLE;
+            throw new BadArgumentException("订单已被取消");
         }
         int i = orderMapper.updateTradeStatus(
                 updateOrderStatusParam.orderId,
@@ -100,20 +101,21 @@ public class OrderServiceImpl implements OrderService {
                 updateOrderStatusParam.isSeller
         );
         if (i == 0) {
-            return ServiceCode.NOT_EXIST;
+            throw new NoSuchElementException("订单不存在");
         }
         // 插入备注
         updateRemark(updateOrderStatusParam);
         if (newStatus == Order.STATUS_DONE) {
             updateTradeStat(updateOrderStatusParam.orderId, null);
             orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
+            Order order = orderMapper.selectByIdSimply(updateOrderStatusParam.orderId);
+            commodityMapper.takeDownCommodityIfEmpty(order.getCommodityId());
         }
-        return ServiceCode.SUCCESS;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ServiceCode markTradeFail(UpdateOrderStatusParam updateOrderStatusParam) {
+    public void markTradeFail(UpdateOrderStatusParam updateOrderStatusParam) {
         int newStatus;
         boolean isCanceled = false;
         int prevStatus = updateOrderStatusParam.previousStatus;
@@ -130,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
             // 被某一方确认，但是另外一方想要取消
             newStatus = isSeller ? Order.STATUS_SELLER_CANCEL : Order.STATUS_BUYER_CANCEL;
         } else {
-            return ServiceCode.NOT_AVAILABLE;
+            throw new BadArgumentException("当前订单已经完成");
         }
         int i = orderMapper.updateTradeStatus(
                 updateOrderStatusParam.orderId,
@@ -140,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
                 updateOrderStatusParam.isSeller
         );
         if (i == 0) {
-            return ServiceCode.NOT_EXIST;
+            throw new java.util.NoSuchElementException("订单不存在");
         }
         updateRemark(updateOrderStatusParam);
         if (isCanceled) {
@@ -151,7 +153,6 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.updateFinishedTime(updateOrderStatusParam.orderId);
             esCommodityDao.increaseCommodityCount(order.getCommodityId(), order.getCount());
         }
-        return ServiceCode.SUCCESS;
     }
 
     /**

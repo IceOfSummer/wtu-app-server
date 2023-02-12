@@ -112,6 +112,12 @@ public class Commodity {
     @NotNull(groups = {InsertGroup.class})
     private Integer count;
 
+    /**
+     * 自动下架
+     */
+    @Null(groups = UpdateGroup.class)
+    private Boolean autoTakeDown;
+
     public Commodity() {
     }
 
@@ -221,5 +227,11 @@ public class Commodity {
         this.images = images;
     }
 
+    public Boolean getAutoTakeDown() {
+        return autoTakeDown;
+    }
 
+    public void setAutoTakeDown(Boolean autoTakeDown) {
+        this.autoTakeDown = autoTakeDown;
+    }
 }

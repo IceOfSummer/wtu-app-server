@@ -11,6 +11,7 @@ CREATE TABLE commodity(
                           trade_location VARCHAR(20) NOT NULL   COMMENT '交易地点' ,
                           count INT NOT NULL   COMMENT '剩余数量' ,
                           status TINYINT   DEFAULT 0 COMMENT '状态;0:上架中，1：已下架' ,
+                          auto_take_down BOOL   DEFAULT TRUE COMMENT '自动下架;当商品数量为0时，自动下架' ,
                           version INT(11)   DEFAULT 1 COMMENT '乐观锁' ,
                           PRIMARY KEY (commodity_id)
 )  COMMENT = '商品;商品搜索时使用ElasticSearch搜索';

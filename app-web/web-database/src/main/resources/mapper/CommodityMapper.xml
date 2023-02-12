@@ -58,4 +58,8 @@
         LIMIT #{s}
     </select>
 
+    <update id="takeDownCommodityIfEmpty">
+        UPDATE commodity SET status = 1 WHERE commodity_id = #{cid} AND count = 0 AND auto_take_down = 1
+    </update>
+
 </mapper>

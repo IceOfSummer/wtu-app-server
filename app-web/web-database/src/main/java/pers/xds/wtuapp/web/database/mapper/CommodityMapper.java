@@ -90,5 +90,11 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      */
     List<Commodity> selectByTimeDesc(@Param("mid") Integer maxId, @Param("s") int size);
 
+    /**
+     * 如果商品数量为0并且{@link Commodity#autoTakeDown}为true，则下架该商品。
+     * @param commodityId 商品id
+     */
+    void takeDownCommodityIfEmpty(@Param("cid") int commodityId);
+
 
 }

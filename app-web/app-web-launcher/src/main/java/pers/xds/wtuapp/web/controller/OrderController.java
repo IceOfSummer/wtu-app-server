@@ -4,15 +4,14 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pers.xds.wtuapp.errorcode.ResponseWrapper;
 import pers.xds.wtuapp.security.SecurityConstant;
 import pers.xds.wtuapp.security.UserPrincipal;
-import pers.xds.wtuapp.web.common.ResponseCode;
 import pers.xds.wtuapp.web.common.ResponseTemplate;
 import pers.xds.wtuapp.web.database.view.OrderDetail;
 import pers.xds.wtuapp.web.database.view.OrderPreview;
 import pers.xds.wtuapp.web.security.util.SecurityContextUtil;
 import pers.xds.wtuapp.web.service.OrderService;
-import pers.xds.wtuapp.web.service.ServiceCode;
 import pers.xds.wtuapp.web.service.bean.UpdateOrderStatusParam;
 import pers.xds.wtuapp.web.util.StringUtils;
 
@@ -94,37 +93,26 @@ public class OrderController {
      * 买家标记商品已经收到
      */
     @PostMapping("/{orderId}/done")
-    public ResponseTemplate<Void> markReceived(@PathVariable int orderId,
-                                               @RequestParam(value = "s") String isSeller,
-                                               @RequestParam(value = "ps") int previousStatus,
-                                               @RequestParam(value = "r", required = false) String remark) {
+    public ResponseWrapper<Void> markReceived(@PathVariable int orderId,
+                                              @RequestParam(value = "s") String isSeller,
+                                              @RequestParam(value = "ps") int previousStatus,
+                                              @RequestParam(value = "r", required = false) String remark) {
         UpdateOrderStatusParam updateOrderStatusParam = getStatusParam(orderId, isSeller, previousStatus, remark);
-        ServiceCode code = orderService.markTradeDone(updateOrderStatusParam);
-        if (code == ServiceCode.SUCCESS) {
-            return ResponseTemplate.success();
-        } else if (code == ServiceCode.NOT_AVAILABLE) {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "订单已经被对方申请取消或者已经完成");
-        }
-        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+        orderService.markTradeDone(updateOrderStatusParam);
+        return ResponseWrapper.success();
     }
 
     /**
      * 买家或卖家要求取消订单
      */
     @PostMapping("/{orderId}/cancel")
-    public ResponseTemplate<Void> cancelOrder(@PathVariable int orderId,
+    public ResponseWrapper<Void> cancelOrder(@PathVariable int orderId,
                                               @RequestParam(value = "s") String isSeller,
                                               @RequestParam(value = "ps") int previousStatus,
                                               @RequestParam(value = "r", required = false) String remark) {
         UpdateOrderStatusParam updateOrderStatusParam = getStatusParam(orderId, isSeller, previousStatus, remark);
-        ServiceCode code = orderService.markTradeFail(updateOrderStatusParam);
-        if (code == ServiceCode.SUCCESS) {
-            return ResponseTemplate.success();
-        } else if (code == ServiceCode.NOT_AVAILABLE) {
-            return ResponseTemplate.fail(ResponseCode.NOT_AVAILABLE, "订单已经完成");
-        }
-        // code == ServiceCode#NOT_EXIST
-        return ResponseTemplate.fail(ResponseCode.ELEMENT_NOT_EXIST);
+        orderService.markTradeFail(updateOrderStatusParam);
+        return ResponseWrapper.success();
     }
 
     @Nullable

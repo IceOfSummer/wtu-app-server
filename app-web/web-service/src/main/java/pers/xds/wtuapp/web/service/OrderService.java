@@ -61,19 +61,19 @@ public interface OrderService {
      * 买家或卖家标记交易完成
      * @param updateOrderStatusParam 参数
      * @return 服务码<p>
-     * - {@link ServiceCode#NOT_EXIST}表示订单不存在<p>
-     * - {@link ServiceCode#NOT_AVAILABLE}表示订单已经被某一方申请取消
+     * @throws pers.xds.wtuapp.web.service.exception.NoSuchElementException 表示订单不存在<p>
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 表示订单已经被某一方申请取消
      */
-    ServiceCode markTradeDone(UpdateOrderStatusParam updateOrderStatusParam);
+    void markTradeDone(UpdateOrderStatusParam updateOrderStatusParam);
 
     /**
      * 买家或卖家标记交易失败
      * @param updateOrderStatusParam 参数
      * @return 服务码<p>
-     * - {@link ServiceCode#NOT_EXIST}表示订单不存在<p>
-     * - {@link ServiceCode#NOT_AVAILABLE}订单已经完成<p>
+     * @throws pers.xds.wtuapp.web.service.exception.NoSuchElementException 表示订单不存在
+     * @throws pers.xds.wtuapp.web.service.exception.BadArgumentException 表示订单已经完成
      */
-    ServiceCode markTradeFail(UpdateOrderStatusParam updateOrderStatusParam);
+    void markTradeFail(UpdateOrderStatusParam updateOrderStatusParam);
 
 
     /**
